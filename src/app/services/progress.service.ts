@@ -1,9 +1,8 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
-import { deriveState } from '../core/card-state';
+import { HISTORY_SIZE, deriveState } from '../core/card-state';
 import { Attempt, Card, CardState } from '../core/models';
 
 const STORAGE_KEY = 'flashcards.v1';
-const MAX_ATTEMPTS = 3; // last N tries kept per card
 
 type CardHistory = Record<string, Attempt[]>;
 
@@ -22,7 +21,7 @@ export class ProgressService {
 
   record(cardId: string, correct: boolean, now = Date.now()): void {
     this.history.update((h) => {
-      const attempts = [...(h[cardId] ?? []), { ts: now, correct }].slice(-MAX_ATTEMPTS);
+      const attempts = [...(h[cardId] ?? []), { ts: now, correct }].slice(-HISTORY_SIZE);
       return { ...h, [cardId]: attempts };
     });
   }

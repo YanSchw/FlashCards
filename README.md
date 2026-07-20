@@ -35,8 +35,8 @@ each stored with a timestamp):
 | -------------------- | ------ | ---------------------------------------------------------------- |
 | **Unanswered**       | gray   | No attempt in the last **72 h**.                                 |
 | **Wrong**            | red    | Every attempt in the last 72 h was wrong.                        |
-| **Needs Repetition** | yellow | Some success in 72 h, but not yet locked in.                     |
-| **Memorized**        | green  | All recent attempts correct **and** the last one within **12 h**. |
+| **Needs Repetition** | yellow | Some success in 72 h, but not a full run of 3 correct yet.        |
+| **Memorized**        | green  | The **last 3** attempts all correct **and** the last one within **12 h**. |
 
 ### Weighted shuffle
 
