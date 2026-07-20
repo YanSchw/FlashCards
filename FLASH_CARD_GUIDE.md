@@ -76,7 +76,7 @@ Add one entry to `public/courses/index.json`:
 ### Card identity (why wording matters)
 
 The app assigns each card a stable id by hashing `topic + question + answer`.
-That id is the key for a user's progress. Practical consequences:
+That id is the key for its saved progress. Practical consequences:
 
 - **Editing a card's text resets its progress** (it becomes a "new" card).
 - **Two cards with identical topic + question + answer collide.** Keep every

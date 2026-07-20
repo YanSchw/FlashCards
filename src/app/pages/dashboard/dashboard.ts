@@ -10,9 +10,8 @@ import { StateBar } from '../../ui/state-bar';
   imports: [StateBar, RouterLink],
   template: `
     @if (course(); as c) {
-      <header class="flex items-center justify-between gap-4">
+      <header class="flex items-center gap-4">
         <a routerLink="/" class="tool">‹ Courses</a>
-        <span class="mono-label text-solder">{{ progress.currentUser() }}</span>
       </header>
 
       <div class="mt-6 text-center">

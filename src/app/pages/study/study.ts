@@ -11,9 +11,8 @@ const TAP = 8; // px below which a pointer up counts as a tap
 @Component({
   selector: 'app-study',
   template: `
-    <header class="flex items-center justify-between gap-4">
+    <header class="flex items-center gap-4">
       <button class="tool" (click)="quit()">‹ Dashboard</button>
-      <span class="mono-label text-solder">{{ progress.currentUser() }}</span>
     </header>
 
     @if (done()) {
@@ -215,10 +214,6 @@ export class Study {
   });
 
   constructor() {
-    if (!this.progress.currentUser()) {
-      this.router.navigate(['/']);
-      return;
-    }
     queueMicrotask(() =>
       this.coursesSvc.course(this.courseId()).then((course) => {
         const pool =

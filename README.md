@@ -1,8 +1,8 @@
 # Flashcards
 
 A mobile-first spaced-study flashcard app. Angular + TypeScript + Tailwind CSS,
-data-driven from plain JSON, progress saved per-profile in `localStorage`. No
-backend, no auth, no build-time coupling to the content.
+data-driven from plain JSON, progress saved in `localStorage`. No backend, no
+auth, no build-time coupling to the content.
 
 ## Run it
 
@@ -14,11 +14,11 @@ npm run build    # production build into dist/
 
 ## How it works
 
-**Flow:** Home (pick a profile + course) → Dashboard (progress overview) →
+**Flow:** Home (pick a course) → Dashboard (progress overview) →
 Study (a shuffled session of _K_ cards) → back to Dashboard.
 
-**Profiles.** Several people can share one device. Each named profile keeps its
-own progress under the `flashcards.v1` key in `localStorage`. No accounts.
+**Progress** is saved under the `flashcards.v1` key in `localStorage`. No
+accounts, no sync — it lives in the browser on the device.
 
 **Content.** Every course is a self-contained JSON file in
 [`public/courses/`](public/courses/), listed in
@@ -28,8 +28,8 @@ converting PDFs → decks).
 
 ### Card states
 
-Each card's state is derived from that profile's recent attempts (the last **3**
-tries, each stored with a timestamp):
+Each card's state is derived from its recent attempts (the last **3** tries,
+each stored with a timestamp):
 
 | State                | Color  | Rule                                                              |
 | -------------------- | ------ | ---------------------------------------------------------------- |
