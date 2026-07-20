@@ -93,14 +93,21 @@ const TAP = 8; // px below which a pointer up counts as a tap
               style="background: repeating-linear-gradient(0deg, transparent 0 33px, var(--color-paper-line) 33px 34px), var(--color-paper); box-shadow: 0 24px 50px -18px rgba(0,0,0,.65)"
             >
               <span
-                class="absolute left-0 top-0 h-16 w-16 rounded-tl-[18px] border-l-[3px] border-t-[3px] border-copper opacity-80"
+                class="absolute left-0 top-0 h-16 w-16 rounded-tl-[18px] border-l-[3px] border-t-[3px] opacity-80"
+                [style.border-color]="stateColor()"
               ></span>
               <div class="flex items-center justify-between">
                 <span
                   class="rounded-md border border-[rgba(200,134,47,.35)] bg-[rgba(200,134,47,.16)] px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[#9a6316]"
                   >{{ card.topic }}</span
                 >
-                <span class="font-mono text-[11px] text-ink-soft">{{ index() + 1 }} / {{ queue().length }}</span>
+                <span
+                  class="rounded-md border px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.12em]"
+                  [style.color]="stateColor()"
+                  [style.border-color]="stateTint()"
+                  [style.background]="stateTint()"
+                  >{{ stateLabel() }}</span
+                >
               </div>
               <div class="mono-label mt-3 text-copper">Question</div>
               <div class="flex flex-1 items-center">
@@ -117,7 +124,8 @@ const TAP = 8; // px below which a pointer up counts as a tap
               style="background: linear-gradient(160deg,#164034 0%, var(--color-back) 60%); box-shadow: 0 24px 50px -18px rgba(0,0,0,.65)"
             >
               <span
-                class="absolute bottom-0 right-0 h-16 w-16 rounded-br-[18px] border-b-[3px] border-r-[3px] border-copper opacity-80"
+                class="absolute bottom-0 right-0 h-16 w-16 rounded-br-[18px] border-b-[3px] border-r-[3px] opacity-80"
+                [style.border-color]="stateColor()"
               ></span>
               <div class="flex items-center justify-between">
                 <span
@@ -197,6 +205,15 @@ export class Study {
 
   protected currentCard = computed(() => this.queue()[this.index()] ?? null);
   protected queueIndices = computed(() => this.queue().map((_, i) => i));
+
+  protected currentState = computed(() => {
+    this.progress.revision();
+    const card = this.currentCard();
+    return card ? this.progress.stateFor(card.id) : 'unanswered';
+  });
+  protected stateColor = computed(() => STATE_META[this.currentState()].color);
+  protected stateLabel = computed(() => STATE_META[this.currentState()].label);
+  protected stateTint = computed(() => `color-mix(in srgb, ${this.stateColor()} 16%, transparent)`);
 
   protected wrapTransform = computed(() => {
     if (this.leaving()) {
