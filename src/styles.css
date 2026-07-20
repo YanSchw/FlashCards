@@ -128,6 +128,31 @@ body::before {
     letter-spacing: 0.28em;
     text-transform: uppercase;
   }
+
+  /* Answer body markup (rendered via [innerHTML], so styled globally). */
+  .answer :is(b, strong) {
+    color: var(--color-copper-bright);
+    font-weight: 600;
+  }
+  .answer em {
+    font-style: italic;
+    color: var(--color-back-ink);
+  }
+  .answer mark {
+    background: rgba(107, 179, 160, 0.16);
+    color: #d8ede6;
+    border-radius: 4px;
+    padding: 0 3px;
+  }
+  .answer code {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    color: #bfe6da;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(107, 179, 160, 0.22);
+    border-radius: 5px;
+    padding: 1px 5px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

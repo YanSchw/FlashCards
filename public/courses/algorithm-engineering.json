@@ -189,6 +189,305 @@
           "answer": "<b>Measure first.</b> The CPU does so much clever stuff that your guesses about what's slow are often wrong — let real numbers guide you. (And never measure an unoptimized build.)"
         }
       ]
+    },
+    {
+      "id": "lecture-03-cpu-architecture-2",
+      "title": "Lecture 03 · CPU Architecture 2",
+      "description": "Optimizing for real hardware — data layout, SIMD & parallelism.",
+      "cards": [
+        {
+          "topic": "Optimization",
+          "question": "In what order should you optimize code?",
+          "answer": "<b>Correctness first</b> → right algorithm → good data/memory layout → <em>only then</em> micro-tricks like SIMD and branch prediction."
+        },
+        {
+          "topic": "Data Layout",
+          "question": "AoS vs SoA — what's the difference?",
+          "answer": "<b>AoS</b> (Array of Structures) keeps each object's fields together (<mark>cleaner code</mark>). <b>SoA</b> (Structure of Arrays) stores separate lists per field (<mark>often faster</mark>)."
+        },
+        {
+          "topic": "Data Layout",
+          "question": "Why is SoA often faster than AoS?",
+          "answer": "Memory is read in chunks (<b>cache lines</b>). Packing needed values together means each chunk is <mark>full of useful data</mark> instead of skipped-over junk (<em>striding</em>)."
+        },
+        {
+          "topic": "Data Layout",
+          "question": "When is AoS perfectly fine?",
+          "answer": "When you use <mark>most fields</mark> of each object anyway — then nothing in the cache line is wasted."
+        },
+        {
+          "topic": "Memory Allocation",
+          "question": "Why are new/malloc calls a hidden performance trap?",
+          "answer": "Allocating is <mark>far more expensive</mark> than normal operations — like ordering a new box from the store every time instead of reusing one."
+        },
+        {
+          "topic": "Memory Allocation",
+          "question": "How do you fix allocating inside a hot loop?",
+          "answer": "<b>Allocate once before the loop and reuse it</b> (e.g. <code>clear()</code> a vector to keep its buffer), or <code>reserve()</code> capacity / use an object pool."
+        },
+        {
+          "topic": "Memory Allocation",
+          "question": "What are 'hidden allocations'?",
+          "answer": "Accidental <mark>copies of containers or temporaries</mark> — often because C++ passes objects <b>by value</b> by default. Profile to catch them."
+        },
+        {
+          "topic": "SIMD",
+          "question": "What does SIMD mean and do?",
+          "answer": "<b>Single Instruction, Multiple Data</b> — one instruction applies the same operation to <mark>many values at once</mark>, like a cashier with 8 hands scanning 8 items in one beep."
+        },
+        {
+          "topic": "SIMD",
+          "question": "Should you usually write SIMD by hand?",
+          "answer": "<b>No</b> — it's complex and platform-dependent. <mark>Let the compiler do it</mark> (auto-vectorization); go manual only as a last resort after measuring."
+        },
+        {
+          "topic": "Auto-Vectorization",
+          "question": "Most common reason the compiler doesn't vectorize?",
+          "answer": "<mark>Missing optimization flags</mark> — you need <code>-O2</code>/<code>-O3</code> turned on (and sometimes flags telling it the hardware, e.g. AVX2, is available)."
+        },
+        {
+          "topic": "Auto-Vectorization",
+          "question": "What code patterns block vectorization?",
+          "answer": "<b>Messy control flow</b> (if/else, non-inlined calls), <b>complex access patterns</b>, and <mark>inter-iteration dependencies</mark>."
+        },
+        {
+          "topic": "Auto-Vectorization",
+          "question": "What is an inter-iteration dependency?",
+          "answer": "When a step needs the <mark>previous step's result</mark> (a chain), so steps can't run at the same time. Example: <code>v[i] = v[i-1]*w[i]</code> is blocked."
+        },
+        {
+          "topic": "Auto-Vectorization",
+          "question": "Why can float sums be hard to vectorize?",
+          "answer": "Reordering float additions can <mark>slightly change the result</mark>, so the compiler won't reorder unless allowed. Float add is <b>commutative but not strictly associative</b>."
+        },
+        {
+          "topic": "Auto-Vectorization",
+          "question": "std::accumulate vs std::reduce for summing floats?",
+          "answer": "<code>accumulate</code> is <b>strict left-to-right</b> (can't reorder → <mark>no SIMD</mark>). <code>reduce</code> <b>may reorder</b> (→ <mark>can vectorize</mark>)."
+        },
+        {
+          "topic": "Alignment",
+          "question": "What is memory alignment and why care?",
+          "answer": "Data should sit at a <mark>'nice' address</mark> (like parking a bus only in a bus-shaped spot). Misalignment hampers vectorization and causes slow loads that split cache lines."
+        },
+        {
+          "topic": "Alignment",
+          "question": "Practical trick to shrink a struct?",
+          "answer": "<b>Reorder fields (big types first)</b> to reduce padding — the same data can go from <mark>40 bytes to 24 bytes</mark> for free."
+        },
+        {
+          "topic": "Parallelization",
+          "question": "Why do we need parallelization now?",
+          "answer": "Per-core speed and frequency <mark>stopped growing (~2005)</mark>; CPUs add <b>more cores</b> instead, so you must use many at once."
+        },
+        {
+          "topic": "Parallelization",
+          "question": "What does Amdahl's Law tell us?",
+          "answer": "Only the parallelizable part speeds up; the <mark>part that must run alone caps total speedup</mark> — even with infinite cores. (Chefs share chopping, but one solo cake limits the meal.)"
+        },
+        {
+          "topic": "Parallelization",
+          "question": "The two fundamental hurdles of parallelization?",
+          "answer": "<b>Synchronization</b> (coordinating shared data) and <b>shared resources</b> (memory bandwidth, power, heat, network)."
+        },
+        {
+          "topic": "Memory Bandwidth",
+          "question": "What is the memory bandwidth limit?",
+          "answer": "A <mark>shared pipe to memory</mark>. Once it's full, more threads don't help — like many people sharing one water fountain."
+        },
+        {
+          "topic": "Memory Bandwidth",
+          "question": "When is a task likely bandwidth-limited?",
+          "answer": "Reading <b>lots of memory once</b>, in a <b>predictable linear scan</b>, <b>more data than cache</b>, with <b>light computation</b>. Then a few threads already max it out."
+        },
+        {
+          "topic": "Synchronization",
+          "question": "Best strategies to reduce synchronization?",
+          "answer": "Have each thread <mark>work its own chunk and combine at the end</mark>; keep critical sections short; hand out big-enough tasks."
+        },
+        {
+          "topic": "False Sharing",
+          "question": "What is false sharing?",
+          "answer": "Threads write to <b>different variables that share one cache line</b>, so each write forces the others to <mark>refresh</mark> — like two people sharing one notebook page."
+        },
+        {
+          "topic": "False Sharing",
+          "question": "Does false sharing cause wrong answers, and how do you fix it?",
+          "answer": "<b>No — results are correct</b>, just <mark>secretly slow</mark>. Fix by putting each thread's data on its own cache line (e.g. <code>alignas(64)</code>)."
+        },
+        {
+          "topic": "Measuring",
+          "question": "Why can CPU utilization mislead you?",
+          "answer": "<b>Busy-waiting (spinning)</b> looks like 100% usage but does <mark>no useful work</mark>. Prefer 'effective time' plus wait/spin time."
+        },
+        {
+          "topic": "Parallelism Levels",
+          "question": "Low-level vs high-level parallelism?",
+          "answer": "<b>Low-level</b> = parallelize one task (parallel sum/sort). <b>High-level</b> = run whole different strategies at once (many seeds, different algorithms) — <mark>usually better</mark>."
+        }
+      ]
+    },
+    {
+      "id": "lecture-04-fundamental-data-structures",
+      "title": "Lecture 04 · Fundamental Data Structures",
+      "description": "Why the data structure — not the Big-O — decides real speed.",
+      "cards": [
+        {
+          "topic": "Theme",
+          "question": "What's the one-line message of the whole lecture?",
+          "answer": "The <b>data structure is the performance story</b>. Same Big-O can be 100× apart in practice — because of <mark>cache behaviour and allocations</mark>, not asymptotics."
+        },
+        {
+          "topic": "Linear",
+          "question": "What's the default linear structure, and why?",
+          "answer": "<b>std::vector</b>. It's <mark>contiguous, predictable, and cache-friendly</mark> — reach for something else only when the workload clearly demands it."
+        },
+        {
+          "topic": "Linear",
+          "question": "Why is std::list usually much slower than std::vector?",
+          "answer": "A vector is contiguous, so the <b>prefetcher streams ahead</b> (one fetch → 8 elements). A list scatters nodes, so <mark>every hop risks a main-memory miss (~100× a cache hit)</mark>."
+        },
+        {
+          "topic": "Linear",
+          "question": "When does std::list actually win? (all three at once)",
+          "answer": "1) <b>Many splices, few traversals</b>; 2) <b>iterator stability</b> (pointers must survive edits elsewhere); 3) <b>elements expensive to move</b>. If you can't name all three → <mark>use vector</mark>."
+        },
+        {
+          "topic": "Linear",
+          "question": "What about std::deque?",
+          "answer": "<b>Avoid it.</b> It's a map of pointers to blocks — every iterator step risks crossing a block boundary. Prefer a <mark>vector with a read index</mark> as a queue (contiguous, one allocation)."
+        },
+        {
+          "topic": "Linear",
+          "question": "What is small-buffer optimization?",
+          "answer": "Store a few elements <b>inside the object itself</b> (on the stack), avoiding a heap allocation while small. Use <code>absl::InlinedVector</code>, <code>boost::small_vector</code>, <code>llvm::SmallVector</code>."
+        },
+        {
+          "topic": "Hash Maps",
+          "question": "Before using a hash map, which cases have a better tool?",
+          "answer": "<b>Dense integer keys</b> → index a <code>std::vector</code> directly. <b>Ordered queries</b> → sorted container. <b>Tiny N (≲100)</b> → <mark>sorted vector + linear scan</mark> (cache beats asymptotics)."
+        },
+        {
+          "topic": "Hash Maps",
+          "question": "Why avoid std::unordered_map?",
+          "answer": "The standard mandates <b>chaining</b> — it's a <mark>linked list in disguise</mark>. Every insert allocates a node; every lookup chases a pointer. ~2× slower on hits, 3–4× on misses."
+        },
+        {
+          "topic": "Hash Maps",
+          "question": "What is open addressing and why is it faster?",
+          "answer": "Store (key,value) <b>inline in one array</b>; collisions probe adjacent slots. <mark>One allocation, and a hit/miss usually stays in the same cache line</mark>. Downside: wide values → fewer slots per line."
+        },
+        {
+          "topic": "Hash Maps",
+          "question": "What clever trick do Swiss tables add?",
+          "answer": "They <b>split tiny metadata from the data</b>. A <mark>single SIMD instruction checks 16 slot-tags at once</mark>; only matches pay to read the full key-value pair — fast regardless of value width."
+        },
+        {
+          "topic": "Hash Maps",
+          "question": "Default hash map + main tuning knobs?",
+          "answer": "Use <b>ankerl::unordered_dense</b>, <b>absl::flat_hash_map</b>, or <b>boost::unordered_flat_map</b>. <mark>reserve() before bulk inserts</mark>, leave load factor alone, and use a good hash for non-trivial keys."
+        },
+        {
+          "topic": "Sorted",
+          "question": "When do you actually need a sorted container?",
+          "answer": "Only when <b>order is part of the query</b>: range queries, predecessor/successor, ordered iteration, order statistics, DB indexes. <mark>If it's just point lookup → hash map</mark>."
+        },
+        {
+          "topic": "Sorted",
+          "question": "Default sorted structure, and its one weakness?",
+          "answer": "<b>Sorted std::vector + std::lower_bound</b> — build once, binary-search many. Weakness: <mark>mid-insert is O(N)</mark> (one insert into a million-key vector shifts megabytes)."
+        },
+        {
+          "topic": "Sorted",
+          "question": "Why avoid std::map?",
+          "answer": "It's a <b>red-black tree with per-node malloc</b> — basically a std::list with a sort order, plus rebalancing on every insert. <mark>Slower than absl::btree_map on every workload</mark>."
+        },
+        {
+          "topic": "Sorted",
+          "question": "For balanced trees, where does the real cost come from?",
+          "answer": "From <b>tree height</b>, not node work. A million-key binary tree is ~20 levels = up to 20 cache misses per lookup. Fix: <mark>widen the branching factor</mark> to shrink height."
+        },
+        {
+          "topic": "Sorted",
+          "question": "What makes a B-tree / B+ tree fast?",
+          "answer": "Each <b>node is sized to a cache line</b> → one cache miss per level. B+ trees keep all values in <mark>linked leaves</mark>, so a range query is one descent + a linear leaf walk — why every database uses them."
+        },
+        {
+          "topic": "Sorted",
+          "question": "Best choice for a mutation-heavy ordered map?",
+          "answer": "<b>absl::btree_map</b> — a drop-in for std::map, ~3× faster lookup, per-op cost bounded by log N, and <mark>no per-node allocation</mark>."
+        },
+        {
+          "topic": "Priority Queues",
+          "question": "When do you actually need a priority queue?",
+          "answer": "When you <b>pop and keep inserting</b> in a loop (event sim, Dijkstra/A*, top-k, scheduling, branch-and-bound). <mark>If you just need order once at the end → std::sort</mark>."
+        },
+        {
+          "topic": "Priority Queues",
+          "question": "What is a binary heap, physically?",
+          "answer": "An <b>implicit tree stored in a flat array</b> (std::vector) — parent/child are just index arithmetic. <mark>No pointers, no per-node allocations</mark>, cache-friendly."
+        },
+        {
+          "topic": "Priority Queues",
+          "question": "How do push and pop work in a heap?",
+          "answer": "<b>push</b>: append to the end, then <b>bubble up</b>. <b>pop</b>: swap root with the last element, remove it, then <mark>sift down</mark> to restore heap order."
+        },
+        {
+          "topic": "Priority Queues",
+          "question": "Cheap way to speed up a large heap?",
+          "answer": "Use a <b>d-ary heap</b> (d = 4 or 8): each node has d children instead of 2. Same array + index math, the d children sit in <mark>one cache line</mark>, and height drops."
+        },
+        {
+          "topic": "Priority Queues",
+          "question": "How do you 'change a key' in a heap (which it can't do)?",
+          "answer": "<b>Push a new entry instead</b> (lazy deletion): on pop, skip stale entries whose priority no longer matches. <mark>This also kills the last reason to use a Fibonacci heap</mark> (cache-hostile in practice)."
+        },
+        {
+          "topic": "Union-Find",
+          "question": "What is union-find and what two tricks make it fast?",
+          "answer": "Maintains a partition under <b>find(x)</b> and <b>unite(x,y)</b> using just a parent array. Tricks: <mark>union by rank</mark> (attach shorter tree under taller) + <mark>path compression</mark> (re-parent nodes to the root during find)."
+        },
+        {
+          "topic": "Union-Find",
+          "question": "What's its real-world cost?",
+          "answer": "Amortized inverse-Ackermann — which is <b>≤ 4 for any real input</b>, so treat both ops as <mark>effectively O(1)</mark>. Constant factor is dominated by one hot cache line (the parent array)."
+        },
+        {
+          "topic": "Graphs",
+          "question": "What's the default graph representation?",
+          "answer": "<b>Compressed Sparse Row (CSR)</b> — two flat arrays (offsets + targets). Neighbors are contiguous, so traversal <mark>streams at memory bandwidth</mark>. CSR is to graphs what vector is to lists."
+        },
+        {
+          "topic": "Graphs",
+          "question": "Why avoid vector<vector<int>> for a long-lived graph?",
+          "answer": "Each vertex's neighbors are a <b>separate heap allocation</b> → <mark>one cache miss per vertex before you read a single edge</mark>. Same pathology as std::list."
+        },
+        {
+          "topic": "Graphs",
+          "question": "When is an adjacency matrix the right call?",
+          "answer": "For <b>small, dense graphs</b>, when edge-existence queries dominate, or when the algorithm is <mark>linear algebra</mark> (SpMV, matrix powers). Costs V² memory always."
+        },
+        {
+          "topic": "Spatial",
+          "question": "How do you pick a spatial structure?",
+          "answer": "By the <b>query, not the data</b>. Range → grid/R-tree; nearest-neighbor → kd-tree; ray → BVH; collision → BVH/grid. The whole win comes from <mark>pruning almost everything</mark>."
+        },
+        {
+          "topic": "Spatial",
+          "question": "Default spatial structure, and kd-tree's big caveat?",
+          "answer": "<b>Uniform grid</b> — simple, near-O(1) for near-neighbor queries on roughly uniform points. <b>kd-trees</b> work in low dimensions but <mark>degrade to linear scan (~20D)</mark> — the curse of dimensionality."
+        },
+        {
+          "topic": "Probabilistic",
+          "question": "Bloom filter — what and what's the catch?",
+          "answer": "Answers <b>“have I seen it?”</b> in a tiny bit array using k hashes. <mark>False positives possible, but never false negatives</mark>. ~10 bits/element ≈ 1% error is the usual default."
+        },
+        {
+          "topic": "Probabilistic",
+          "question": "Count-Min sketch vs HyperLogLog — one line each?",
+          "answer": "<b>Count-Min</b>: approximate <mark>frequencies</mark> (“how often?”), always an overcount, never under. <b>HyperLogLog</b>: approximate <mark>distinct count</mark> (“how many unique?”) in kilobytes — powers <code>COUNT(DISTINCT)</code>."
+        }
+      ]
     }
   ]
 }

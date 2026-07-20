@@ -71,7 +71,20 @@ Add one entry to `public/courses/index.json`:
 | `lectures[].title`   | yes      | Plain text.                                                           |
 | `cards[].topic`      | yes      | Short label used for grouping/filtering (e.g. "Branch Prediction").   |
 | `cards[].question`   | yes      | Plain text. One idea per card. End with a `?` when it's a question.   |
-| `cards[].answer`     | yes      | May contain **only** `<b>…</b>` for emphasis. No other HTML.          |
+| `cards[].answer`     | yes      | May contain the inline tags below. No other HTML.                    |
+
+### Allowed HTML in `answer`
+
+Only these four inline tags render (anything else is stripped by the sanitizer):
+
+| Tag      | Use it for                                 | Renders as            |
+| -------- | ------------------------------------------ | --------------------- |
+| `<b>`    | the single key term                        | copper, bold          |
+| `<mark>` | the punchy takeaway phrase                 | soft green highlight  |
+| `<em>`   | light emphasis / an aside                  | italic                |
+| `<code>` | code, identifiers, API names (`reserve()`) | monospace chip        |
+
+Keep it restrained — a card with everything highlighted highlights nothing.
 
 ### Card identity (why wording matters)
 
@@ -95,14 +108,15 @@ Follow all of these when generating cards:
    Don't write "What is the second reason mentioned above?".
 4. **Question on the front, answer on the back.** Never put the answer in the
    question.
-5. **Concise answers.** 1–3 sentences. Bold the single most important phrase with
-   `<b>…</b>` — exactly one or two per answer, not the whole sentence.
+5. **Concise answers.** 1–3 sentences. Emphasise the key idea with the allowed
+   tags above — roughly one or two highlights per answer, not the whole sentence.
 6. **Plain, active language.** Prefer intuition and analogies over jargon dumps,
    matching the existing decks' tone.
 7. **Group with `topic`.** Reuse a small, consistent set of topic labels per
    lecture (roughly 4–8), so filtering and the dashboard stay meaningful.
 8. **Valid JSON only.** UTF-8, double quotes, no trailing commas, no comments.
-   Escape any literal `"` inside strings. The only HTML allowed is `<b>`.
+   Escape any literal `"` inside strings. The only HTML allowed is `<b>`, `<mark>`,
+   `<em>`, `<code>`.
 9. **No secrets / no PII.** Don't copy names, emails, or credentials from source
    material into cards.
 10. **Aim for 15–40 cards per lecture** unless the source is unusually short or long.
@@ -118,16 +132,16 @@ You convert study material into flashcards as strict JSON.
 
 OUTPUT: a single JSON object for ONE lecture, matching this shape:
 { "id": "<kebab-case>", "title": "<string>", "description": "<string>",
-  "cards": [ { "topic": "<short group>", "question": "<string>", "answer": "<string, may use <b></b>>" } ] }
+  "cards": [ { "topic": "<short group>", "question": "<string>", "answer": "<string, may use <b> <mark> <em> <code>>" } ] }
 
 RULES:
 - Use ONLY facts present in the provided material. Do not add outside knowledge.
 - One idea per card. Each card must stand alone (no references to other cards).
 - Question on the front; never reveal the answer in the question.
-- Answers are 1–3 sentences; wrap the single key phrase in <b>…</b>.
+- Answers are 1–3 sentences; highlight the key idea sparingly.
 - Group cards with a small, consistent set of `topic` labels.
 - Output valid JSON only. No markdown fences, no commentary, no trailing commas.
-- The only HTML permitted anywhere is <b>…</b>.
+- The only HTML permitted is <b>, <mark>, <em>, <code>.
 
 MATERIAL:
 <paste the extracted lecture text here>

@@ -170,12 +170,6 @@ const TAP = 8; // px below which a pointer up counts as a tap
       </section>
     }
   `,
-  styles: `
-    .answer :is(b, strong) {
-      color: var(--color-copper-bright);
-      font-weight: 600;
-    }
-  `,
 })
 export class Study {
   courseId = input.required<string>();
