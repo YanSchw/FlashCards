@@ -1,0 +1,66 @@
+{
+  "id": "computer-networks",
+  "title": "Computer Networks",
+  "description": "From cables to the cloud — how packets actually travel.",
+  "lectures": [
+    {
+      "id": "lecture-01-foundations",
+      "title": "Lecture 01 · Foundations",
+      "description": "Layers, addresses and the shape of the internet.",
+      "cards": [
+        {
+          "topic": "Layering",
+          "question": "What problem does the layered network model solve?",
+          "answer": "It <b>splits one impossible job into small, swappable pieces</b>. Each layer only talks to the ones above and below it, so you can change Wi-Fi to Ethernet without rewriting the browser."
+        },
+        {
+          "topic": "Layering",
+          "question": "What do the four TCP/IP layers roughly do?",
+          "answer": "<b>Link</b> moves bits over one hop, <b>Internet</b> routes packets across networks, <b>Transport</b> gives apps a reliable stream, <b>Application</b> is the actual protocol (HTTP, DNS…)."
+        },
+        {
+          "topic": "Addressing",
+          "question": "What is the difference between an IP address and a MAC address?",
+          "answer": "A <b>MAC address</b> names a device on one local link; an <b>IP address</b> names a device on the whole internet and can change as it moves networks."
+        },
+        {
+          "topic": "Addressing",
+          "question": "What does DNS do?",
+          "answer": "It's the internet's <b>phone book</b>: it translates human names like <b>example.com</b> into the IP addresses machines actually route to."
+        },
+        {
+          "topic": "Packets",
+          "question": "Why send data as packets instead of one continuous stream?",
+          "answer": "Packets can be <b>routed independently, retried when lost, and interleaved</b> with others — so one big transfer can't hog a link and failures stay local."
+        }
+      ]
+    },
+    {
+      "id": "lecture-02-transport",
+      "title": "Lecture 02 · Transport",
+      "description": "TCP, UDP and the promises they make.",
+      "cards": [
+        {
+          "topic": "TCP",
+          "question": "What guarantees does TCP add on top of IP?",
+          "answer": "<b>Reliable, in-order delivery</b>: it numbers bytes, re-sends what's lost, and reassembles everything in the right order for the app."
+        },
+        {
+          "topic": "TCP",
+          "question": "What is the TCP three-way handshake?",
+          "answer": "<b>SYN → SYN-ACK → ACK.</b> Both sides agree on starting sequence numbers before any data flows, so each knows the other is ready and reachable."
+        },
+        {
+          "topic": "UDP",
+          "question": "When is UDP the better choice than TCP?",
+          "answer": "When <b>speed beats perfection</b> — live video, games, DNS. Losing a packet is fine; waiting to re-send it would hurt more than dropping it."
+        },
+        {
+          "topic": "Congestion",
+          "question": "What is congestion control, in one line?",
+          "answer": "Each sender <b>slows down when the network looks overloaded</b> (packets dropping) and speeds back up when it recovers — so no single flow drowns the link."
+        }
+      ]
+    }
+  ]
+}

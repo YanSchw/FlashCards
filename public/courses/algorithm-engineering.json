@@ -1,0 +1,194 @@
+{
+  "id": "algorithm-engineering",
+  "title": "Algorithm Engineering",
+  "description": "How real hardware shapes fast code — pipelines, caches and memory.",
+  "lectures": [
+    {
+      "id": "lecture-02-cpu-architecture-1",
+      "title": "Lecture 02 · CPU Architecture 1",
+      "description": "Flip through the pipeline — branching, memory & caches.",
+      "cards": [
+        {
+          "topic": "Why it matters",
+          "question": "Why care how the CPU works if your algorithm's Big-O already looks good?",
+          "answer": "Because <b>constant factors matter in real life</b>. Two programs with the same Big-O can differ hugely in speed, and misunderstanding the CPU can hide an enormous constant factor — a 'smart' Python program can lose to a well-tuned C++ one."
+        },
+        {
+          "topic": "The Pipeline",
+          "question": "What is the CPU 'pipeline', in plain terms?",
+          "answer": "An <b>assembly line for instructions</b>. Different instructions sit at different stages (fetch, decode, execute…) at the same time, so no stage sits idle."
+        },
+        {
+          "topic": "The Pipeline",
+          "question": "What is the single goal behind all the CPU's pipeline tricks?",
+          "answer": "<b>Avoid waiting.</b> Keep every part of the CPU busy instead of standing around doing nothing."
+        },
+        {
+          "topic": "The Pipeline",
+          "question": "What does 'superscalar' mean?",
+          "answer": "The CPU can work on <b>several independent instructions at once</b> — like having 4 workers on the line instead of 1."
+        },
+        {
+          "topic": "The Pipeline",
+          "question": "What is 'out-of-order' execution?",
+          "answer": "If a later instruction is ready while an earlier one is stuck, the ready one can <b>jump the queue</b>. The final results still come out in the correct order."
+        },
+        {
+          "topic": "The Pipeline",
+          "question": "What is 'speculation' in a CPU?",
+          "answer": "The CPU <b>guesses what's coming next and starts early</b>, before it's fully sure. If the guess was wrong, it throws that work away."
+        },
+        {
+          "topic": "The Pipeline",
+          "question": "Roughly how many instructions can a modern CPU juggle at once?",
+          "answer": "<b>Hundreds 'in flight'</b> at any moment. It looks chaotic, but the output still matches your written program."
+        },
+        {
+          "topic": "Latency vs Throughput",
+          "question": "What is latency?",
+          "answer": "How long <b>one</b> instruction takes from start to finish. (Like: how long a single pizza takes to bake.)"
+        },
+        {
+          "topic": "Latency vs Throughput",
+          "question": "What is throughput?",
+          "answer": "How <b>many</b> instructions finish per unit of time at full speed. (Like: with many ovens, a fresh pizza comes out every few minutes.)"
+        },
+        {
+          "topic": "Latency vs Throughput",
+          "question": "Does the pipeline make a single instruction finish faster?",
+          "answer": "No — <b>latency stays about the same</b>. What it improves is throughput: many instructions finish in quick succession."
+        },
+        {
+          "topic": "Branch Prediction",
+          "question": "What is a 'branch'?",
+          "answer": "An <b>if / decision point</b> where the next instruction depends on a condition (e.g., 'if green, go straight, else turn')."
+        },
+        {
+          "topic": "Branch Prediction",
+          "question": "Why are branches a problem for the pipeline?",
+          "answer": "The CPU races ahead and reaches the fork <b>before it knows the answer</b>, so it doesn't know which instructions to load next."
+        },
+        {
+          "topic": "Branch Prediction",
+          "question": "How does the CPU cope with not knowing which way a branch goes?",
+          "answer": "It <b>predicts (guesses)</b> the outcome and speculatively runs ahead based on that guess."
+        },
+        {
+          "topic": "Branch Prediction",
+          "question": "What happens when a prediction is right vs wrong?",
+          "answer": "Right → no time wasted, smooth flow. Wrong (<b>misprediction</b>) → it throws away the speculative work and restarts — an expensive stall."
+        },
+        {
+          "topic": "Branch Prediction",
+          "question": "Which branches are cheap and which are slow?",
+          "answer": "<b>Predictable branches are basically free.</b> Random, coin-flip branches inside a hot loop cause massive slowdowns."
+        },
+        {
+          "topic": "Branch Prediction",
+          "question": "How can the CPU predict branches so well?",
+          "answer": "It <b>spots patterns</b> — 'taken the last 100 times', repeating sequences — and learns from nearby branches. On normal code it's right over 95% of the time."
+        },
+        {
+          "topic": "Branch Prediction",
+          "question": "What kinds of branches are hard to predict?",
+          "answer": "Ones taken about <b>50% of the time at random</b>, or patterns too long/complex for the predictor to catch."
+        },
+        {
+          "topic": "Branch Prediction",
+          "question": "What's the main trick to fix an unpredictable branch?",
+          "answer": "<b>Branchless code</b> — get the answer with math / conditional moves instead of an 'if', so there's no branch to mispredict."
+        },
+        {
+          "topic": "Branch Prediction",
+          "question": "Why not just make everything branchless?",
+          "answer": "Well-predicted branches are already cheap, and branchless code often does <b>extra work</b> (computes both paths). It only helps when both paths are cheap AND the branch is truly unpredictable."
+        },
+        {
+          "topic": "Memory & Caches",
+          "question": "What's the big speed mismatch inside a computer?",
+          "answer": "The CPU is extremely fast, but fetching data from <b>main memory (RAM) is very slow</b> — hundreds of cycles of waiting."
+        },
+        {
+          "topic": "Memory & Caches",
+          "question": "What are caches, and why do they exist?",
+          "answer": "<b>Small, very fast memory right next to the CPU.</b> They hold data you're likely to need so the CPU doesn't wait on slow RAM."
+        },
+        {
+          "topic": "Memory & Caches",
+          "question": "How do the cache levels (L1, L2, L3, RAM) compare?",
+          "answer": "<b>Closer to the CPU = faster but smaller.</b> L1 is tiny and fastest; RAM is huge but slowest. Goal: keep needed data in the fast, close caches."
+        },
+        {
+          "topic": "Memory & Caches",
+          "question": "When the CPU asks for one value, what does the cache actually fetch?",
+          "answer": "A whole <b>cache line</b> — a chunk of neighboring data (~16 ints), not just the one value — betting you'll want the neighbors soon."
+        },
+        {
+          "topic": "Memory & Caches",
+          "question": "What is spatial locality?",
+          "answer": "If you use one piece of data, you'll probably use the data <b>right next to it</b> soon (like reading left to right)."
+        },
+        {
+          "topic": "Memory & Caches",
+          "question": "What is temporal locality?",
+          "answer": "If you use a piece of data, you'll probably use <b>that same data again</b> soon."
+        },
+        {
+          "topic": "Memory & Caches",
+          "question": "What is a prefetcher?",
+          "answer": "A helper that <b>spots predictable access patterns</b> (like scanning straight through memory) and loads the data early, before you ask."
+        },
+        {
+          "topic": "Access Patterns",
+          "question": "In the matrix experiment, why is reading row-by-row fast?",
+          "answer": "Data is stored row by row, so reading in that order <b>fully uses each fetched cache line</b> before moving on — no waste."
+        },
+        {
+          "topic": "Access Patterns",
+          "question": "Why is reading a matrix column-by-column slow?",
+          "answer": "Each jump lands in a different cache line, so the CPU fetches a whole chunk but <b>uses only one value and throws the rest away</b> — over and over."
+        },
+        {
+          "topic": "Access Patterns",
+          "question": "What is 'striding', and why can it hurt?",
+          "answer": "Jumping through memory in <b>big steps</b> instead of neighboring items. Big strides waste most of each cache line and stop the prefetcher from guessing the pattern."
+        },
+        {
+          "topic": "Access Patterns",
+          "question": "What's the key takeaway about memory access patterns?",
+          "answer": "<b>Predictable, sequential access is fast; scattered, jumping access is slow</b> — even for the exact same result."
+        },
+        {
+          "topic": "Data Structures",
+          "question": "Which data structures are cache-friendly vs not?",
+          "answer": "<b>Packed ones (arrays / vectors) are great.</b> Scattered, pointer-chasing ones (linked lists, tree maps) are usually slow because the CPU chases data all over memory."
+        },
+        {
+          "topic": "Data Structures",
+          "question": "What's the idea behind 'Structure of Arrays vs Array of Structures'?",
+          "answer": "Array of Structures is <b>cleaner to read</b> as a programmer; Structure of Arrays (each field in its own tight array) is often <b>faster</b> because you load only the data you actually use."
+        },
+        {
+          "topic": "Compiler & Strategy",
+          "question": "What can the compiler optimize for you automatically?",
+          "answer": "<b>Low-level tricks</b> — simple branchless code, swapping slow operations for fast ones, removing repeated work, vectorizing loops."
+        },
+        {
+          "topic": "Compiler & Strategy",
+          "question": "What can the compiler NOT do for you?",
+          "answer": "The <b>big decisions</b> — it won't change your data structure, your memory layout, or your algorithm. That's your job."
+        },
+        {
+          "topic": "Compiler & Strategy",
+          "question": "What is the optimization hierarchy, in order?",
+          "answer": "1) <b>Correctness first</b>, 2) pick the right algorithm, 3) pick cache-friendly data structures & layout, 4) then measure and fine-tune things like branch prediction."
+        },
+        {
+          "topic": "Compiler & Strategy",
+          "question": "What's the golden rule before optimizing anything?",
+          "answer": "<b>Measure first.</b> The CPU does so much clever stuff that your guesses about what's slow are often wrong — let real numbers guide you. (And never measure an unoptimized build.)"
+        }
+      ]
+    }
+  ]
+}

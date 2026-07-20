@@ -1,0 +1,6 @@
+{
+  "courses": [
+    { "id": "algorithm-engineering", "file": "algorithm-engineering.json" },
+    { "id": "computer-networks", "file": "computer-networks.json" }
+  ]
+}

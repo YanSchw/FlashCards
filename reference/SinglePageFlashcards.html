@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 02 — CPU Architecture · Flashcards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --board:#0d211b;
+    --board-2:#0a1a15;
+    --trace:#1c3a30;
+    --copper:#c8862f;
+    --copper-bright:#e0a24a;
+    --solder:#6bb3a0;
+    --paper:#f4f1e6;
+    --paper-line:#e2ddcb;
+    --ink:#17211d;
+    --ink-soft:#4a564f;
+    --back:#12332a;
+    --back-ink:#eef3ee;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:
+      radial-gradient(circle at 18% 12%, #133328 0%, transparent 42%),
+      radial-gradient(circle at 82% 88%, #10281f 0%, transparent 45%),
+      var(--board);
+    color:var(--back-ink);
+    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;
+    padding:28px 18px 48px;
+    position:relative;overflow-x:hidden;
+  }
+  /* faint circuit traces */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
+    background-image:
+      linear-gradient(90deg, var(--trace) 1px, transparent 1px),
+      linear-gradient(0deg, var(--trace) 1px, transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+            mask-image:radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+  }
+  header{width:100%;max-width:720px;text-align:center;z-index:2;margin-bottom:22px}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.32em;
+    text-transform:uppercase;color:var(--copper-bright);
+    display:inline-flex;align-items:center;gap:10px;margin-bottom:12px;
+  }
+  .eyebrow::before,.eyebrow::after{content:"";width:26px;height:1px;background:var(--copper)}
+  h1{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(26px,6vw,40px);
+    line-height:1.05;letter-spacing:-.01em;
+  }
+  h1 .sub{display:block;font-size:clamp(13px,3vw,16px);font-weight:500;color:var(--solder);margin-top:8px;letter-spacing:.02em}
+
+  /* filter chips */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:720px;margin:0 auto 22px;z-index:2}
+  .chip{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.04em;
+    background:transparent;border:1px solid var(--trace);color:#a9c4ba;
+    padding:7px 12px;border-radius:999px;cursor:pointer;transition:all .18s ease;
+  }
+  .chip:hover{border-color:var(--solder);color:#d6e6df}
+  .chip.active{background:var(--copper);border-color:var(--copper);color:#1a1109;font-weight:700}
+
+  /* card */
+  .stage{width:100%;max-width:540px;perspective:1600px;z-index:2}
+  .card{
+    position:relative;width:100%;aspect-ratio:5/3.35;min-height:300px;
+    transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.7,.2,1);
+    cursor:pointer;
+  }
+  .card.flipped{transform:rotateY(180deg)}
+  .face{
+    position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    border-radius:18px;padding:26px 26px 20px;display:flex;flex-direction:column;
+    box-shadow:0 24px 50px -18px rgba(0,0,0,.65), 0 2px 0 rgba(255,255,255,.04) inset;
+    overflow:hidden;
+  }
+  /* front = paper / question */
+  .front{
+    background:
+      repeating-linear-gradient(0deg, transparent 0 33px, var(--paper-line) 33px 34px),
+      var(--paper);
+    color:var(--ink);
+    border:1px solid #d8d2bf;
+  }
+  .front::before{ /* copper corner trace */
+    content:"";position:absolute;top:0;left:0;width:64px;height:64px;
+    border-top:3px solid var(--copper);border-left:3px solid var(--copper);
+    border-top-left-radius:18px;opacity:.8;
+  }
+  /* back = board / answer */
+  .back{
+    transform:rotateY(180deg);
+    background:linear-gradient(160deg,#164034 0%, var(--back) 60%);
+    color:var(--back-ink);border:1px solid #235244;
+  }
+  .back::before{
+    content:"";position:absolute;bottom:0;right:0;width:64px;height:64px;
+    border-bottom:3px solid var(--copper);border-right:3px solid var(--copper);
+    border-bottom-right-radius:18px;opacity:.8;
+  }
+  .meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex:0 0 auto}
+  .cat{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    padding:5px 11px;border-radius:6px;font-weight:700;
+  }
+  .front .cat{background:rgba(200,134,47,.16);color:#9a6316;border:1px solid rgba(200,134,47,.35)}
+  .back .cat{background:rgba(107,179,160,.18);color:#bfe6da;border:1px solid rgba(107,179,160,.35)}
+  .counter{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em}
+  .front .counter{color:var(--ink-soft)}
+  .back .counter{color:var(--solder)}
+  .side-tag{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.28em;
+    text-transform:uppercase;margin-bottom:8px;flex:0 0 auto;
+  }
+  .front .side-tag{color:var(--copper)}
+  .back .side-tag{color:var(--solder)}
+  .content{
+    flex:1 1 auto;display:flex;align-items:center;
+  }
+  .qtext{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:clamp(18px,3.6vw,23px);line-height:1.32;letter-spacing:-.005em;
+  }
+  .atext{font-size:clamp(15px,3vw,17px);line-height:1.5;font-weight:400}
+  .atext b{color:var(--copper-bright);font-weight:600}
+  .hint{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;text-align:center;margin-top:14px;flex:0 0 auto;opacity:.55;
+  }
+  .front .hint{color:var(--ink-soft)}
+  .back .hint{color:var(--solder)}
+
+  /* controls */
+  .controls{display:flex;align-items:center;gap:12px;margin-top:26px;z-index:2}
+  .nav{
+    width:52px;height:52px;border-radius:50%;border:1px solid var(--trace);
+    background:var(--board-2);color:#cfe3db;font-size:20px;cursor:pointer;
+    display:grid;place-items:center;transition:all .16s ease;
+  }
+  .nav:hover{border-color:var(--copper);color:var(--copper-bright);transform:translateY(-2px)}
+  .nav:active{transform:translateY(0)}
+  .flipbtn{
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;letter-spacing:.1em;
+    text-transform:uppercase;padding:0 26px;height:52px;border-radius:999px;cursor:pointer;
+    background:var(--copper);color:#1a1109;border:none;transition:all .16s ease;
+  }
+  .flipbtn:hover{background:var(--copper-bright);transform:translateY(-2px)}
+
+  .toolbar{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;z-index:2}
+  .tool{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.06em;
+    background:var(--board-2);border:1px solid var(--trace);color:#9fbbb1;
+    padding:9px 15px;border-radius:8px;cursor:pointer;transition:all .16s ease;
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .tool:hover{border-color:var(--solder);color:#d6e6df}
+  .tool.on{border-color:var(--copper);color:var(--copper-bright)}
+
+  /* pipeline progress */
+  .pipeline{
+    display:flex;align-items:center;gap:4px;margin-top:22px;max-width:540px;
+    width:100%;flex-wrap:wrap;justify-content:center;z-index:2;
+  }
+  .seg{width:16px;height:6px;border-radius:3px;background:var(--trace);transition:all .2s ease}
+  .seg.done{background:var(--solder)}
+  .seg.here{background:var(--copper-bright);box-shadow:0 0 8px var(--copper)}
+  .seg.known{background:var(--copper);opacity:.55}
+
+  .stat{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
+    color:var(--solder);margin-top:14px;text-transform:uppercase;z-index:2;
+  }
+  footer{margin-top:30px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+    color:#4d6459;text-transform:uppercase;z-index:2;text-align:center}
+
+  @media (prefers-reduced-motion: reduce){
+    .card{transition:none}
+    .nav,.flipbtn,.tool,.chip{transition:none}
+  }
+  @media (max-width:480px){
+    .face{padding:20px 18px 16px}
+    .card{min-height:270px}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <span class="eyebrow">Algorithm Engineering</span>
+    <h1>Lecture 02 · CPU Architecture 1
+      <span class="sub">Flip through the pipeline — branching, memory & caches</span>
+    </h1>
+  </header>
+
+  <div class="filters" id="filters"></div>
+
+  <div class="stage">
+    <div class="card" id="card" role="button" tabindex="0" aria-label="Flashcard, tap to flip">
+      <div class="face front">
+        <div class="meta">
+          <span class="cat" id="fCat">—</span>
+          <span class="counter" id="fCount">00 / 00</span>
+        </div>
+        <div class="side-tag">Question</div>
+        <div class="content"><div class="qtext" id="qText">…</div></div>
+        <div class="hint">▲ tap to reveal answer</div>
+      </div>
+      <div class="face back">
+        <div class="meta">
+          <span class="cat" id="bCat">—</span>
+          <span class="counter" id="bCount">00 / 00</span>
+        </div>
+        <div class="side-tag">Answer</div>
+        <div class="content"><div class="atext" id="aText">…</div></div>
+        <div class="hint">▼ tap to flip back</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="nav" id="prev" aria-label="Previous card">‹</button>
+    <button class="flipbtn" id="flip">Flip</button>
+    <button class="nav" id="next" aria-label="Next card">›</button>
+  </div>
+
+  <div class="toolbar">
+    <button class="tool" id="known">◇ Mark known</button>
+    <button class="tool" id="hideKnown">Hide known</button>
+    <button class="tool" id="shuffle">⤨ Shuffle</button>
+    <button class="tool" id="reset">↺ Reset</button>
+  </div>
+
+  <div class="pipeline" id="pipeline"></div>
+  <div class="stat" id="stat"></div>
+
+  <footer>Space / Enter = flip · ← → = navigate</footer>
+
+<script>
+const CARDS = [
+  // Why it matters
+  {cat:"Why it matters", q:"Why care how the CPU works if your algorithm's Big-O already looks good?",
+   a:"Because <b>constant factors matter in real life</b>. Two programs with the same Big-O can differ hugely in speed, and misunderstanding the CPU can hide an enormous constant factor — a 'smart' Python program can lose to a well-tuned C++ one."},
+
+  // Pipeline
+  {cat:"The Pipeline", q:"What is the CPU 'pipeline', in plain terms?",
+   a:"An <b>assembly line for instructions</b>. Different instructions sit at different stages (fetch, decode, execute…) at the same time, so no stage sits idle."},
+  {cat:"The Pipeline", q:"What is the single goal behind all the CPU's pipeline tricks?",
+   a:"<b>Avoid waiting.</b> Keep every part of the CPU busy instead of standing around doing nothing."},
+  {cat:"The Pipeline", q:"What does 'superscalar' mean?",
+   a:"The CPU can work on <b>several independent instructions at once</b> — like having 4 workers on the line instead of 1."},
+  {cat:"The Pipeline", q:"What is 'out-of-order' execution?",
+   a:"If a later instruction is ready while an earlier one is stuck, the ready one can <b>jump the queue</b>. The final results still come out in the correct order."},
+  {cat:"The Pipeline", q:"What is 'speculation' in a CPU?",
+   a:"The CPU <b>guesses what's coming next and starts early</b>, before it's fully sure. If the guess was wrong, it throws that work away."},
+  {cat:"The Pipeline", q:"Roughly how many instructions can a modern CPU juggle at once?",
+   a:"<b>Hundreds 'in flight'</b> at any moment. It looks chaotic, but the output still matches your written program."},
+
+  // Latency vs Throughput
+  {cat:"Latency vs Throughput", q:"What is latency?",
+   a:"How long <b>one</b> instruction takes from start to finish. (Like: how long a single pizza takes to bake.)"},
+  {cat:"Latency vs Throughput", q:"What is throughput?",
+   a:"How <b>many</b> instructions finish per unit of time at full speed. (Like: with many ovens, a fresh pizza comes out every few minutes.)"},
+  {cat:"Latency vs Throughput", q:"Does the pipeline make a single instruction finish faster?",
+   a:"No — <b>latency stays about the same</b>. What it improves is throughput: many instructions finish in quick succession."},
+
+  // Branch prediction
+  {cat:"Branch Prediction", q:"What is a 'branch'?",
+   a:"An <b>if / decision point</b> where the next instruction depends on a condition (e.g., 'if green, go straight, else turn')."},
+  {cat:"Branch Prediction", q:"Why are branches a problem for the pipeline?",
+   a:"The CPU races ahead and reaches the fork <b>before it knows the answer</b>, so it doesn't know which instructions to load next."},
+  {cat:"Branch Prediction", q:"How does the CPU cope with not knowing which way a branch goes?",
+   a:"It <b>predicts (guesses)</b> the outcome and speculatively runs ahead based on that guess."},
+  {cat:"Branch Prediction", q:"What happens when a prediction is right vs wrong?",
+   a:"Right → no time wasted, smooth flow. Wrong (<b>misprediction</b>) → it throws away the speculative work and restarts — an expensive stall."},
+  {cat:"Branch Prediction", q:"Which branches are cheap and which are slow?",
+   a:"<b>Predictable branches are basically free.</b> Random, coin-flip branches inside a hot loop cause massive slowdowns."},
+  {cat:"Branch Prediction", q:"How can the CPU predict branches so well?",
+   a:"It <b>spots patterns</b> — 'taken the last 100 times', repeating sequences — and learns from nearby branches. On normal code it's right over 95% of the time."},
+  {cat:"Branch Prediction", q:"What kinds of branches are hard to predict?",
+   a:"Ones taken about <b>50% of the time at random</b>, or patterns too long/complex for the predictor to catch."},
+  {cat:"Branch Prediction", q:"What's the main trick to fix an unpredictable branch?",
+   a:"<b>Branchless code</b> — get the answer with math / conditional moves instead of an 'if', so there's no branch to mispredict."},
+  {cat:"Branch Prediction", q:"Why not just make everything branchless?",
+   a:"Well-predicted branches are already cheap, and branchless code often does <b>extra work</b> (computes both paths). It only helps when both paths are cheap AND the branch is truly unpredictable."},
+
+  // Memory & caches
+  {cat:"Memory & Caches", q:"What's the big speed mismatch inside a computer?",
+   a:"The CPU is extremely fast, but fetching data from <b>main memory (RAM) is very slow</b> — hundreds of cycles of waiting."},
+  {cat:"Memory & Caches", q:"What are caches, and why do they exist?",
+   a:"<b>Small, very fast memory right next to the CPU.</b> They hold data you're likely to need so the CPU doesn't wait on slow RAM."},
+  {cat:"Memory & Caches", q:"How do the cache levels (L1, L2, L3, RAM) compare?",
+   a:"<b>Closer to the CPU = faster but smaller.</b> L1 is tiny and fastest; RAM is huge but slowest. Goal: keep needed data in the fast, close caches."},
+  {cat:"Memory & Caches", q:"When the CPU asks for one value, what does the cache actually fetch?",
+   a:"A whole <b>cache line</b> — a chunk of neighboring data (~16 ints), not just the one value — betting you'll want the neighbors soon."},
+  {cat:"Memory & Caches", q:"What is spatial locality?",
+   a:"If you use one piece of data, you'll probably use the data <b>right next to it</b> soon (like reading left to right)."},
+  {cat:"Memory & Caches", q:"What is temporal locality?",
+   a:"If you use a piece of data, you'll probably use <b>that same data again</b> soon."},
+  {cat:"Memory & Caches", q:"What is a prefetcher?",
+   a:"A helper that <b>spots predictable access patterns</b> (like scanning straight through memory) and loads the data early, before you ask."},
+
+  // Access patterns
+  {cat:"Access Patterns", q:"In the matrix experiment, why is reading row-by-row fast?",
+   a:"Data is stored row by row, so reading in that order <b>fully uses each fetched cache line</b> before moving on — no waste."},
+  {cat:"Access Patterns", q:"Why is reading a matrix column-by-column slow?",
+   a:"Each jump lands in a different cache line, so the CPU fetches a whole chunk but <b>uses only one value and throws the rest away</b> — over and over."},
+  {cat:"Access Patterns", q:"What is 'striding', and why can it hurt?",
+   a:"Jumping through memory in <b>big steps</b> instead of neighboring items. Big strides waste most of each cache line and stop the prefetcher from guessing the pattern."},
+  {cat:"Access Patterns", q:"What's the key takeaway about memory access patterns?",
+   a:"<b>Predictable, sequential access is fast; scattered, jumping access is slow</b> — even for the exact same result."},
+
+  // Data structures
+  {cat:"Data Structures", q:"Which data structures are cache-friendly vs not?",
+   a:"<b>Packed ones (arrays / vectors) are great.</b> Scattered, pointer-chasing ones (linked lists, tree maps) are usually slow because the CPU chases data all over memory."},
+  {cat:"Data Structures", q:"What's the idea behind 'Structure of Arrays vs Array of Structures'?",
+   a:"Array of Structures is <b>cleaner to read</b> as a programmer; Structure of Arrays (each field in its own tight array) is often <b>faster</b> because you load only the data you actually use."},
+
+  // Compiler & strategy
+  {cat:"Compiler & Strategy", q:"What can the compiler optimize for you automatically?",
+   a:"<b>Low-level tricks</b> — simple branchless code, swapping slow operations for fast ones, removing repeated work, vectorizing loops."},
+  {cat:"Compiler & Strategy", q:"What can the compiler NOT do for you?",
+   a:"The <b>big decisions</b> — it won't change your data structure, your memory layout, or your algorithm. That's your job."},
+  {cat:"Compiler & Strategy", q:"What is the optimization hierarchy, in order?",
+   a:"1) <b>Correctness first</b>, 2) pick the right algorithm, 3) pick cache-friendly data structures & layout, 4) then measure and fine-tune things like branch prediction."},
+  {cat:"Compiler & Strategy", q:"What's the golden rule before optimizing anything?",
+   a:"<b>Measure first.</b> The CPU does so much clever stuff that your guesses about what's slow are often wrong — let real numbers guide you. (And never measure an unoptimized build.)"}
+];
+
+// ---- state ----
+let order = CARDS.map((_,i)=>i);
+let view = [...order];
+let pos = 0;
+let flipped = false;
+let activeCat = "All";
+let hideKnown = false;
+const known = new Set();
+
+const el = id => document.getElementById(id);
+const card = el('card');
+
+function categories(){
+  const set = ["All", ...Array.from(new Set(CARDS.map(c=>c.cat)))];
+  return set;
+}
+function buildFilters(){
+  const box = el('filters'); box.innerHTML='';
+  categories().forEach(cat=>{
+    const b=document.createElement('button');
+    b.className='chip'+(cat===activeCat?' active':'');
+    b.textContent=cat;
+    b.onclick=()=>{activeCat=cat; rebuildView(); };
+    box.appendChild(b);
+  });
+}
+function rebuildView(){
+  view = order.filter(i=>{
+    const c=CARDS[i];
+    if(activeCat!=="All" && c.cat!==activeCat) return false;
+    if(hideKnown && known.has(i)) return false;
+    return true;
+  });
+  if(view.length===0) view=[order[0]]; // avoid empty
+  pos=0; flipped=false; card.classList.remove('flipped');
+  buildFilters(); render();
+}
+function current(){ return view[pos]; }
+
+function render(){
+  const i = current();
+  const c = CARDS[i];
+  el('fCat').textContent = c.cat;
+  el('bCat').textContent = c.cat;
+  el('qText').innerHTML = c.q;
+  el('aText').innerHTML = c.a;
+  const label = `${String(pos+1).padStart(2,'0')} / ${String(view.length).padStart(2,'0')}`;
+  el('fCount').textContent = label;
+  el('bCount').textContent = label;
+
+  const kbtn = el('known');
+  if(known.has(i)){ kbtn.classList.add('on'); kbtn.textContent='◆ Known'; }
+  else { kbtn.classList.remove('on'); kbtn.textContent='◇ Mark known'; }
+
+  buildPipeline();
+  const total = CARDS.length;
+  el('stat').textContent = `${known.size} / ${total} learned · ${view.length} in this view`;
+}
+function buildPipeline(){
+  const p = el('pipeline'); p.innerHTML='';
+  view.forEach((idx,k)=>{
+    const s=document.createElement('div');
+    s.className='seg';
+    if(known.has(idx)) s.classList.add('known');
+    if(k<pos) s.classList.add('done');
+    if(k===pos) s.classList.add('here');
+    p.appendChild(s);
+  });
+}
+
+function doFlip(){ flipped=!flipped; card.classList.toggle('flipped',flipped); }
+function go(d){
+  pos = (pos + d + view.length) % view.length;
+  flipped=false; card.classList.remove('flipped');
+  render();
+}
+
+// controls
+card.onclick = doFlip;
+card.onkeydown = e=>{ if(e.key===' '||e.key==='Enter'){e.preventDefault();doFlip();} };
+el('flip').onclick = doFlip;
+el('next').onclick = ()=>go(1);
+el('prev').onclick = ()=>go(-1);
+el('known').onclick = ()=>{
+  const i=current();
+  if(known.has(i)) known.delete(i); else known.add(i);
+  render();
+};
+el('hideKnown').onclick = (e)=>{
+  hideKnown=!hideKnown;
+  e.currentTarget.classList.toggle('on',hideKnown);
+  rebuildView();
+};
+el('shuffle').onclick = ()=>{
+  for(let k=order.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]];}
+  rebuildView();
+};
+el('reset').onclick = ()=>{
+  order = CARDS.map((_,i)=>i);
+  known.clear(); hideKnown=false; activeCat="All";
+  el('hideKnown').classList.remove('on');
+  rebuildView();
+};
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') go(1);
+  else if(e.key==='ArrowLeft') go(-1);
+});
+
+// init
+buildFilters();
+rebuildView();
+</script>
+</body>
+</html>
