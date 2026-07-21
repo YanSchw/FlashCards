@@ -1235,6 +1235,119 @@
                 "answer": "<b>CDCL, the trail & decision levels, conflict resolution (learning + backjumping), and the high-level ideas</b> behind the tricks — not every optimization's inner details."
             }
         ]
+    },
+    {
+        "id": "lecture-10-cp-sat",
+        "title": "Lecture 10 · CP-SAT Technology & Explainability",
+        "description": "How the CP-SAT solver works inside: clever deduction plus learning from mistakes.",
+        "summary": "summaries/algorithm-engineering/lecture-10-cp-sat.md",
+        "cards": [
+            {
+                "topic": "Big Picture",
+                "question": "In one sentence, what is CP-SAT?",
+                "answer": "A puzzle solver that combines <b>clever deduction (CP)</b> with <b>learning from mistakes (SAT)</b> — 'a CP solver with a SAT solver's memory'."
+            },
+            {
+                "topic": "Big Picture",
+                "question": "What kind of problems does CP-SAT solve?",
+                "answer": "Problems with <b>boxes to fill using whole numbers</b> and a list of <b>rules (constraints)</b> — it finds an assignment satisfying every rule, or proves none exists. (Think Sudoku for real-world scheduling, routing, planning.)"
+            },
+            {
+                "topic": "Two Superpowers",
+                "question": "What is CP's superpower?",
+                "answer": "<b>Smart deduction (propagation)</b>: ruling out impossible options because the rules force it, like a good Sudoku player — no guessing needed."
+            },
+            {
+                "topic": "Two Superpowers",
+                "question": "What is SAT's (CDCL's) superpower?",
+                "answer": "<b>Learning from failure</b>: every time it hits a dead end, it writes a permanent 'never do this again' note, so it never repeats the same mistake."
+            },
+            {
+                "topic": "Two Superpowers",
+                "question": "What weakness of classic CP does CP-SAT fix?",
+                "answer": "Classic CP is a great deducer but <b>forgetful</b> — it backtracks and forgets why it failed. CP-SAT adds SAT-style memory so failures become lasting lessons."
+            },
+            {
+                "topic": "Variables as Bounds",
+                "question": "How does CP-SAT store a number while solving?",
+                "answer": "Not as a fixed value, but as a <b>shrinking range</b> (a lowest and a highest it could be). Like the 'higher or lower' guessing game."
+            },
+            {
+                "topic": "Variables as Bounds",
+                "question": "When is a variable finally 'solved'?",
+                "answer": "When its <b>low end and high end squeeze together</b> into a single number. Until then, it has no single value."
+            },
+            {
+                "topic": "Variables as Bounds",
+                "question": "Which way do the ranges move during search?",
+                "answer": "They only ever <b>shrink</b> as the solver works, and <b>pop back open</b> if it has to undo a guess."
+            },
+            {
+                "topic": "Propagation",
+                "question": "What does a propagator do?",
+                "answer": "A helper attached to each rule that <b>squeezes ranges tighter</b> whenever the rule forces it — and can trigger other propagators like falling dominoes."
+            },
+            {
+                "topic": "Propagation",
+                "question": "Does propagation ever guess?",
+                "answer": "No. It only states things that are <b>100% forced</b> by the current ranges. When forced moves run out, the solver must make a guess instead."
+            },
+            {
+                "topic": "Propagation",
+                "question": "What is a 'conflict'?",
+                "answer": "When squeezing leaves a box with <b>no numbers left</b> — a dead end. It sounds bad but is actually useful, because it's what the solver learns from."
+            },
+            {
+                "topic": "Explainability ⭐",
+                "question": "What extra duty does a CP-SAT propagator have that classic CP lacks?",
+                "answer": "It must be able to <b>explain every deduction</b> — name the exact facts (bounds) that forced it — like a detective showing the evidence, not just naming the culprit."
+            },
+            {
+                "topic": "Explainability ⭐",
+                "question": "Why must propagators be able to explain themselves?",
+                "answer": "Because to <b>learn from a mistake</b>, the solver needs to know exactly which facts caused it. No reason = nothing to write in the 'dead ends' notebook."
+            },
+            {
+                "topic": "Lazy Explanations",
+                "question": "What does 'lazy' mean for explanations?",
+                "answer": "The full explanation is <b>built only when it's actually needed</b> — i.e. when that deduction turns out to be part of a dead end — not up front."
+            },
+            {
+                "topic": "Lazy Explanations",
+                "question": "Why is being lazy worthwhile?",
+                "answer": "<b>Most deductions never cause trouble</b>, so explaining all of them up front would be wasted effort. You only pay for the reasons you truly use (like homework done when it's due)."
+            },
+            {
+                "topic": "Learning From Failure",
+                "question": "When CP-SAT hits a dead end, what does it do instead of just undoing the last guess?",
+                "answer": "It traces the reasons back to find the <b>few guesses truly to blame</b>, learns a permanent rule against that combo, and <b>jumps back (backjumps)</b> past the innocent guesses in one leap."
+            },
+            {
+                "topic": "Learning From Failure",
+                "question": "What is a 'nogood'?",
+                "answer": "The <b>learned rule</b> saved after a conflict — 'never combine these facts again' — so the solver never repeats that mistake."
+            },
+            {
+                "topic": "Lazy Clause Generation",
+                "question": "What is CP-SAT's one big unifying idea?",
+                "answer": "<b>Lazy clause generation</b>: propagators that both squeeze ranges AND explain themselves, so the SAT memory can learn from every CP deduction. It's the glue joining the two halves."
+            },
+            {
+                "topic": "Branching (VSIDS)",
+                "question": "How does CP-SAT decide what to guess?",
+                "answer": "With <b>VSIDS</b>: it guesses on whatever has been <b>causing the most recent conflicts</b> — focusing on the troublemakers."
+            },
+            {
+                "topic": "Branching (VSIDS)",
+                "question": "Why can't VSIDS finish the puzzle alone, and what closes the gap?",
+                "answer": "VSIDS only settles simple <b>yes/no facts</b>, which can leave a number still un-pinned. <b>Integer completion</b> then nails down each leftover range to one value."
+            },
+            {
+                "topic": "Turbo-Boosters",
+                "question": "What accelerators are bolted onto the core?",
+                "answer": "<b>LP relaxation</b> (fraction-based hints from the MIP world), <b>cutting planes</b>, <b>restarts</b> (wipe guesses but keep lessons), and a <b>parallel portfolio</b> of solvers that share what they learn."
+            }
+        ]
     }
   ]
 }
