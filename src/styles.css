@@ -29,25 +29,39 @@ body {
   height: 100%;
 }
 
+/* Flat base on the root: a background here fills the whole canvas, so
+   overscroll and pages taller than the viewport never expose bare white. */
+html {
+  background: var(--color-board);
+}
+
 body {
   font-family: var(--font-body);
   color: var(--color-back-ink);
-  background:
-    radial-gradient(circle at 18% 12%, #133328 0%, transparent 42%),
-    radial-gradient(circle at 82% 88%, #10281f 0%, transparent 45%),
-    var(--color-board);
   min-height: 100dvh;
   overflow-x: hidden;
 }
 
-/* faint circuit traces behind everything */
-body::before {
+/* Ambient glow + circuit traces. Both are fixed to the viewport rather than
+   painted on the body box, which would tile once per viewport height and
+   band visibly as you scroll. */
+body::before,
+body::after {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.5;
   z-index: 0;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 18% 12%, #133328 0%, transparent 42%),
+    radial-gradient(circle at 82% 88%, #10281f 0%, transparent 45%);
+}
+
+body::after {
+  opacity: 0.5;
   background-image:
     linear-gradient(90deg, var(--color-trace) 1px, transparent 1px),
     linear-gradient(0deg, var(--color-trace) 1px, transparent 1px);
