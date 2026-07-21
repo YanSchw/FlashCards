@@ -904,6 +904,174 @@
           "answer": "Repeatedly solve the easy LP to get bounds, then <b>squeeze the upper and lower bounds together</b> using cuts and branching until they meet."
         }
       ]
+    },
+    {
+        "id": "lecture-08-graph-network-algorithms",
+        "title": "Lecture 08 · Graph & Network Algorithms",
+        "description": "The four classic graph problems — shortest path, matching, flow, and spanning trees — explained through everyday examples.",
+        "summary": "summaries/algorithm-engineering/lecture-08-graph-network-algorithms.md",
+        "cards": [
+            {
+                "topic": "Graph Basics",
+                "question": "What are the two building blocks of every graph?",
+                "answer": "<b>Nodes (dots)</b> are the things, and <b>edges (lines)</b> are the connections between pairs of things."
+            },
+            {
+                "topic": "Graph Basics",
+                "question": "What does a 'weight' on an edge represent?",
+                "answer": "A number carried by the edge, like <b>distance, time, cost, or capacity</b>."
+            },
+            {
+                "topic": "Graph Basics",
+                "question": "What does it mean for an edge to have a direction?",
+                "answer": "The connection only goes <b>one way</b>, like a one-way street."
+            },
+            {
+                "topic": "Graph Basics",
+                "question": "What is special about a graph with no loops (a DAG or tree)?",
+                "answer": "You can never walk in a circle back to the start, which makes them <b>much easier to solve</b> — often with simple step-by-step dynamic programming."
+            },
+            {
+                "topic": "Graph Basics",
+                "question": "What are the four classic graph problems in this lecture?",
+                "answer": "<b>Shortest path, matching, flow, and spanning tree (MST)</b>."
+            },
+            {
+                "topic": "Graph Basics",
+                "question": "Why prefer a graph algorithm over a general solver when possible?",
+                "answer": "Graph algorithms are <b>more specialized and much faster</b> than throwing a general-purpose (LP/MIP) solver at the problem."
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "What question does the shortest path problem answer?",
+                "answer": "What is the <b>cheapest or fastest way</b> to get from a start point to a target point?"
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "How does Dijkstra's algorithm explore the graph?",
+                "answer": "Like water flooding outward — it always settles the <b>nearest unvisited node next</b>, in all directions equally."
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "How is A* different from Dijkstra?",
+                "answer": "A* adds a <b>hint pointing toward the goal</b>, so it searches in a focused cone instead of flooding everywhere."
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "What is the one rule the A* hint must obey?",
+                "answer": "It must <b>never overestimate</b> the real remaining distance; an honest under-guess keeps A* correct."
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "Why is A* usually much faster than Dijkstra?",
+                "answer": "It explores <b>far fewer nodes</b> — in the lecture, 123 instead of 1,253 for the same best path."
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "How can A* solve a sliding tile puzzle with ~180,000 states?",
+                "answer": "It treats each arrangement as a node and <b>generates the graph as it goes</b>, touching only ~283 states instead of storing them all."
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "Which algorithm fits an unweighted graph?",
+                "answer": "<b>BFS</b> — just count the number of steps."
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "Which algorithm handles negative edge weights?",
+                "answer": "<b>Bellman-Ford</b> (plain Dijkstra can fail with negative weights)."
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "Why can time-dependent paths make a longer road the better choice?",
+                "answer": "Travel time depends on <b>when you enter a road</b>, so a longer route can dodge rush hour — sometimes even waiting before leaving helps."
+            },
+            {
+                "topic": "Shortest Path",
+                "question": "Why is the resource-constrained shortest path surprisingly hard?",
+                "answer": "Finding the cheapest path that also respects a limit (like a fuel budget) is <b>NP-hard</b> — the cheapest path is often illegal, forcing a pricier legal one."
+            },
+            {
+                "topic": "Matching",
+                "question": "What is a matching in a graph?",
+                "answer": "A set of edges where <b>no two edges share a node</b> — everyone gets at most one partner."
+            },
+            {
+                "topic": "Matching",
+                "question": "Is the biggest matching always the best one?",
+                "answer": "No — a <b>smaller matching can be worth more</b> when you count value/weight instead of the number of pairs."
+            },
+            {
+                "topic": "Matching",
+                "question": "How does kidney exchange work as a matching problem?",
+                "answer": "Pair up families so each donor gives to the <b>other pair's compatible patient</b>, maximizing successful transplants."
+            },
+            {
+                "topic": "Matching",
+                "question": "What is the assignment problem?",
+                "answer": "A minimum-cost perfect matching — assign each order to one machine so the <b>total cost is lowest</b>."
+            },
+            {
+                "topic": "Matching",
+                "question": "What makes matching harder to solve?",
+                "answer": "<b>Odd cycles</b> — bipartite graphs (no odd cycles) allow clean, faster algorithms."
+            },
+            {
+                "topic": "Flow",
+                "question": "What does the max flow problem ask?",
+                "answer": "How much can you push from a <b>source to a sink</b> through pipes that each have a capacity limit?"
+            },
+            {
+                "topic": "Flow",
+                "question": "What limits the total flow through a network?",
+                "answer": "The <b>bottleneck</b> — the tightest pipe or cut along the way."
+            },
+            {
+                "topic": "Flow",
+                "question": "How is min-cost flow different from max flow?",
+                "answer": "Each pipe charges a fee per unit, so the goal is to move the required flow at the <b>least total cost</b>."
+            },
+            {
+                "topic": "Flow",
+                "question": "Why is the residual graph the key idea in flow algorithms?",
+                "answer": "It lets the algorithm <b>undo or reroute earlier flow</b>, so bad early decisions can be fixed to reach the true optimum."
+            },
+            {
+                "topic": "Flow",
+                "question": "Why is min-cost flow called a 'Swiss Army knife'?",
+                "answer": "Shortest path, assignment, and transportation problems are all <b>special cases</b> of it."
+            },
+            {
+                "topic": "Flow",
+                "question": "When does a flow problem stop being easy?",
+                "answer": "With <b>multiple goods sharing pipes</b> or costs to open an edge — then it becomes NP-hard and needs a MIP solver."
+            },
+            {
+                "topic": "Spanning Tree",
+                "question": "What is a minimum spanning tree (MST)?",
+                "answer": "The <b>cheapest set of edges that connects every node</b> with no wasteful loops."
+            },
+            {
+                "topic": "Spanning Tree",
+                "question": "Name the three greedy algorithms that build an MST.",
+                "answer": "<b>Kruskal, Prim, and Borůvka</b> — all reach the same optimum."
+            },
+            {
+                "topic": "Spanning Tree",
+                "question": "Why is greedy special for the MST?",
+                "answer": "For the MST, always grabbing the cheapest safe edge is <b>provably exact</b> — rare, since greedy usually isn't optimal."
+            },
+            {
+                "topic": "Spanning Tree",
+                "question": "Give a real-world use of an MST.",
+                "answer": "Wiring a campus with fiber so every building connects using the <b>least total trench length</b>."
+            },
+            {
+                "topic": "Big Picture",
+                "question": "What is the practical performance warning about matching and flow?",
+                "answer": "They usually run fast, but their <b>roughly cubic worst case</b> can become critical on very large or tricky inputs."
+            }
+        ]
     }
   ]
 }
