@@ -498,412 +498,412 @@
       "description": "Eight ways to solve optimization problems, all taught through the Knapsack puzzle.",
       "summary": "summaries/algorithm-engineering/lecture-05.md",
       "cards": [
-          {
-              "topic": "The Big Picture",
-              "question": "How does this lecture's goal differ from the first half of the course?",
-              "answer": "The first half was about making programs run faster; now the focus shifts to solving <b>optimization problems</b> \u2014 finding the best possible answer, not just any answer."
-          },
-          {
-              "topic": "The Big Picture",
-              "question": "Which single problem is used to demonstrate every technique in the lecture?",
-              "answer": "The <b>Knapsack problem</b> is the running example used to compare all the solving methods."
-          },
-          {
-              "topic": "Knapsack",
-              "question": "In plain words, what is the Knapsack problem?",
-              "answer": "You have a backpack with a <b>weight limit</b> and treasures that each have a weight and a value \u2014 pick items to get the highest total value without going over the limit."
-          },
-          {
-              "topic": "Dynamic Programming",
-              "question": "What is the core idea of dynamic programming?",
-              "answer": "Solve many <b>small subproblems</b> first, store their answers, and reuse them to build up the solution to the big problem."
-          },
-          {
-              "topic": "Dynamic Programming",
-              "question": "For each item, what are the only two choices dynamic programming compares?",
-              "answer": "Either <b>skip the item</b> (keep the previous best) or <b>take the item</b> (gain its value but use up bag space) \u2014 keep whichever is better."
-          },
-          {
-              "topic": "Dynamic Programming",
-              "question": "Is dynamic programming usually the best choice in practice?",
-              "answer": "No \u2014 the tables often become <b>too big to be practical</b>. It's common in theory but rarely the best real-world choice; Knapsack is a lucky exception."
-          },
-          {
-              "topic": "Greedy",
-              "question": "How does the greedy Knapsack algorithm decide what to pack?",
-              "answer": "Sort items by <b>value per weight (efficiency)</b> and take them in that order as long as they still fit."
-          },
-          {
-              "topic": "Greedy",
-              "question": "Why is the greedy result useful even though it can be imperfect?",
-              "answer": "It's fast and always a valid, real packing, so it gives a <b>lower bound</b> \u2014 a guaranteed \"you can do at least this well\" (a floor)."
-          },
-          {
-              "topic": "Fractional & Bounds",
-              "question": "What extra power does the fractional Knapsack give you?",
-              "answer": "You may take <b>fractions of items</b> (slice them) to fill the bag exactly to the brim."
-          },
-          {
-              "topic": "Fractional & Bounds",
-              "question": "Why does the fractional solution give an upper bound?",
-              "answer": "Slicing adds freedom, so it can only be as good or better than the real puzzle \u2014 its value is a <b>ceiling</b> the true answer can never beat."
-          },
-          {
-              "topic": "Fractional & Bounds",
-              "question": "What does it mean to \"relax\" a problem?",
-              "answer": "A <b>relaxation</b> is an easier version of the problem (like allowing fractions) that gives a useful bound on the real answer."
-          },
-          {
-              "topic": "Search Tree",
-              "question": "How can all possible Knapsack solutions be pictured?",
-              "answer": "As a <b>decision tree</b> of yes/no choices \u2014 each node is a partial plan and each edge is one \"take it / leave it\" decision."
-          },
-          {
-              "topic": "Backtracking",
-              "question": "What is the key move in backtracking?",
-              "answer": "If a partial plan is <b>already too heavy</b>, stop and discard that whole branch \u2014 nothing below it can be valid."
-          },
-          {
-              "topic": "Backtracking",
-              "question": "What does backtracking achieve versus full brute force?",
-              "answer": "It <b>prunes impossible branches</b> early, shrinking the search tree instead of exploring every combination."
-          },
-          {
-              "topic": "Constraint Propagation",
-              "question": "What is constraint propagation?",
-              "answer": "Using <b>logic to auto-decide forced choices</b> before branching \u2014 working out the obvious consequences of what you've already picked."
-          },
-          {
-              "topic": "Constraint Propagation",
-              "question": "Give an example of a forced choice in Knapsack propagation.",
-              "answer": "If an item <b>can't possibly fit</b>, automatically leave it; if leftover items are free value and all fit, automatically take them."
-          },
-          {
-              "topic": "Branch & Bound",
-              "question": "How does branch & bound go beyond backtracking?",
-              "answer": "It also discards branches that are possible but <b>can't beat the best answer found so far</b> \u2014 not just impossible ones."
-          },
-          {
-              "topic": "Branch & Bound",
-              "question": "What key question does branch & bound ask about each branch?",
-              "answer": "\"Could this branch, <b>even in its best case</b>, beat my current record?\" If not, prune it."
-          },
-          {
-              "topic": "Branch & Bound",
-              "question": "What two values does branch & bound track in order to prune?",
-              "answer": "A <b>lower bound</b> (best real answer so far) and each branch's <b>upper bound</b> (best it could possibly reach); if the branch's ceiling can't beat your record, drop it."
-          },
-          {
-              "topic": "Branch & Cut",
-              "question": "In branch & cut, how is the bound usually computed?",
-              "answer": "By solving the <b>linear relaxation</b> \u2014 dropping the strict \"take it or leave it\" rule and allowing values in between, which turns the hard problem into an easy one."
-          },
-          {
-              "topic": "Branch & Cut",
-              "question": "What is a \"cut\", and why add one?",
-              "answer": "A cut is an extra rule that <b>forbids an impossible fractional answer</b> while keeping every real solution legal; it pulls the ceiling closer to reality so branches can be pruned sooner."
-          },
-          {
-              "topic": "Metaheuristics",
-              "question": "When do you reach for metaheuristics?",
-              "answer": "When the problem is <b>too big or too nasty</b> for exact methods to finish \u2014 they find a really good answer without promising it's perfect."
-          },
-          {
-              "topic": "Metaheuristics",
-              "question": "What are the three big families of metaheuristics?",
-              "answer": "<b>Constructive heuristics</b>, <b>local search</b>, and <b>population-based</b> algorithms."
-          },
-          {
-              "topic": "Metaheuristics",
-              "question": "How does a constructive heuristic build an answer?",
-              "answer": "It <b>grows a solution step by step</b> (often greedily), possibly with randomness and many repeats, keeping the best attempt."
-          },
-          {
-              "topic": "Metaheuristics",
-              "question": "How does local search work?",
-              "answer": "Start from a solution and repeatedly move to a <b>slightly better neighbor</b> (one small change away) until you can't improve."
-          },
-          {
-              "topic": "Metaheuristics",
-              "question": "What is the main danger of local search, and one way to escape it?",
-              "answer": "Getting stuck in a <b>local optimum</b> (a small hill). <b>Simulated annealing</b> escapes by occasionally allowing a step downhill."
-          },
-          {
-              "topic": "Metaheuristics",
-              "question": "What is the exploration vs. exploitation trade-off?",
-              "answer": "<b>Exploration</b> roams widely to scout new areas, while <b>exploitation</b> polishes what you already have; a good strategy explores first, then intensifies."
-          },
-          {
-              "topic": "Metaheuristics",
-              "question": "How do population-based methods work?",
-              "answer": "Keep a <b>whole population of solutions</b> and each generation combine them, favor the good ones, and keep diversity (e.g. genetic algorithms)."
-          },
-          {
-              "topic": "Key Ideas",
-              "question": "What single idea unifies all of these methods?",
-              "answer": "They are all smarter ways to <b>search the tree of take-it/leave-it choices</b>, trapping the answer between a floor and a ceiling."
-          },
-          {
-              "topic": "Key Ideas",
-              "question": "Why are metaheuristics often the best choice in practice?",
-              "answer": "Because they <b>scale to huge problems</b> where exact methods can't finish \u2014 and they can still team up with exact methods."
-          }
+        {
+          "topic": "The Big Picture",
+          "question": "How does this lecture's goal differ from the first half of the course?",
+          "answer": "The first half was about making programs run faster; now the focus shifts to solving <b>optimization problems</b> \u2014 finding the best possible answer, not just any answer."
+        },
+        {
+          "topic": "The Big Picture",
+          "question": "Which single problem is used to demonstrate every technique in the lecture?",
+          "answer": "The <b>Knapsack problem</b> is the running example used to compare all the solving methods."
+        },
+        {
+          "topic": "Knapsack",
+          "question": "In plain words, what is the Knapsack problem?",
+          "answer": "You have a backpack with a <b>weight limit</b> and treasures that each have a weight and a value \u2014 pick items to get the highest total value without going over the limit."
+        },
+        {
+          "topic": "Dynamic Programming",
+          "question": "What is the core idea of dynamic programming?",
+          "answer": "Solve many <b>small subproblems</b> first, store their answers, and reuse them to build up the solution to the big problem."
+        },
+        {
+          "topic": "Dynamic Programming",
+          "question": "For each item, what are the only two choices dynamic programming compares?",
+          "answer": "Either <b>skip the item</b> (keep the previous best) or <b>take the item</b> (gain its value but use up bag space) \u2014 keep whichever is better."
+        },
+        {
+          "topic": "Dynamic Programming",
+          "question": "Is dynamic programming usually the best choice in practice?",
+          "answer": "No \u2014 the tables often become <b>too big to be practical</b>. It's common in theory but rarely the best real-world choice; Knapsack is a lucky exception."
+        },
+        {
+          "topic": "Greedy",
+          "question": "How does the greedy Knapsack algorithm decide what to pack?",
+          "answer": "Sort items by <b>value per weight (efficiency)</b> and take them in that order as long as they still fit."
+        },
+        {
+          "topic": "Greedy",
+          "question": "Why is the greedy result useful even though it can be imperfect?",
+          "answer": "It's fast and always a valid, real packing, so it gives a <b>lower bound</b> \u2014 a guaranteed \"you can do at least this well\" (a floor)."
+        },
+        {
+          "topic": "Fractional & Bounds",
+          "question": "What extra power does the fractional Knapsack give you?",
+          "answer": "You may take <b>fractions of items</b> (slice them) to fill the bag exactly to the brim."
+        },
+        {
+          "topic": "Fractional & Bounds",
+          "question": "Why does the fractional solution give an upper bound?",
+          "answer": "Slicing adds freedom, so it can only be as good or better than the real puzzle \u2014 its value is a <b>ceiling</b> the true answer can never beat."
+        },
+        {
+          "topic": "Fractional & Bounds",
+          "question": "What does it mean to \"relax\" a problem?",
+          "answer": "A <b>relaxation</b> is an easier version of the problem (like allowing fractions) that gives a useful bound on the real answer."
+        },
+        {
+          "topic": "Search Tree",
+          "question": "How can all possible Knapsack solutions be pictured?",
+          "answer": "As a <b>decision tree</b> of yes/no choices \u2014 each node is a partial plan and each edge is one \"take it / leave it\" decision."
+        },
+        {
+          "topic": "Backtracking",
+          "question": "What is the key move in backtracking?",
+          "answer": "If a partial plan is <b>already too heavy</b>, stop and discard that whole branch \u2014 nothing below it can be valid."
+        },
+        {
+          "topic": "Backtracking",
+          "question": "What does backtracking achieve versus full brute force?",
+          "answer": "It <b>prunes impossible branches</b> early, shrinking the search tree instead of exploring every combination."
+        },
+        {
+          "topic": "Constraint Propagation",
+          "question": "What is constraint propagation?",
+          "answer": "Using <b>logic to auto-decide forced choices</b> before branching \u2014 working out the obvious consequences of what you've already picked."
+        },
+        {
+          "topic": "Constraint Propagation",
+          "question": "Give an example of a forced choice in Knapsack propagation.",
+          "answer": "If an item <b>can't possibly fit</b>, automatically leave it; if leftover items are free value and all fit, automatically take them."
+        },
+        {
+          "topic": "Branch & Bound",
+          "question": "How does branch & bound go beyond backtracking?",
+          "answer": "It also discards branches that are possible but <b>can't beat the best answer found so far</b> \u2014 not just impossible ones."
+        },
+        {
+          "topic": "Branch & Bound",
+          "question": "What key question does branch & bound ask about each branch?",
+          "answer": "\"Could this branch, <b>even in its best case</b>, beat my current record?\" If not, prune it."
+        },
+        {
+          "topic": "Branch & Bound",
+          "question": "What two values does branch & bound track in order to prune?",
+          "answer": "A <b>lower bound</b> (best real answer so far) and each branch's <b>upper bound</b> (best it could possibly reach); if the branch's ceiling can't beat your record, drop it."
+        },
+        {
+          "topic": "Branch & Cut",
+          "question": "In branch & cut, how is the bound usually computed?",
+          "answer": "By solving the <b>linear relaxation</b> \u2014 dropping the strict \"take it or leave it\" rule and allowing values in between, which turns the hard problem into an easy one."
+        },
+        {
+          "topic": "Branch & Cut",
+          "question": "What is a \"cut\", and why add one?",
+          "answer": "A cut is an extra rule that <b>forbids an impossible fractional answer</b> while keeping every real solution legal; it pulls the ceiling closer to reality so branches can be pruned sooner."
+        },
+        {
+          "topic": "Metaheuristics",
+          "question": "When do you reach for metaheuristics?",
+          "answer": "When the problem is <b>too big or too nasty</b> for exact methods to finish \u2014 they find a really good answer without promising it's perfect."
+        },
+        {
+          "topic": "Metaheuristics",
+          "question": "What are the three big families of metaheuristics?",
+          "answer": "<b>Constructive heuristics</b>, <b>local search</b>, and <b>population-based</b> algorithms."
+        },
+        {
+          "topic": "Metaheuristics",
+          "question": "How does a constructive heuristic build an answer?",
+          "answer": "It <b>grows a solution step by step</b> (often greedily), possibly with randomness and many repeats, keeping the best attempt."
+        },
+        {
+          "topic": "Metaheuristics",
+          "question": "How does local search work?",
+          "answer": "Start from a solution and repeatedly move to a <b>slightly better neighbor</b> (one small change away) until you can't improve."
+        },
+        {
+          "topic": "Metaheuristics",
+          "question": "What is the main danger of local search, and one way to escape it?",
+          "answer": "Getting stuck in a <b>local optimum</b> (a small hill). <b>Simulated annealing</b> escapes by occasionally allowing a step downhill."
+        },
+        {
+          "topic": "Metaheuristics",
+          "question": "What is the exploration vs. exploitation trade-off?",
+          "answer": "<b>Exploration</b> roams widely to scout new areas, while <b>exploitation</b> polishes what you already have; a good strategy explores first, then intensifies."
+        },
+        {
+          "topic": "Metaheuristics",
+          "question": "How do population-based methods work?",
+          "answer": "Keep a <b>whole population of solutions</b> and each generation combine them, favor the good ones, and keep diversity (e.g. genetic algorithms)."
+        },
+        {
+          "topic": "Key Ideas",
+          "question": "What single idea unifies all of these methods?",
+          "answer": "They are all smarter ways to <b>search the tree of take-it/leave-it choices</b>, trapping the answer between a floor and a ceiling."
+        },
+        {
+          "topic": "Key Ideas",
+          "question": "Why are metaheuristics often the best choice in practice?",
+          "answer": "Because they <b>scale to huge problems</b> where exact methods can't finish \u2014 and they can still team up with exact methods."
+        }
       ]
-  },
-  {
+    },
+    {
       "id": "lecture-06-bill-cook",
       "title": "Lecture 06 · Bill Cook",
       "description": "No Lecture. Bill Cook was a guest speaker.",
       "summary": "",
       "cards": []
-  },
-  {
-    "id": "lecture-07-lp-mip",
-    "title": "Lecture 07 · LP & MIP",
-    "description": "How solvers use easy linear programs to crack hard integer problems.",
-    "summary": "summaries/algorithm-engineering/lecture-07.md",
-    "cards": [
+    },
+    {
+      "id": "lecture-07-lp-mip",
+      "title": "Lecture 07 · LP & MIP",
+      "description": "How solvers use easy linear programs to crack hard integer problems.",
+      "summary": "summaries/algorithm-engineering/lecture-07.md",
+      "cards": [
         {
-            "topic": "Big Picture",
-            "question": "What is optimization, in plain terms?",
-            "answer": "Finding the <b>best plan</b> (e.g. most money) while obeying a set of rules (constraints)."
+          "topic": "Big Picture",
+          "question": "What is optimization, in plain terms?",
+          "answer": "Finding the <b>best plan</b> (e.g. most money) while obeying a set of rules (constraints)."
         },
         {
-            "topic": "Big Picture",
-            "question": "What is Linear Programming (LP) and what makes it the 'easy' version?",
-            "answer": "Maximizing a goal under straight-line rules where answers may be <b>fractions</b>. It's easy because computers can solve it quickly."
+          "topic": "Big Picture",
+          "question": "What is Linear Programming (LP) and what makes it the 'easy' version?",
+          "answer": "Maximizing a goal under straight-line rules where answers may be <b>fractions</b>. It's easy because computers can solve it quickly."
         },
         {
-            "topic": "Big Picture",
-            "question": "What is Mixed Integer Programming (MIP) and why is it the 'hard' version?",
-            "answer": "An LP where some variables must be <b>whole numbers</b>. That single requirement makes it genuinely hard to solve."
+          "topic": "Big Picture",
+          "question": "What is Mixed Integer Programming (MIP) and why is it the 'hard' version?",
+          "answer": "An LP where some variables must be <b>whole numbers</b>. That single requirement makes it genuinely hard to solve."
         },
         {
-            "topic": "Big Picture",
-            "question": "What is the core trick behind every MIP solver?",
-            "answer": "Use the <b>easy LP over and over again</b> to slowly crack the hard MIP."
+          "topic": "Big Picture",
+          "question": "What is the core trick behind every MIP solver?",
+          "answer": "Use the <b>easy LP over and over again</b> to slowly crack the hard MIP."
         },
         {
-            "topic": "LP Basics",
-            "question": "What does it mean that 'LP is in P'?",
-            "answer": "Computers can solve LP <b>quickly</b> (in polynomial time), even for large problems, in both theory and practice."
+          "topic": "LP Basics",
+          "question": "What does it mean that 'LP is in P'?",
+          "answer": "Computers can solve LP <b>quickly</b> (in polynomial time), even for large problems, in both theory and practice."
         },
         {
-            "topic": "LP Basics",
-            "question": "What mainly determines how long an LP takes to solve?",
-            "answer": "The number of variables, the number of constraints, and how <b>sparse</b> the problem is (how few non-zero coefficients)."
+          "topic": "LP Basics",
+          "question": "What mainly determines how long an LP takes to solve?",
+          "answer": "The number of variables, the number of constraints, and how <b>sparse</b> the problem is (how few non-zero coefficients)."
         },
         {
-            "topic": "LP Algorithms",
-            "question": "How does the Simplex algorithm find the answer?",
-            "answer": "It walks along the <b>edges</b> of the shape of valid answers, checking corners one at a time."
+          "topic": "LP Algorithms",
+          "question": "How does the Simplex algorithm find the answer?",
+          "answer": "It walks along the <b>edges</b> of the shape of valid answers, checking corners one at a time."
         },
         {
-            "topic": "LP Algorithms",
-            "question": "What are Simplex's strengths and weaknesses?",
-            "answer": "Strengths: many cheap steps, great at <b>warm starts</b>, clean solutions. Weaknesses: not proven fast, hard to parallelize."
+          "topic": "LP Algorithms",
+          "question": "What are Simplex's strengths and weaknesses?",
+          "answer": "Strengths: many cheap steps, great at <b>warm starts</b>, clean solutions. Weaknesses: not proven fast, hard to parallelize."
         },
         {
-            "topic": "LP Algorithms",
-            "question": "How does the Barrier (Interior Point) method find the answer?",
-            "answer": "It floats <b>through the middle</b> of the shape and homes in on the answer, instead of crawling along edges."
+          "topic": "LP Algorithms",
+          "question": "How does the Barrier (Interior Point) method find the answer?",
+          "answer": "It floats <b>through the middle</b> of the shape and homes in on the answer, instead of crawling along edges."
         },
         {
-            "topic": "LP Algorithms",
-            "question": "What are Barrier's strengths and weaknesses?",
-            "answer": "Strengths: <b>proven fast</b>, parallelizable, fewer steps. Weaknesses: each step is expensive, bad at warm starts."
+          "topic": "LP Algorithms",
+          "question": "What are Barrier's strengths and weaknesses?",
+          "answer": "Strengths: <b>proven fast</b>, parallelizable, fewer steps. Weaknesses: each step is expensive, bad at warm starts."
         },
         {
-            "topic": "LP Algorithms",
-            "question": "What makes PDLP (PDHG) special among LP solvers?",
-            "answer": "It takes many cheap steps and can even use <b>GPUs</b>, making it very fast to moderate precision."
+          "topic": "LP Algorithms",
+          "question": "What makes PDLP (PDHG) special among LP solvers?",
+          "answer": "It takes many cheap steps and can even use <b>GPUs</b>, making it very fast to moderate precision."
         },
         {
-            "topic": "LP Algorithms",
-            "question": "Why is there no single 'best' LP algorithm?",
-            "answer": "Each one wins in <b>different situations</b>; the right choice depends on the problem's size, structure, and precision needed."
+          "topic": "LP Algorithms",
+          "question": "Why is there no single 'best' LP algorithm?",
+          "answer": "Each one wins in <b>different situations</b>; the right choice depends on the problem's size, structure, and precision needed."
         },
         {
-            "topic": "LP Algorithms",
-            "question": "What is a 'warm start' and why does it matter?",
-            "answer": "Reusing a previous solution after a small change, so you only need a <b>few extra steps</b> instead of solving from scratch."
+          "topic": "LP Algorithms",
+          "question": "What is a 'warm start' and why does it matter?",
+          "answer": "Reusing a previous solution after a small change, so you only need a <b>few extra steps</b> instead of solving from scratch."
         },
         {
-            "topic": "LP to MIP",
-            "question": "What extra rule turns an LP into a MIP?",
-            "answer": "Some variables are forced to be <b>whole numbers</b> (integers) instead of fractions."
+          "topic": "LP to MIP",
+          "question": "What extra rule turns an LP into a MIP?",
+          "answer": "Some variables are forced to be <b>whole numbers</b> (integers) instead of fractions."
         },
         {
-            "topic": "LP to MIP",
-            "question": "What is an Integer Program vs. a Binary Program?",
-            "answer": "Integer Program: all variables are whole numbers. Binary Program: variables are only <b>0 or 1</b> (yes/no switches)."
+          "topic": "LP to MIP",
+          "question": "What is an Integer Program vs. a Binary Program?",
+          "answer": "Integer Program: all variables are whole numbers. Binary Program: variables are only <b>0 or 1</b> (yes/no switches)."
         },
         {
-            "topic": "LP to MIP",
-            "question": "What does a {0,1} variable represent?",
-            "answer": "A <b>yes/no decision</b>, e.g. 'build the bridge?' where 1 = yes and 0 = no."
+          "topic": "LP to MIP",
+          "question": "What does a {0,1} variable represent?",
+          "answer": "A <b>yes/no decision</b>, e.g. 'build the bridge?' where 1 = yes and 0 = no."
         },
         {
-            "topic": "LP to MIP",
-            "question": "How hard are MIP, IP, and BP as problem classes?",
-            "answer": "They are all <b>NP-complete</b> — the 'really tough' category of problems."
+          "topic": "LP to MIP",
+          "question": "How hard are MIP, IP, and BP as problem classes?",
+          "answer": "They are all <b>NP-complete</b> — the 'really tough' category of problems."
         },
         {
-            "topic": "LP to MIP",
-            "question": "Why does 'whole numbers only' make a problem so hard?",
-            "answer": "Valid answers become <b>scattered dots</b> instead of a smooth shape, so you can't just slide to the best one."
+          "topic": "LP to MIP",
+          "question": "Why does 'whole numbers only' make a problem so hard?",
+          "answer": "Valid answers become <b>scattered dots</b> instead of a smooth shape, so you can't just slide to the best one."
         },
         {
-            "topic": "TSP Example",
-            "question": "What is the Traveling Salesperson Problem (TSP)?",
-            "answer": "Visit every city exactly once and return home using the <b>shortest total route</b>."
+          "topic": "TSP Example",
+          "question": "What is the Traveling Salesperson Problem (TSP)?",
+          "answer": "Visit every city exactly once and return home using the <b>shortest total route</b>."
         },
         {
-            "topic": "TSP Example",
-            "question": "In the treasure-hunt view of solving, what is the Upper Bound (UB)?",
-            "answer": "The best <b>real, complete route</b> found so far — proof that a route this good exists."
+          "topic": "TSP Example",
+          "question": "In the treasure-hunt view of solving, what is the Upper Bound (UB)?",
+          "answer": "The best <b>real, complete route</b> found so far — proof that a route this good exists."
         },
         {
-            "topic": "TSP Example",
-            "question": "In the treasure-hunt view of solving, what is the Lower Bound (relaxation)?",
-            "answer": "A <b>dream estimate</b> from the easy LP saying no route could possibly be better than this."
+          "topic": "TSP Example",
+          "question": "In the treasure-hunt view of solving, what is the Lower Bound (relaxation)?",
+          "answer": "A <b>dream estimate</b> from the easy LP saying no route could possibly be better than this."
         },
         {
-            "topic": "TSP Example",
-            "question": "When do you know you've found the optimal answer?",
-            "answer": "When the upper bound and lower bound <b>meet at the same value</b> — the answer is then proven best."
+          "topic": "TSP Example",
+          "question": "When do you know you've found the optimal answer?",
+          "answer": "When the upper bound and lower bound <b>meet at the same value</b> — the answer is then proven best."
         },
         {
-            "topic": "TSP Example",
-            "question": "What is a 'relaxation' of a MIP?",
-            "answer": "A version where you <b>drop the whole-number rule</b> (and sometimes other rules) so the easy LP can solve it."
+          "topic": "TSP Example",
+          "question": "What is a 'relaxation' of a MIP?",
+          "answer": "A version where you <b>drop the whole-number rule</b> (and sometimes other rules) so the easy LP can solve it."
         },
         {
-            "topic": "Cutting Planes",
-            "question": "What problem do cutting planes solve?",
-            "answer": "The LP gives a <b>fractional answer</b> (like 'use 0.5 of a road') that can't be used in reality."
+          "topic": "Cutting Planes",
+          "question": "What problem do cutting planes solve?",
+          "answer": "The LP gives a <b>fractional answer</b> (like 'use 0.5 of a road') that can't be used in reality."
         },
         {
-            "topic": "Cutting Planes",
-            "question": "What is a cutting plane, in one idea?",
-            "answer": "A new rule that <b>slices off the fractional answer</b> without removing any valid whole-number answer."
+          "topic": "Cutting Planes",
+          "question": "What is a cutting plane, in one idea?",
+          "answer": "A new rule that <b>slices off the fractional answer</b> without removing any valid whole-number answer."
         },
         {
-            "topic": "Cutting Planes",
-            "question": "What three properties must a good cutting plane have?",
-            "answer": "It's <b>linear</b>, satisfied by all valid integer solutions, and violated by the current fractional solution."
+          "topic": "Cutting Planes",
+          "question": "What three properties must a good cutting plane have?",
+          "answer": "It's <b>linear</b>, satisfied by all valid integer solutions, and violated by the current fractional solution."
         },
         {
-            "topic": "Cutting Planes",
-            "question": "Why is adding a cut safe and useful?",
-            "answer": "You keep an easy LP, <b>lose no valid solution</b>, and force a new answer because the old fractional one is cut off."
+          "topic": "Cutting Planes",
+          "question": "Why is adding a cut safe and useful?",
+          "answer": "You keep an easy LP, <b>lose no valid solution</b>, and force a new answer because the old fractional one is cut off."
         },
         {
-            "topic": "Cutting Planes",
-            "question": "What is the 'separation problem'?",
-            "answer": "The task of <b>finding a good cutting plane</b>; usually solved by a heuristic that can sometimes fail."
+          "topic": "Cutting Planes",
+          "question": "What is the 'separation problem'?",
+          "answer": "The task of <b>finding a good cutting plane</b>; usually solved by a heuristic that can sometimes fail."
         },
         {
-            "topic": "Cutting Planes",
-            "question": "What is a comb inequality (TSP)?",
-            "answer": "A hand-crafted TSP cut using a 'handle' with an odd number of 'teeth' — just a <b>specialized no-cheating rule</b>."
+          "topic": "Cutting Planes",
+          "question": "What is a comb inequality (TSP)?",
+          "answer": "A hand-crafted TSP cut using a 'handle' with an odd number of 'teeth' — just a <b>specialized no-cheating rule</b>."
         },
         {
-            "topic": "Branch & Bound",
-            "question": "What does it mean to 'branch' on a variable?",
-            "answer": "Take a variable stuck at a fraction and split into two <b>what-if worlds</b> (e.g. round it down vs. round it up), solving each."
+          "topic": "Branch & Bound",
+          "question": "What does it mean to 'branch' on a variable?",
+          "answer": "Take a variable stuck at a fraction and split into two <b>what-if worlds</b> (e.g. round it down vs. round it up), solving each."
         },
         {
-            "topic": "Branch & Bound",
-            "question": "What is 'pruning' and why is it so powerful?",
-            "answer": "Throwing away a branch whose best-possible value is <b>already worse</b> than a real answer you have, avoiding huge amounts of work."
+          "topic": "Branch & Bound",
+          "question": "What is 'pruning' and why is it so powerful?",
+          "answer": "Throwing away a branch whose best-possible value is <b>already worse</b> than a real answer you have, avoiding huge amounts of work."
         },
         {
-            "topic": "Branch & Bound",
-            "question": "What is Branch & Cut?",
-            "answer": "Combining <b>branching and cutting planes</b> — the engine inside every real MIP solver."
+          "topic": "Branch & Bound",
+          "question": "What is Branch & Cut?",
+          "answer": "Combining <b>branching and cutting planes</b> — the engine inside every real MIP solver."
         },
         {
-            "topic": "Duality",
-            "question": "What is the dual of an LP?",
-            "answer": "A <b>mirror-image problem</b> (max becomes min) that puts a ceiling on how good any answer could possibly be."
+          "topic": "Duality",
+          "question": "What is the dual of an LP?",
+          "answer": "A <b>mirror-image problem</b> (max becomes min) that puts a ceiling on how good any answer could possibly be."
         },
         {
-            "topic": "Duality",
-            "question": "What does the Strong Duality Theorem say?",
-            "answer": "If the primal has an optimal solution, so does the dual, and their optimal <b>values are exactly equal</b>."
+          "topic": "Duality",
+          "question": "What does the Strong Duality Theorem say?",
+          "answer": "If the primal has an optimal solution, so does the dual, and their optimal <b>values are exactly equal</b>."
         },
         {
-            "topic": "Duality",
-            "question": "How does the floor-and-ceiling analogy explain duality?",
-            "answer": "The primal builds a floor ('at least this high'), the dual sets a ceiling ('no higher than this'), and they <b>meet at the true value</b>."
+          "topic": "Duality",
+          "question": "How does the floor-and-ceiling analogy explain duality?",
+          "answer": "The primal builds a floor ('at least this high'), the dual sets a ceiling ('no higher than this'), and they <b>meet at the true value</b>."
         },
         {
-            "topic": "Duality",
-            "question": "Why does duality matter for MIP solvers?",
-            "answer": "It's the mathematical <b>proof</b> that when the upper and lower bounds meet, you've truly found the best answer."
+          "topic": "Duality",
+          "question": "Why does duality matter for MIP solvers?",
+          "answer": "It's the mathematical <b>proof</b> that when the upper and lower bounds meet, you've truly found the best answer."
         },
         {
-            "topic": "Branch Selection",
-            "question": "What is the 'Most Fractional' branching rule?",
-            "answer": "Branch on the variable closest to <b>halfway</b> between two integers. Simple, but often mediocre."
+          "topic": "Branch Selection",
+          "question": "What is the 'Most Fractional' branching rule?",
+          "answer": "Branch on the variable closest to <b>halfway</b> between two integers. Simple, but often mediocre."
         },
         {
-            "topic": "Branch Selection",
-            "question": "What is Pseudo-Cost Branching?",
-            "answer": "Keep a <b>running report card</b> per variable estimating how helpful branching on it usually is. Fast but needs data to warm up."
+          "topic": "Branch Selection",
+          "question": "What is Pseudo-Cost Branching?",
+          "answer": "Keep a <b>running report card</b> per variable estimating how helpful branching on it usually is. Fast but needs data to warm up."
         },
         {
-            "topic": "Branch Selection",
-            "question": "What is the main weakness of Pseudo-Cost Branching?",
-            "answer": "Scores get better over time, but the <b>earliest choices matter most</b> — exactly when scores are least reliable."
+          "topic": "Branch Selection",
+          "question": "What is the main weakness of Pseudo-Cost Branching?",
+          "answer": "Scores get better over time, but the <b>earliest choices matter most</b> — exactly when scores are least reliable."
         },
         {
-            "topic": "Branch Selection",
-            "question": "What is Strong Branching?",
-            "answer": "Actually <b>test-solving both children</b> for several candidate variables and picking the best. Accurate but expensive."
+          "topic": "Branch Selection",
+          "question": "What is Strong Branching?",
+          "answer": "Actually <b>test-solving both children</b> for several candidate variables and picking the best. Accurate but expensive."
         },
         {
-            "topic": "Branch Selection",
-            "question": "What is Reliability Branching?",
-            "answer": "A hybrid: use <b>Strong Branching early</b>, then switch to pseudo-costs once they've gathered enough data to be reliable."
+          "topic": "Branch Selection",
+          "question": "What is Reliability Branching?",
+          "answer": "A hybrid: use <b>Strong Branching early</b>, then switch to pseudo-costs once they've gathered enough data to be reliable."
         },
         {
-            "topic": "Solver Internals",
-            "question": "Why must solvers manage cuts and sometimes 'forget' them?",
-            "answer": "Too many cuts <b>slow the LP down</b>, so solvers keep a cut pool and drop cuts that aren't helping."
+          "topic": "Solver Internals",
+          "question": "Why must solvers manage cuts and sometimes 'forget' them?",
+          "answer": "Too many cuts <b>slow the LP down</b>, so solvers keep a cut pool and drop cuts that aren't helping."
         },
         {
-            "topic": "Solver Internals",
-            "question": "What does Presolve do before the real solving starts?",
-            "answer": "Cleans up the problem — <b>removing useless variables, tightening bounds, rescaling</b> — often the single biggest speedup."
+          "topic": "Solver Internals",
+          "question": "What does Presolve do before the real solving starts?",
+          "answer": "Cleans up the problem — <b>removing useless variables, tightening bounds, rescaling</b> — often the single biggest speedup."
         },
         {
-            "topic": "Solver Internals",
-            "question": "What are primal heuristics and why do they help?",
-            "answer": "Quick tricks to <b>find good real answers fast</b>, giving the upper bounds needed to prune branches."
+          "topic": "Solver Internals",
+          "question": "What are primal heuristics and why do they help?",
+          "answer": "Quick tricks to <b>find good real answers fast</b>, giving the upper bounds needed to prune branches."
         },
         {
-            "topic": "Solver Internals",
-            "question": "What's the difference between construction and improvement heuristics?",
-            "answer": "Construction <b>builds a solution from nothing</b> (e.g. diving, feasibility pump); improvement <b>polishes</b> an existing one (e.g. RINS, local branching)."
+          "topic": "Solver Internals",
+          "question": "What's the difference between construction and improvement heuristics?",
+          "answer": "Construction <b>builds a solution from nothing</b> (e.g. diving, feasibility pump); improvement <b>polishes</b> an existing one (e.g. RINS, local branching)."
         },
         {
-            "topic": "Solver Internals",
-            "question": "What is the Feasibility Pump idea?",
-            "answer": "Bounce between the LP answer and the <b>nearest rounded point</b> until they line up on a valid solution."
+          "topic": "Solver Internals",
+          "question": "What is the Feasibility Pump idea?",
+          "answer": "Bounce between the LP answer and the <b>nearest rounded point</b> until they line up on a valid solution."
         },
         {
-            "topic": "Solver Internals",
-            "question": "What is the idea behind Local Branching / RINS?",
-            "answer": "<b>Freeze most of a good solution</b> and let the solver re-optimize only a small piece as a mini sub-problem."
+          "topic": "Solver Internals",
+          "question": "What is the idea behind Local Branching / RINS?",
+          "answer": "<b>Freeze most of a good solution</b> and let the solver re-optimize only a small piece as a mini sub-problem."
         },
         {
-            "topic": "Takeaway",
-            "question": "Summarize how solvers crack a MIP in one sentence.",
-            "answer": "Repeatedly solve the easy LP to get bounds, then <b>squeeze the upper and lower bounds together</b> using cuts and branching until they meet."
+          "topic": "Takeaway",
+          "question": "Summarize how solvers crack a MIP in one sentence.",
+          "answer": "Repeatedly solve the easy LP to get bounds, then <b>squeeze the upper and lower bounds together</b> using cuts and branching until they meet."
         }
-    ]
-}
+      ]
+    }
   ]
 }
