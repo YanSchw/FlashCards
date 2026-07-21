@@ -1348,6 +1348,89 @@
                 "answer": "<b>LP relaxation</b> (fraction-based hints from the MIP world), <b>cutting planes</b>, <b>restarts</b> (wipe guesses but keep lessons), and a <b>parallel portfolio</b> of solvers that share what they learn."
             }
         ]
+    },
+    {
+        "id": "lecture-11-decomposition",
+        "title": "Lecture 11 · Decomposition",
+        "description": "Breaking a big, tangled optimization problem into small easy pieces held together by a little glue.",
+        "summary": "summaries/algorithm-engineering/lecture-11-decomposition.md",
+        "cards": [
+            {
+                "topic": "Big Picture",
+                "question": "What is problem decomposition and why do we do it?",
+                "answer": "Some hard problems are really many <b>loosely coupled small problems</b> tied together by a few global rules. Decomposition means pulling apart those tying-together rules so the leftover pieces become easy to solve."
+            },
+            {
+                "topic": "Big Picture",
+                "question": "What is a 'coupling constraint'?",
+                "answer": "A rule that <b>ties all the sub-parts together</b> and makes the problem hard. In facility location it's 'every client must be served by exactly one warehouse.' Remove it and each warehouse could act on its own."
+            },
+            {
+                "topic": "Lagrangian",
+                "question": "What is the core idea of Lagrangian relaxation?",
+                "answer": "Don't forbid breaking a rule — <b>charge a price (penalty) for breaking it</b>. Move the annoying constraint into the objective as a fee, then adjust the fee until the solver stops cheating on its own. (Like library late fees.)"
+            },
+            {
+                "topic": "Lagrangian",
+                "question": "Why is it called a 'relaxation', and what does that give us?",
+                "answer": "The rule isn't deleted, just made optional-with-a-fee, so every original solution still exists at the same cost. We only added options, so the answer can only get cheaper — giving a <b>valid lower bound</b> on the true optimum."
+            },
+            {
+                "topic": "Lagrangian",
+                "question": "What happens to the warehouse problem once the coupling rule is turned into a price?",
+                "answer": "The warehouses become <b>independent subproblems</b>. Each warehouse just picks the clients worth serving at the discounted prices — a tiny, fast problem (greedy works)."
+            },
+            {
+                "topic": "Lagrangian",
+                "question": "How do we find the right penalty prices?",
+                "answer": "Iterate: solve subproblems, check how badly each rule was broken, then <b>nudge each price toward its violation</b> (raise it if under-covered, lower it if over-covered). This price-updating loop is the subgradient method."
+            },
+            {
+                "topic": "Dantzig-Wolfe",
+                "question": "What is the core idea of Dantzig–Wolfe decomposition?",
+                "answer": "Let each part propose complete ready-made plans called <b>patterns</b>, then have a master problem pick the best combination. (Like food trucks each offering menus, and you choose one menu per truck.)"
+            },
+            {
+                "topic": "Dantzig-Wolfe",
+                "question": "What is a 'pattern' in the warehouse example?",
+                "answer": "One legal way a single warehouse could operate — a <b>specific set of clients it serves</b> (or serving nobody = staying closed). Each pattern already bakes in the capacity and opening logic."
+            },
+            {
+                "topic": "Column Generation",
+                "question": "What problem does column generation solve, and how?",
+                "answer": "There are astronomically many patterns to list. Instead of listing them all, <b>generate patterns lazily</b> — start with a few and only invent a new one when it would actually improve the answer."
+            },
+            {
+                "topic": "Column Generation",
+                "question": "How does column generation decide whether to add a new pattern?",
+                "answer": "It solves a small <b>pricing problem</b> to find the most promising missing pattern. If that pattern would lower the cost it's added; if none exists, the current solution is optimal."
+            },
+            {
+                "topic": "Branch & Price",
+                "question": "What is Branch & Price and why use it?",
+                "answer": "Column generation gives fractional answers ('use half a plan'), but real choices are whole. Branch & Price <b>combines column generation with branch & bound</b>, re-generating patterns at each node, and gives a tighter bound than the plain LP."
+            },
+            {
+                "topic": "Benders",
+                "question": "What is the core idea of Benders' decomposition?",
+                "answer": "A master picks the <b>hard strategic choices</b> with an optimistic cost guess; a subproblem fills in the easy details and reports back with <b>cuts</b> that correct the guess. (Pick the cities, let a helper compute the real route.)"
+            },
+            {
+                "topic": "Benders",
+                "question": "In the warehouse example, how is the work split between master and subproblem?",
+                "answer": "The master decides <b>which warehouses to open</b> (the hard part). The subproblem, given those open warehouses, finds the cheapest client assignment — which is just an easy min-cost flow problem."
+            },
+            {
+                "topic": "Benders",
+                "question": "What are optimality cuts vs. feasibility cuts?",
+                "answer": "After solving the subproblem: an <b>optimality cut</b> forces the master's optimistic cost guess to be more realistic; a <b>feasibility cut</b> forbids a choice of open warehouses that genuinely can't serve everyone."
+            },
+            {
+                "topic": "Benders",
+                "question": "What does Logic-Based Benders (LBBD) add?",
+                "answer": "It drops the requirement that the subproblem be an LP — it can be <b>SAT, CP, a MIP, or a DP</b>. Cuts are derived logically and can be much stronger, but must be designed problem-by-problem (no universal recipe)."
+            }
+        ]
     }
   ]
 }
