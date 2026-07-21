@@ -136,6 +136,28 @@ body::after {
     color: var(--color-copper-bright);
   }
 
+  /* Native <dialog> (see ui/dialog.ts) — box styling is on the element itself,
+     but the backdrop and open transition have to live here. */
+  .dialog {
+    /* Modal <dialog> is centred by the UA's `margin: auto`, which Tailwind's
+       preflight (`* { margin: 0 }`) wipes out. Put it back. */
+    margin: auto;
+    box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.75);
+  }
+  .dialog::backdrop {
+    background: rgba(4, 12, 9, 0.62);
+    backdrop-filter: blur(3px);
+  }
+  .dialog[open] {
+    animation: dialog-in 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  @keyframes dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.97);
+    }
+  }
+
   .mono-label {
     font-family: var(--font-mono);
     font-size: 10.5px;

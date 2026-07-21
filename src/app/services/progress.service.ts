@@ -44,6 +44,19 @@ export class ProgressService {
     this.history.set({});
   }
 
+  /** Drops the history for just these cards, leaving other courses untouched. */
+  resetCards(cardIds: string[]): void {
+    const drop = new Set(cardIds);
+    this.history.update((h) =>
+      Object.fromEntries(Object.entries(h).filter(([id]) => !drop.has(id))),
+    );
+  }
+
+  /** How many of these cards have been answered at least once. */
+  answeredCount(cards: Card[]): number {
+    return cards.reduce((n, c) => n + (this.attemptsFor(c.id).length > 0 ? 1 : 0), 0);
+  }
+
   private load(): CardHistory {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);

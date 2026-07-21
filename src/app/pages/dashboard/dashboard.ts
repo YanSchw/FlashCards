@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Course, STATE_META } from '../../core/models';
 import { CoursesService, allCards } from '../../services/courses.service';
 import { ProgressService } from '../../services/progress.service';
+import { DialogService } from '../../ui/dialog';
 import { StateBar } from '../../ui/state-bar';
 
 @Component({
@@ -23,7 +24,16 @@ import { StateBar } from '../../ui/state-bar';
       </div>
 
       <section class="mt-8 rounded-2xl border border-trace bg-board-2/70 p-5 sm:p-6">
-        <h2 class="mono-label mb-4 text-copper">Course progress</h2>
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <h2 class="mono-label text-copper">Course progress</h2>
+          <button
+            class="tool disabled:cursor-not-allowed disabled:opacity-35"
+            [disabled]="answeredCount() === 0"
+            (click)="resetProgress()"
+          >
+            ↺ Reset
+          </button>
+        </div>
         <app-state-bar [counts]="courseCounts()" />
         <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           @for (s of states; track s.key) {
@@ -93,6 +103,7 @@ export class Dashboard {
 
   private coursesSvc = inject(CoursesService);
   private router = inject(Router);
+  private dialog = inject(DialogService);
   protected progress = inject(ProgressService);
 
   protected course = signal<Course | null>(null);
@@ -135,6 +146,26 @@ export class Dashboard {
     for (const l of c?.lectures ?? []) out[l.id] = this.progress.countStates(l.cards);
     return out;
   });
+
+  protected answeredCount = computed(() => {
+    this.progress.revision();
+    const c = this.course();
+    return c ? this.progress.answeredCount(allCards(c)) : 0;
+  });
+
+  protected async resetProgress(): Promise<void> {
+    const c = this.course();
+    if (!c) return;
+    const cards = allCards(c);
+    const answered = this.answeredCount();
+    const ok = await this.dialog.confirm({
+      title: 'Reset course progress?',
+      message: `This clears your answer history for ${answered} of ${cards.length} cards in “${c.title}”. Other courses keep their progress. This cannot be undone.`,
+      confirmLabel: 'Reset progress',
+      tone: 'danger',
+    });
+    if (ok) this.progress.resetCards(cards.map((card) => card.id));
+  }
 
   protected study(): void {
     this.router.navigate(['/c', this.courseId(), 'study'], {
