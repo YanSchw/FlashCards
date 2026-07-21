@@ -656,6 +656,254 @@
       "description": "No Lecture. Bill Cook was a guest speaker.",
       "summary": "",
       "cards": []
-  }
+  },
+  {
+    "id": "lecture-07-lp-mip",
+    "title": "Lecture 07 · LP & MIP",
+    "description": "How solvers use easy linear programs to crack hard integer problems.",
+    "summary": "summaries/algorithm-engineering/lecture-07.md",
+    "cards": [
+        {
+            "topic": "Big Picture",
+            "question": "What is optimization, in plain terms?",
+            "answer": "Finding the <b>best plan</b> (e.g. most money) while obeying a set of rules (constraints)."
+        },
+        {
+            "topic": "Big Picture",
+            "question": "What is Linear Programming (LP) and what makes it the 'easy' version?",
+            "answer": "Maximizing a goal under straight-line rules where answers may be <b>fractions</b>. It's easy because computers can solve it quickly."
+        },
+        {
+            "topic": "Big Picture",
+            "question": "What is Mixed Integer Programming (MIP) and why is it the 'hard' version?",
+            "answer": "An LP where some variables must be <b>whole numbers</b>. That single requirement makes it genuinely hard to solve."
+        },
+        {
+            "topic": "Big Picture",
+            "question": "What is the core trick behind every MIP solver?",
+            "answer": "Use the <b>easy LP over and over again</b> to slowly crack the hard MIP."
+        },
+        {
+            "topic": "LP Basics",
+            "question": "What does it mean that 'LP is in P'?",
+            "answer": "Computers can solve LP <b>quickly</b> (in polynomial time), even for large problems, in both theory and practice."
+        },
+        {
+            "topic": "LP Basics",
+            "question": "What mainly determines how long an LP takes to solve?",
+            "answer": "The number of variables, the number of constraints, and how <b>sparse</b> the problem is (how few non-zero coefficients)."
+        },
+        {
+            "topic": "LP Algorithms",
+            "question": "How does the Simplex algorithm find the answer?",
+            "answer": "It walks along the <b>edges</b> of the shape of valid answers, checking corners one at a time."
+        },
+        {
+            "topic": "LP Algorithms",
+            "question": "What are Simplex's strengths and weaknesses?",
+            "answer": "Strengths: many cheap steps, great at <b>warm starts</b>, clean solutions. Weaknesses: not proven fast, hard to parallelize."
+        },
+        {
+            "topic": "LP Algorithms",
+            "question": "How does the Barrier (Interior Point) method find the answer?",
+            "answer": "It floats <b>through the middle</b> of the shape and homes in on the answer, instead of crawling along edges."
+        },
+        {
+            "topic": "LP Algorithms",
+            "question": "What are Barrier's strengths and weaknesses?",
+            "answer": "Strengths: <b>proven fast</b>, parallelizable, fewer steps. Weaknesses: each step is expensive, bad at warm starts."
+        },
+        {
+            "topic": "LP Algorithms",
+            "question": "What makes PDLP (PDHG) special among LP solvers?",
+            "answer": "It takes many cheap steps and can even use <b>GPUs</b>, making it very fast to moderate precision."
+        },
+        {
+            "topic": "LP Algorithms",
+            "question": "Why is there no single 'best' LP algorithm?",
+            "answer": "Each one wins in <b>different situations</b>; the right choice depends on the problem's size, structure, and precision needed."
+        },
+        {
+            "topic": "LP Algorithms",
+            "question": "What is a 'warm start' and why does it matter?",
+            "answer": "Reusing a previous solution after a small change, so you only need a <b>few extra steps</b> instead of solving from scratch."
+        },
+        {
+            "topic": "LP to MIP",
+            "question": "What extra rule turns an LP into a MIP?",
+            "answer": "Some variables are forced to be <b>whole numbers</b> (integers) instead of fractions."
+        },
+        {
+            "topic": "LP to MIP",
+            "question": "What is an Integer Program vs. a Binary Program?",
+            "answer": "Integer Program: all variables are whole numbers. Binary Program: variables are only <b>0 or 1</b> (yes/no switches)."
+        },
+        {
+            "topic": "LP to MIP",
+            "question": "What does a {0,1} variable represent?",
+            "answer": "A <b>yes/no decision</b>, e.g. 'build the bridge?' where 1 = yes and 0 = no."
+        },
+        {
+            "topic": "LP to MIP",
+            "question": "How hard are MIP, IP, and BP as problem classes?",
+            "answer": "They are all <b>NP-complete</b> — the 'really tough' category of problems."
+        },
+        {
+            "topic": "LP to MIP",
+            "question": "Why does 'whole numbers only' make a problem so hard?",
+            "answer": "Valid answers become <b>scattered dots</b> instead of a smooth shape, so you can't just slide to the best one."
+        },
+        {
+            "topic": "TSP Example",
+            "question": "What is the Traveling Salesperson Problem (TSP)?",
+            "answer": "Visit every city exactly once and return home using the <b>shortest total route</b>."
+        },
+        {
+            "topic": "TSP Example",
+            "question": "In the treasure-hunt view of solving, what is the Upper Bound (UB)?",
+            "answer": "The best <b>real, complete route</b> found so far — proof that a route this good exists."
+        },
+        {
+            "topic": "TSP Example",
+            "question": "In the treasure-hunt view of solving, what is the Lower Bound (relaxation)?",
+            "answer": "A <b>dream estimate</b> from the easy LP saying no route could possibly be better than this."
+        },
+        {
+            "topic": "TSP Example",
+            "question": "When do you know you've found the optimal answer?",
+            "answer": "When the upper bound and lower bound <b>meet at the same value</b> — the answer is then proven best."
+        },
+        {
+            "topic": "TSP Example",
+            "question": "What is a 'relaxation' of a MIP?",
+            "answer": "A version where you <b>drop the whole-number rule</b> (and sometimes other rules) so the easy LP can solve it."
+        },
+        {
+            "topic": "Cutting Planes",
+            "question": "What problem do cutting planes solve?",
+            "answer": "The LP gives a <b>fractional answer</b> (like 'use 0.5 of a road') that can't be used in reality."
+        },
+        {
+            "topic": "Cutting Planes",
+            "question": "What is a cutting plane, in one idea?",
+            "answer": "A new rule that <b>slices off the fractional answer</b> without removing any valid whole-number answer."
+        },
+        {
+            "topic": "Cutting Planes",
+            "question": "What three properties must a good cutting plane have?",
+            "answer": "It's <b>linear</b>, satisfied by all valid integer solutions, and violated by the current fractional solution."
+        },
+        {
+            "topic": "Cutting Planes",
+            "question": "Why is adding a cut safe and useful?",
+            "answer": "You keep an easy LP, <b>lose no valid solution</b>, and force a new answer because the old fractional one is cut off."
+        },
+        {
+            "topic": "Cutting Planes",
+            "question": "What is the 'separation problem'?",
+            "answer": "The task of <b>finding a good cutting plane</b>; usually solved by a heuristic that can sometimes fail."
+        },
+        {
+            "topic": "Cutting Planes",
+            "question": "What is a comb inequality (TSP)?",
+            "answer": "A hand-crafted TSP cut using a 'handle' with an odd number of 'teeth' — just a <b>specialized no-cheating rule</b>."
+        },
+        {
+            "topic": "Branch & Bound",
+            "question": "What does it mean to 'branch' on a variable?",
+            "answer": "Take a variable stuck at a fraction and split into two <b>what-if worlds</b> (e.g. round it down vs. round it up), solving each."
+        },
+        {
+            "topic": "Branch & Bound",
+            "question": "What is 'pruning' and why is it so powerful?",
+            "answer": "Throwing away a branch whose best-possible value is <b>already worse</b> than a real answer you have, avoiding huge amounts of work."
+        },
+        {
+            "topic": "Branch & Bound",
+            "question": "What is Branch & Cut?",
+            "answer": "Combining <b>branching and cutting planes</b> — the engine inside every real MIP solver."
+        },
+        {
+            "topic": "Duality",
+            "question": "What is the dual of an LP?",
+            "answer": "A <b>mirror-image problem</b> (max becomes min) that puts a ceiling on how good any answer could possibly be."
+        },
+        {
+            "topic": "Duality",
+            "question": "What does the Strong Duality Theorem say?",
+            "answer": "If the primal has an optimal solution, so does the dual, and their optimal <b>values are exactly equal</b>."
+        },
+        {
+            "topic": "Duality",
+            "question": "How does the floor-and-ceiling analogy explain duality?",
+            "answer": "The primal builds a floor ('at least this high'), the dual sets a ceiling ('no higher than this'), and they <b>meet at the true value</b>."
+        },
+        {
+            "topic": "Duality",
+            "question": "Why does duality matter for MIP solvers?",
+            "answer": "It's the mathematical <b>proof</b> that when the upper and lower bounds meet, you've truly found the best answer."
+        },
+        {
+            "topic": "Branch Selection",
+            "question": "What is the 'Most Fractional' branching rule?",
+            "answer": "Branch on the variable closest to <b>halfway</b> between two integers. Simple, but often mediocre."
+        },
+        {
+            "topic": "Branch Selection",
+            "question": "What is Pseudo-Cost Branching?",
+            "answer": "Keep a <b>running report card</b> per variable estimating how helpful branching on it usually is. Fast but needs data to warm up."
+        },
+        {
+            "topic": "Branch Selection",
+            "question": "What is the main weakness of Pseudo-Cost Branching?",
+            "answer": "Scores get better over time, but the <b>earliest choices matter most</b> — exactly when scores are least reliable."
+        },
+        {
+            "topic": "Branch Selection",
+            "question": "What is Strong Branching?",
+            "answer": "Actually <b>test-solving both children</b> for several candidate variables and picking the best. Accurate but expensive."
+        },
+        {
+            "topic": "Branch Selection",
+            "question": "What is Reliability Branching?",
+            "answer": "A hybrid: use <b>Strong Branching early</b>, then switch to pseudo-costs once they've gathered enough data to be reliable."
+        },
+        {
+            "topic": "Solver Internals",
+            "question": "Why must solvers manage cuts and sometimes 'forget' them?",
+            "answer": "Too many cuts <b>slow the LP down</b>, so solvers keep a cut pool and drop cuts that aren't helping."
+        },
+        {
+            "topic": "Solver Internals",
+            "question": "What does Presolve do before the real solving starts?",
+            "answer": "Cleans up the problem — <b>removing useless variables, tightening bounds, rescaling</b> — often the single biggest speedup."
+        },
+        {
+            "topic": "Solver Internals",
+            "question": "What are primal heuristics and why do they help?",
+            "answer": "Quick tricks to <b>find good real answers fast</b>, giving the upper bounds needed to prune branches."
+        },
+        {
+            "topic": "Solver Internals",
+            "question": "What's the difference between construction and improvement heuristics?",
+            "answer": "Construction <b>builds a solution from nothing</b> (e.g. diving, feasibility pump); improvement <b>polishes</b> an existing one (e.g. RINS, local branching)."
+        },
+        {
+            "topic": "Solver Internals",
+            "question": "What is the Feasibility Pump idea?",
+            "answer": "Bounce between the LP answer and the <b>nearest rounded point</b> until they line up on a valid solution."
+        },
+        {
+            "topic": "Solver Internals",
+            "question": "What is the idea behind Local Branching / RINS?",
+            "answer": "<b>Freeze most of a good solution</b> and let the solver re-optimize only a small piece as a mini sub-problem."
+        },
+        {
+            "topic": "Takeaway",
+            "question": "Summarize how solvers crack a MIP in one sentence.",
+            "answer": "Repeatedly solve the easy LP to get bounds, then <b>squeeze the upper and lower bounds together</b> using cuts and branching until they meet."
+        }
+    ]
+}
   ]
 }

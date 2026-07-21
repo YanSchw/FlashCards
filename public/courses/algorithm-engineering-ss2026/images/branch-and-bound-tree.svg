@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="320" viewBox="0 0 680 320" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#73726c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="680" height="320" fill="#ffffff"/>
+  <rect x="250" y="30" width="180" height="56" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="340" y="54" text-anchor="middle" fill="#0C447C" font-size="14" font-weight="500">Root: 52019</text>
+  <text x="340" y="72" text-anchor="middle" fill="#185FA5" font-size="12">fractional, best route: 54277</text>
+  <line x1="300" y1="86" x2="180" y2="170" stroke="#73726c" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="380" y1="86" x2="500" y2="170" stroke="#73726c" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="212" y="130" text-anchor="middle" fill="#3d3d3a" font-size="12">"what if x &#8804; 3?"</text>
+  <text x="470" y="130" text-anchor="middle" fill="#3d3d3a" font-size="12">"what if x &#8805; 4?"</text>
+  <rect x="70" y="172" width="220" height="76" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+  <text x="180" y="196" text-anchor="middle" fill="#085041" font-size="14" font-weight="500">52021 - whole numbers!</text>
+  <text x="180" y="216" text-anchor="middle" fill="#0F6E56" font-size="12">new best route: 52021</text>
+  <text x="180" y="234" text-anchor="middle" fill="#0F6E56" font-size="12">Optimal</text>
+  <rect x="390" y="172" width="220" height="76" rx="8" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.5"/>
+  <text x="500" y="196" text-anchor="middle" fill="#791F1F" font-size="14" font-weight="500">52360 - too expensive</text>
+  <text x="500" y="216" text-anchor="middle" fill="#A32D2D" font-size="12">already worse than 52021</text>
+  <text x="500" y="234" text-anchor="middle" fill="#A32D2D" font-size="12">pruned, skip it</text>
+  <text x="340" y="290" text-anchor="middle" fill="#3d3d3a" font-size="12">Because the left world already proved a route of 52021 exists, the right world can be thrown away.</text>
+</svg>
