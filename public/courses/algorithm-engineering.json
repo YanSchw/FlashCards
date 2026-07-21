@@ -4,6 +4,23 @@
   "description": "How real hardware shapes fast code — pipelines, caches and memory.",
   "lectures": [
     {
+      "id": "lecture-01-overview",
+      "title": "Lecture 01 · What is Algorithm Engineering?",
+      "description": "Why NP-hard doesn't mean unsolvable — and why measuring is hard.",
+      "cards": [
+        {
+          "topic": "Application Domains",
+          "question": "Name four typical domains where organizations must solve hard optimization problems, with one concrete task each.",
+          "answer": "<b>Shift scheduling &amp; task assignment</b> — building a nurse roster. <b>Logistics</b> — routing a delivery fleet. <b>Energy networks</b> — planning grid capacity and dispatch. <b>Production planning</b> — car sequencing, ordering cars on a conveyor so no station is overloaded ('at most 2 sunroofs in 5'). Nearly all of these are <b>NP-hard, yet industry solves them every day</b>."
+        },
+        {
+          "topic": "Why Benchmarking Is Hard",
+          "question": "Why is benchmarking optimization algorithms fundamentally harder than benchmarking a sorting algorithm?",
+          "answer": "Sorting has one clean size axis and one target (time). Optimization has <b>neither</b>. In the <b>nurse rostering</b> example the winner flips between instances <em>and</em> flips depending on <b>when you stop the clock</b> — there is no single 'fastest' solver. NP-hard runtimes vary by orders of magnitude, no single measure captures instance hardness, and you are really comparing <b>two things at once: runtime and solution quality</b>."
+        }
+      ]
+    },
+    {
       "id": "lecture-02-cpu-architecture-1",
       "title": "Lecture 02 · CPU Architecture 1",
       "description": "Flip through the pipeline — branching, memory & caches.",
@@ -21,13 +38,13 @@
         },
         {
           "topic": "The Pipeline",
-          "question": "What is the single goal behind all the CPU's pipeline tricks?",
-          "answer": "<b>Avoid waiting.</b> Keep every part of the CPU busy instead of standing around doing nothing."
+          "question": "What does 'superscalar' mean?",
+          "answer": "The CPU can work on <b>several independent instructions at once</b> — like having 4 workers on the line instead of 1."
         },
         {
           "topic": "The Pipeline",
-          "question": "What does 'superscalar' mean?",
-          "answer": "The CPU can work on <b>several independent instructions at once</b> — like having 4 workers on the line instead of 1."
+          "question": "What is instruction-level parallelism (ILP)?",
+          "answer": "The <b>parallelism hidden inside a single instruction stream</b>: independent instructions that can be executed at the same time even though you wrote them in sequence. The CPU harvests it with <b>superscalar</b> issue (several instructions per cycle), <b>out-of-order</b> execution and <b>speculation</b>. <mark>ILP is limited by dependencies</mark> — if each instruction needs the previous one's result, there is nothing to overlap and the wide machine sits idle."
         },
         {
           "topic": "The Pipeline",
@@ -41,8 +58,8 @@
         },
         {
           "topic": "The Pipeline",
-          "question": "Roughly how many instructions can a modern CPU juggle at once?",
-          "answer": "<b>Hundreds 'in flight'</b> at any moment. It looks chaotic, but the output still matches your written program."
+          "question": "A thread must behave <em>as if</em> it ran one instruction after another. Which effects may still differ because of microarchitectural tricks?",
+          "answer": "The CPU must preserve the <b>architectural state</b> exactly: <b>general-purpose register contents</b> and <b>memory contents</b> always match the sequential program. What it does <em>not</em> promise is anything <b>microarchitectural</b>: <b>execution time</b>, <b>branch predictor state</b>, and <b>cache contents</b> may all differ. <mark>That gap is the whole point — it is where the performance comes from</mark> (and, incidentally, where side-channel attacks like Spectre live)."
         },
         {
           "topic": "Latency vs Throughput",
@@ -58,11 +75,6 @@
           "topic": "Latency vs Throughput",
           "question": "Does the pipeline make a single instruction finish faster?",
           "answer": "No — <b>latency stays about the same</b>. What it improves is throughput: many instructions finish in quick succession."
-        },
-        {
-          "topic": "Branch Prediction",
-          "question": "What is a 'branch'?",
-          "answer": "An <b>if / decision point</b> where the next instruction depends on a condition (e.g., 'if green, go straight, else turn')."
         },
         {
           "topic": "Branch Prediction",
@@ -91,11 +103,6 @@
         },
         {
           "topic": "Branch Prediction",
-          "question": "What kinds of branches are hard to predict?",
-          "answer": "Ones taken about <b>50% of the time at random</b>, or patterns too long/complex for the predictor to catch."
-        },
-        {
-          "topic": "Branch Prediction",
           "question": "What's the main trick to fix an unpredictable branch?",
           "answer": "<b>Branchless code</b> — get the answer with math / conditional moves instead of an 'if', so there's no branch to mispredict."
         },
@@ -103,11 +110,6 @@
           "topic": "Branch Prediction",
           "question": "Why not just make everything branchless?",
           "answer": "Well-predicted branches are already cheap, and branchless code often does <b>extra work</b> (computes both paths). It only helps when both paths are cheap AND the branch is truly unpredictable."
-        },
-        {
-          "topic": "Memory & Caches",
-          "question": "What's the big speed mismatch inside a computer?",
-          "answer": "The CPU is extremely fast, but fetching data from <b>main memory (RAM) is very slow</b> — hundreds of cycles of waiting."
         },
         {
           "topic": "Memory & Caches",
@@ -136,6 +138,11 @@
         },
         {
           "topic": "Memory & Caches",
+          "question": "What two general principles make caching work at all?",
+          "answer": "<b>Temporal locality</b> — if you touch a piece of data you will probably touch it <em>again</em> soon. <b>Spatial locality</b> — if you touch a piece of data you will probably touch the data <em>next to it</em> soon. Without both, a small fast memory could not predict what to keep, and a cache line (fetching the neighbours too) would be wasted work."
+        },
+        {
+          "topic": "Memory & Caches",
           "question": "What is a prefetcher?",
           "answer": "A helper that <b>spots predictable access patterns</b> (like scanning straight through memory) and loads the data early, before you ask."
         },
@@ -155,19 +162,9 @@
           "answer": "Jumping through memory in <b>big steps</b> instead of neighboring items. Big strides waste most of each cache line and stop the prefetcher from guessing the pattern."
         },
         {
-          "topic": "Access Patterns",
-          "question": "What's the key takeaway about memory access patterns?",
-          "answer": "<b>Predictable, sequential access is fast; scattered, jumping access is slow</b> — even for the exact same result."
-        },
-        {
           "topic": "Data Structures",
           "question": "Which data structures are cache-friendly vs not?",
           "answer": "<b>Packed ones (arrays / vectors) are great.</b> Scattered, pointer-chasing ones (linked lists, tree maps) are usually slow because the CPU chases data all over memory."
-        },
-        {
-          "topic": "Data Structures",
-          "question": "What's the idea behind 'Structure of Arrays vs Array of Structures'?",
-          "answer": "Array of Structures is <b>cleaner to read</b> as a programmer; Structure of Arrays (each field in its own tight array) is often <b>faster</b> because you load only the data you actually use."
         },
         {
           "topic": "Compiler & Strategy",
@@ -197,11 +194,6 @@
       "description": "Optimizing for real hardware — data layout, SIMD & parallelism.",
       "summary": "summaries/algorithm-engineering/lecture-03-cpu-architecture-2.md",
       "cards": [
-        {
-          "topic": "Optimization",
-          "question": "In what order should you optimize code?",
-          "answer": "<b>Correctness first</b> → right algorithm → good data/memory layout → <em>only then</em> micro-tricks like SIMD and branch prediction."
-        },
         {
           "topic": "Data Layout",
           "question": "AoS vs SoA — what's the difference?",
@@ -256,6 +248,11 @@
           "topic": "Auto-Vectorization",
           "question": "What is an inter-iteration dependency?",
           "answer": "When a step needs the <mark>previous step's result</mark> (a chain), so steps can't run at the same time. Example: <code>v[i] = v[i-1]*w[i]</code> is blocked."
+        },
+        {
+          "topic": "Auto-Vectorization",
+          "question": "Compilers split a sum into several partial sums. Why does breaking the dependency chain help even <em>without</em> vectorization?",
+          "answer": "One accumulator means every add must wait for the previous add's result, so the loop runs at <b>one add per add-<em>latency</em></b> (say 4 cycles) — the pipeline's other slots sit empty. Several partial sums are <b>independent</b>, so they can be in flight at once and the loop runs at the add's <b>throughput</b> instead (several per cycle). <mark>You are converting a latency-bound chain into instruction-level parallelism</mark>; vectorization is a separate, additional win on top."
         },
         {
           "topic": "Auto-Vectorization",
@@ -330,16 +327,38 @@
       ]
     },
     {
+      "id": "tutorial-01-performance-engineering",
+      "title": "Tutorial 01 · Performance Engineering in Practice",
+      "description": "Find the bottleneck before you touch it — Amdahl, profilers, counters.",
+      "cards": [
+        {
+          "topic": "Amdahl's Law",
+          "question": "State Amdahl's Law and explain what it implies for where you spend optimization effort.",
+          "answer": "If a fraction <b>p</b> of the runtime can be sped up by a factor <b>s</b>, then <code>speedup = 1 / ((1 − p) + p/s)</code>. The untouched <b>(1 − p)</b> is a hard ceiling — making a routine that is 5% of runtime <em>infinitely</em> fast still buys you only 5%. So: <b>speed up the part that dominates runtime, not the part that looks embarrassing.</b>"
+        },
+        {
+          "topic": "Profilers",
+          "question": "Profiling tools fall into two big families. Name both, describe each mechanism, and give the main trade-off.",
+          "answer": "<b>Tracing / instrumentation</b> — records every call or event (e.g. cProfile): exact call counts, but <b>high overhead</b> that can distort the very thing you measure. <b>Sampling</b> — interrupts the program periodically and reads the program counter (e.g. Scalene, <code>perf record</code>): only a <b>statistical estimate</b>, but low overhead. The trade-off is <b>exactness vs. overhead and distortion</b>."
+        },
+        {
+          "topic": "Hardware Counters",
+          "question": "Which hardware-counter metrics would you examine in a micro-benchmark, and what does each diagnose?",
+          "answer": "<code>cycles</code> + <code>instructions</code> → <b>IPC</b>, how well the pipeline is being fed. <code>cache-references</code> / <code>cache-misses</code> → <b>locality and data layout</b>. <code>branches</code> / <code>branch-misses</code> → <b>unpredictable conditionals</b>. <code>task-clock</code> vs. wall time → whether you are <b>blocked rather than slow</b>. Collected with <code>perf stat</code>, which classifies the bottleneck; <code>perf record</code> then locates it in the code."
+        },
+        {
+          "topic": "Hardware Counters",
+          "question": "Why does a single hardware counter rarely diagnose anything — what do you read instead?",
+          "answer": "<b>Read the signature across counters, not one number.</b> Compute-bound = high IPC + low miss rate (blame the instruction count / algorithm). Memory-bound = low IPC + miss pressure (blame locality and layout). Branch-heavy = high branch-miss % on hot code. <mark>The trap: <code>task-clock</code> ≪ wall time means the program is <b>waiting, not computing</b></mark> — sampling harder won't help, you need off-CPU tools."
+        }
+      ]
+    },
+    {
       "id": "lecture-04-fundamental-data-structures",
       "title": "Lecture 04 · Fundamental Data Structures",
       "description": "Why the data structure — not the Big-O — decides real speed.",
       "summary": "summaries/algorithm-engineering/lecture-04-fundamental-data-structures.md",
       "cards": [
-        {
-          "topic": "Theme",
-          "question": "What's the one-line message of the whole lecture?",
-          "answer": "The <b>data structure is the performance story</b>. Same Big-O can be 100× apart in practice — because of <mark>cache behaviour and allocations</mark>, not asymptotics."
-        },
         {
           "topic": "Linear",
           "question": "What's the default linear structure, and why?",
@@ -369,6 +388,11 @@
           "topic": "Hash Maps",
           "question": "Before using a hash map, which cases have a better tool?",
           "answer": "<b>Dense integer keys</b> → index a <code>std::vector</code> directly. <b>Ordered queries</b> → sorted container. <b>Tiny N (≲100)</b> → <mark>sorted vector + linear scan</mark> (cache beats asymptotics)."
+        },
+        {
+          "topic": "Hash Maps",
+          "question": "How would you store an attribute keyed by node ID (IDs are incremental ints from 0, deletions rare, IDs never reused)?",
+          "answer": "<b>A flat <code>std::vector&lt;T&gt;</code> indexed directly by node ID</b> — no hashing, no allocation per key, one cache line per access. The IDs are already a dense perfect index, so a hash map only adds overhead. Deletions are rare and IDs are never reused, so you simply <b>leave a hole</b> (a tombstone / validity flag, or a sentinel value) rather than compacting; the vector grows with new nodes and never needs to shrink. Wasted slots cost memory only, and only if deletions ever become common."
         },
         {
           "topic": "Hash Maps",
@@ -413,7 +437,7 @@
         {
           "topic": "Sorted",
           "question": "What makes a B-tree / B+ tree fast?",
-          "answer": "Each <b>node is sized to a cache line</b> → one cache miss per level. B+ trees keep all values in <mark>linked leaves</mark>, so a range query is one descent + a linear leaf walk — why every database uses them."
+          "answer": "Each <b>node is sized to a cache line</b> (order chosen so one node = one cache line, typically dozens of keys) → <b>one cache miss per level</b> instead of one per comparison, and the height collapses to log_B N. <mark>The trade-off in choosing the order</mark>: a larger node means fewer levels (fewer misses) but more linear scanning inside a node and more data to shift on insert — so you grow it until a node stops fitting the cache line. B+ trees additionally keep all values in <b>linked leaves</b>, so a range query is one descent + a linear leaf walk — why every database uses them."
         },
         {
           "topic": "Sorted",
@@ -429,11 +453,6 @@
           "topic": "Priority Queues",
           "question": "What is a binary heap, physically?",
           "answer": "An <b>implicit tree stored in a flat array</b> (std::vector) — parent/child are just index arithmetic. <mark>No pointers, no per-node allocations</mark>, cache-friendly."
-        },
-        {
-          "topic": "Priority Queues",
-          "question": "How do push and pop work in a heap?",
-          "answer": "<b>push</b>: append to the end, then <b>bubble up</b>. <b>pop</b>: swap root with the last element, remove it, then <mark>sift down</mark> to restore heap order."
         },
         {
           "topic": "Priority Queues",
@@ -462,7 +481,7 @@
         },
         {
           "topic": "Graphs",
-          "question": "Why avoid vector<vector<int>> for a long-lived graph?",
+          "question": "Why avoid <code>vector&lt;vector&lt;int&gt;&gt;</code> for a long-lived graph?",
           "answer": "Each vertex's neighbors are a <b>separate heap allocation</b> → <mark>one cache miss per vertex before you read a single edge</mark>. Same pathology as std::list."
         },
         {
@@ -499,19 +518,9 @@
       "summary": "summaries/algorithm-engineering/lecture-05.md",
       "cards": [
         {
-          "topic": "The Big Picture",
-          "question": "How does this lecture's goal differ from the first half of the course?",
-          "answer": "The first half was about making programs run faster; now the focus shifts to solving <b>optimization problems</b> \u2014 finding the best possible answer, not just any answer."
-        },
-        {
-          "topic": "The Big Picture",
-          "question": "Which single problem is used to demonstrate every technique in the lecture?",
-          "answer": "The <b>Knapsack problem</b> is the running example used to compare all the solving methods."
-        },
-        {
           "topic": "Knapsack",
           "question": "In plain words, what is the Knapsack problem?",
-          "answer": "You have a backpack with a <b>weight limit</b> and treasures that each have a weight and a value \u2014 pick items to get the highest total value without going over the limit."
+          "answer": "You have a backpack with a <b>weight limit</b> and treasures that each have a weight and a value — pick items to get the highest total value without going over the limit."
         },
         {
           "topic": "Dynamic Programming",
@@ -521,12 +530,12 @@
         {
           "topic": "Dynamic Programming",
           "question": "For each item, what are the only two choices dynamic programming compares?",
-          "answer": "Either <b>skip the item</b> (keep the previous best) or <b>take the item</b> (gain its value but use up bag space) \u2014 keep whichever is better."
+          "answer": "Either <b>skip the item</b> (keep the previous best) or <b>take the item</b> (gain its value but use up bag space) — keep whichever is better."
         },
         {
           "topic": "Dynamic Programming",
           "question": "Is dynamic programming usually the best choice in practice?",
-          "answer": "No \u2014 the tables often become <b>too big to be practical</b>. It's common in theory but rarely the best real-world choice; Knapsack is a lucky exception."
+          "answer": "No — the tables often become <b>too big to be practical</b>. It's common in theory but rarely the best real-world choice; Knapsack is a lucky exception."
         },
         {
           "topic": "Greedy",
@@ -536,7 +545,7 @@
         {
           "topic": "Greedy",
           "question": "Why is the greedy result useful even though it can be imperfect?",
-          "answer": "It's fast and always a valid, real packing, so it gives a <b>lower bound</b> \u2014 a guaranteed \"you can do at least this well\" (a floor)."
+          "answer": "It's fast and always a valid, real packing, so it gives a <b>lower bound</b> — a guaranteed \"you can do at least this well\" (a floor)."
         },
         {
           "topic": "Fractional & Bounds",
@@ -546,7 +555,7 @@
         {
           "topic": "Fractional & Bounds",
           "question": "Why does the fractional solution give an upper bound?",
-          "answer": "Slicing adds freedom, so it can only be as good or better than the real puzzle \u2014 its value is a <b>ceiling</b> the true answer can never beat."
+          "answer": "Slicing adds freedom, so it can only be as good or better than the real puzzle — its value is a <b>ceiling</b> the true answer can never beat."
         },
         {
           "topic": "Fractional & Bounds",
@@ -556,22 +565,17 @@
         {
           "topic": "Search Tree",
           "question": "How can all possible Knapsack solutions be pictured?",
-          "answer": "As a <b>decision tree</b> of yes/no choices \u2014 each node is a partial plan and each edge is one \"take it / leave it\" decision."
+          "answer": "As a <b>decision tree</b> of yes/no choices — each node is a partial plan and each edge is one \"take it / leave it\" decision."
         },
         {
           "topic": "Backtracking",
           "question": "What is the key move in backtracking?",
-          "answer": "If a partial plan is <b>already too heavy</b>, stop and discard that whole branch \u2014 nothing below it can be valid."
-        },
-        {
-          "topic": "Backtracking",
-          "question": "What does backtracking achieve versus full brute force?",
-          "answer": "It <b>prunes impossible branches</b> early, shrinking the search tree instead of exploring every combination."
+          "answer": "If a partial plan is <b>already too heavy</b>, stop and discard that whole branch — nothing below it can be valid."
         },
         {
           "topic": "Constraint Propagation",
           "question": "What is constraint propagation?",
-          "answer": "Using <b>logic to auto-decide forced choices</b> before branching \u2014 working out the obvious consequences of what you've already picked."
+          "answer": "Using <b>logic to auto-decide forced choices</b> before branching — working out the obvious consequences of what you've already picked."
         },
         {
           "topic": "Constraint Propagation",
@@ -581,12 +585,7 @@
         {
           "topic": "Branch & Bound",
           "question": "How does branch & bound go beyond backtracking?",
-          "answer": "It also discards branches that are possible but <b>can't beat the best answer found so far</b> \u2014 not just impossible ones."
-        },
-        {
-          "topic": "Branch & Bound",
-          "question": "What key question does branch & bound ask about each branch?",
-          "answer": "\"Could this branch, <b>even in its best case</b>, beat my current record?\" If not, prune it."
+          "answer": "It also discards branches that are possible but <b>can't beat the best answer found so far</b> — not just impossible ones."
         },
         {
           "topic": "Branch & Bound",
@@ -594,39 +593,14 @@
           "answer": "A <b>lower bound</b> (best real answer so far) and each branch's <b>upper bound</b> (best it could possibly reach); if the branch's ceiling can't beat your record, drop it."
         },
         {
-          "topic": "Branch & Cut",
-          "question": "In branch & cut, how is the bound usually computed?",
-          "answer": "By solving the <b>linear relaxation</b> \u2014 dropping the strict \"take it or leave it\" rule and allowing values in between, which turns the hard problem into an easy one."
-        },
-        {
-          "topic": "Branch & Cut",
-          "question": "What is a \"cut\", and why add one?",
-          "answer": "A cut is an extra rule that <b>forbids an impossible fractional answer</b> while keeping every real solution legal; it pulls the ceiling closer to reality so branches can be pruned sooner."
+          "topic": "Branch & Bound",
+          "question": "Bound approach A is fast but weak; B is slow but tighter. Discuss the trade-off — why can either win?",
+          "answer": "Total time ≈ <b>(nodes explored) × (cost per node)</b>, and the two approaches move these in opposite directions. <b>A (fast, weak)</b> rips through many nodes per second, but prunes less, so the tree stays large — it wins when the weak bound is <em>almost as good</em>, or when the instance is easy enough that raw node throughput dominates. <b>B (slow, tight)</b> pays much more per node but cuts whole subtrees, and the saving is <b>exponential in the tree</b> — it wins when the tighter bound actually prunes branches A would explore, especially deep in a hard instance and when <em>proving</em> optimality. <mark>Neither dominates: it depends on whether the extra pruning outweighs the extra cost per node</mark>, which is why solvers hedge (cheap bound at every node, expensive bound only at promising ones)."
         },
         {
           "topic": "Metaheuristics",
           "question": "When do you reach for metaheuristics?",
-          "answer": "When the problem is <b>too big or too nasty</b> for exact methods to finish \u2014 they find a really good answer without promising it's perfect."
-        },
-        {
-          "topic": "Metaheuristics",
-          "question": "What are the three big families of metaheuristics?",
-          "answer": "<b>Constructive heuristics</b>, <b>local search</b>, and <b>population-based</b> algorithms."
-        },
-        {
-          "topic": "Metaheuristics",
-          "question": "How does a constructive heuristic build an answer?",
-          "answer": "It <b>grows a solution step by step</b> (often greedily), possibly with randomness and many repeats, keeping the best attempt."
-        },
-        {
-          "topic": "Metaheuristics",
-          "question": "How does local search work?",
-          "answer": "Start from a solution and repeatedly move to a <b>slightly better neighbor</b> (one small change away) until you can't improve."
-        },
-        {
-          "topic": "Metaheuristics",
-          "question": "What is the main danger of local search, and one way to escape it?",
-          "answer": "Getting stuck in a <b>local optimum</b> (a small hill). <b>Simulated annealing</b> escapes by occasionally allowing a step downhill."
+          "answer": "When the problem is <b>too big or too nasty</b> for exact methods to finish — they find a really good answer without promising it's perfect."
         },
         {
           "topic": "Metaheuristics",
@@ -634,19 +608,26 @@
           "answer": "<b>Exploration</b> roams widely to scout new areas, while <b>exploitation</b> polishes what you already have; a good strategy explores first, then intensifies."
         },
         {
-          "topic": "Metaheuristics",
-          "question": "How do population-based methods work?",
-          "answer": "Keep a <b>whole population of solutions</b> and each generation combine them, favor the good ones, and keep diversity (e.g. genetic algorithms)."
-        },
-        {
           "topic": "Key Ideas",
           "question": "What single idea unifies all of these methods?",
           "answer": "They are all smarter ways to <b>search the tree of take-it/leave-it choices</b>, trapping the answer between a floor and a ceiling."
+        }
+      ]
+    },
+    {
+      "id": "tutorial-02-declarative-modeling",
+      "title": "Tutorial 02 · Declarative Modeling",
+      "description": "The five-component recipe: turn a paragraph of prose into a model.",
+      "cards": [
+        {
+          "topic": "Five Components",
+          "question": "Name the five components of an optimization model in order — the question each answers and the mathematical object it becomes.",
+          "answer": "1. <b>Entities</b> — what objects does the problem talk about? → <b>sets</b>. 2. <b>Parameters</b> — what data is known up front? → <b>constants indexed by those sets</b>. 3. <b>Variables</b> — what is the solver allowed to choose? → <b>unknowns with a domain</b>. 4. <b>Constraints</b> — what makes a choice valid? → <b>relations on the variables</b>. 5. <b>Objective</b> — how do we rank the feasible ones? → <b>a function to minimise or maximise</b>. It is a recurring guide, not a one-pass checklist — a new constraint may demand a new variable."
         },
         {
-          "topic": "Key Ideas",
-          "question": "Why are metaheuristics often the best choice in practice?",
-          "answer": "Because they <b>scale to huge problems</b> where exact methods can't finish \u2014 and they can still team up with exact methods."
+          "topic": "Five Components",
+          "question": "Apply the five-component recipe: assign every parcel to exactly one van without exceeding van capacity, minimising handling cost.",
+          "answer": "<b>Entities</b>: parcels P, vans V. <b>Parameters</b>: weight w<sub>p</sub>, capacity C<sub>v</sub>, handling cost c<sub>pv</sub>. <b>Variables</b>: x<sub>pv</sub> ∈ {0,1} — parcel p is loaded into van v. <b>Constraints</b>: Σ<sub>v</sub> x<sub>pv</sub> = 1 for every p ('exactly one of its available vans'); Σ<sub>p</sub> w<sub>p</sub>·x<sub>pv</sub> ≤ C<sub>v</sub> for every v ('must not exceed'). <b>Objective</b>: min Σ<sub>p,v</sub> c<sub>pv</sub>·x<sub>pv</sub>."
         }
       ]
     },
@@ -665,11 +646,6 @@
       "cards": [
         {
           "topic": "Big Picture",
-          "question": "What is optimization, in plain terms?",
-          "answer": "Finding the <b>best plan</b> (e.g. most money) while obeying a set of rules (constraints)."
-        },
-        {
-          "topic": "Big Picture",
           "question": "What is Linear Programming (LP) and what makes it the 'easy' version?",
           "answer": "Maximizing a goal under straight-line rules where answers may be <b>fractions</b>. It's easy because computers can solve it quickly."
         },
@@ -679,14 +655,14 @@
           "answer": "An LP where some variables must be <b>whole numbers</b>. That single requirement makes it genuinely hard to solve."
         },
         {
-          "topic": "Big Picture",
-          "question": "What is the core trick behind every MIP solver?",
-          "answer": "Use the <b>easy LP over and over again</b> to slowly crack the hard MIP."
-        },
-        {
           "topic": "LP Basics",
           "question": "What does it mean that 'LP is in P'?",
           "answer": "Computers can solve LP <b>quickly</b> (in polynomial time), even for large problems, in both theory and practice."
+        },
+        {
+          "topic": "LP Basics",
+          "question": "Write down the general form of a minimization LP.",
+          "answer": "<b>min cᵀx  subject to  Ax ≥ b,  x ≥ 0</b> — x is the vector of decision variables, c the cost coefficients, A the constraint matrix and b the right-hand sides. Every relation is <b>linear</b> and x is <b>continuous</b>; that is exactly what puts LP in P."
         },
         {
           "topic": "LP Basics",
@@ -720,28 +696,13 @@
         },
         {
           "topic": "LP Algorithms",
-          "question": "Why is there no single 'best' LP algorithm?",
-          "answer": "Each one wins in <b>different situations</b>; the right choice depends on the problem's size, structure, and precision needed."
-        },
-        {
-          "topic": "LP Algorithms",
           "question": "What is a 'warm start' and why does it matter?",
           "answer": "Reusing a previous solution after a small change, so you only need a <b>few extra steps</b> instead of solving from scratch."
         },
         {
           "topic": "LP to MIP",
-          "question": "What extra rule turns an LP into a MIP?",
-          "answer": "Some variables are forced to be <b>whole numbers</b> (integers) instead of fractions."
-        },
-        {
-          "topic": "LP to MIP",
           "question": "What is an Integer Program vs. a Binary Program?",
           "answer": "Integer Program: all variables are whole numbers. Binary Program: variables are only <b>0 or 1</b> (yes/no switches)."
-        },
-        {
-          "topic": "LP to MIP",
-          "question": "What does a {0,1} variable represent?",
-          "answer": "A <b>yes/no decision</b>, e.g. 'build the bridge?' where 1 = yes and 0 = no."
         },
         {
           "topic": "LP to MIP",
@@ -760,6 +721,16 @@
         },
         {
           "topic": "TSP Example",
+          "question": "How would you model the TSP as a MIP?",
+          "answer": "<b>DFJ (undirected)</b>: one binary xₑ per edge, minimise Σ cₑ·xₑ, with <b>degree constraints</b> Σ<sub>e ∈ δ(i)</sub> xₑ = 2 for every city, plus <b>subtour elimination</b> Σ<sub>e ∈ δ(S)</sub> xₑ ≥ 2 for every ∅ ⊊ S ⊊ V. Degrees alone allow a set of disjoint cycles; the cut constraints force a single tour. There are 2ⁿ−2 of them, so they are added <b>lazily</b> — separation is a <b>min cut</b>, and any cut of value &lt; 2 is a violated inequality. <b>MTZ (directed)</b> is the writable alternative (position variables uᵢ with a Big-M) but its relaxation is weak."
+        },
+        {
+          "topic": "TSP Example",
+          "question": "What are lazy constraints, and where did we use them?",
+          "answer": "A constraint family too large to write down is <b>left out of the model entirely</b>. You solve, inspect the solution, and <b>add back only the constraints it actually violates</b>, repeating until none are. It is not proven that few suffice — but in practice they do. <b>Example: TSP subtour elimination</b>, where we start with no subtour constraints and add one each time the LP hands back disjoint cycles."
+        },
+        {
+          "topic": "TSP Example",
           "question": "In the treasure-hunt view of solving, what is the Upper Bound (UB)?",
           "answer": "The best <b>real, complete route</b> found so far — proof that a route this good exists."
         },
@@ -772,11 +743,6 @@
           "topic": "TSP Example",
           "question": "When do you know you've found the optimal answer?",
           "answer": "When the upper bound and lower bound <b>meet at the same value</b> — the answer is then proven best."
-        },
-        {
-          "topic": "TSP Example",
-          "question": "What is a 'relaxation' of a MIP?",
-          "answer": "A version where you <b>drop the whole-number rule</b> (and sometimes other rules) so the easy LP can solve it."
         },
         {
           "topic": "Cutting Planes",
@@ -795,18 +761,8 @@
         },
         {
           "topic": "Cutting Planes",
-          "question": "Why is adding a cut safe and useful?",
-          "answer": "You keep an easy LP, <b>lose no valid solution</b>, and force a new answer because the old fractional one is cut off."
-        },
-        {
-          "topic": "Cutting Planes",
           "question": "What is the 'separation problem'?",
           "answer": "The task of <b>finding a good cutting plane</b>; usually solved by a heuristic that can sometimes fail."
-        },
-        {
-          "topic": "Cutting Planes",
-          "question": "What is a comb inequality (TSP)?",
-          "answer": "A hand-crafted TSP cut using a 'handle' with an odd number of 'teeth' — just a <b>specialized no-cheating rule</b>."
         },
         {
           "topic": "Branch & Bound",
@@ -832,16 +788,6 @@
           "topic": "Duality",
           "question": "What does the Strong Duality Theorem say?",
           "answer": "If the primal has an optimal solution, so does the dual, and their optimal <b>values are exactly equal</b>."
-        },
-        {
-          "topic": "Duality",
-          "question": "How does the floor-and-ceiling analogy explain duality?",
-          "answer": "The primal builds a floor ('at least this high'), the dual sets a ceiling ('no higher than this'), and they <b>meet at the true value</b>."
-        },
-        {
-          "topic": "Duality",
-          "question": "Why does duality matter for MIP solvers?",
-          "answer": "It's the mathematical <b>proof</b> that when the upper and lower bounds meet, you've truly found the best answer."
         },
         {
           "topic": "Branch Selection",
@@ -906,800 +852,763 @@
       ]
     },
     {
-        "id": "lecture-08-graph-network-algorithms",
-        "title": "Lecture 08 · Graph & Network Algorithms",
-        "description": "The four classic graph problems — shortest path, matching, flow, and spanning trees — explained through everyday examples.",
-        "summary": "summaries/algorithm-engineering/lecture-08.md",
-        "cards": [
-            {
-                "topic": "Graph Basics",
-                "question": "What are the two building blocks of every graph?",
-                "answer": "<b>Nodes (dots)</b> are the things, and <b>edges (lines)</b> are the connections between pairs of things."
-            },
-            {
-                "topic": "Graph Basics",
-                "question": "What does a 'weight' on an edge represent?",
-                "answer": "A number carried by the edge, like <b>distance, time, cost, or capacity</b>."
-            },
-            {
-                "topic": "Graph Basics",
-                "question": "What does it mean for an edge to have a direction?",
-                "answer": "The connection only goes <b>one way</b>, like a one-way street."
-            },
-            {
-                "topic": "Graph Basics",
-                "question": "What is special about a graph with no loops (a DAG or tree)?",
-                "answer": "You can never walk in a circle back to the start, which makes them <b>much easier to solve</b> — often with simple step-by-step dynamic programming."
-            },
-            {
-                "topic": "Graph Basics",
-                "question": "What are the four classic graph problems in this lecture?",
-                "answer": "<b>Shortest path, matching, flow, and spanning tree (MST)</b>."
-            },
-            {
-                "topic": "Graph Basics",
-                "question": "Why prefer a graph algorithm over a general solver when possible?",
-                "answer": "Graph algorithms are <b>more specialized and much faster</b> than throwing a general-purpose (LP/MIP) solver at the problem."
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "What question does the shortest path problem answer?",
-                "answer": "What is the <b>cheapest or fastest way</b> to get from a start point to a target point?"
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "How does Dijkstra's algorithm explore the graph?",
-                "answer": "Like water flooding outward — it always settles the <b>nearest unvisited node next</b>, in all directions equally."
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "How is A* different from Dijkstra?",
-                "answer": "A* adds a <b>hint pointing toward the goal</b>, so it searches in a focused cone instead of flooding everywhere."
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "What is the one rule the A* hint must obey?",
-                "answer": "It must <b>never overestimate</b> the real remaining distance; an honest under-guess keeps A* correct."
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "Why is A* usually much faster than Dijkstra?",
-                "answer": "It explores <b>far fewer nodes</b> — in the lecture, 123 instead of 1,253 for the same best path."
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "How can A* solve a sliding tile puzzle with ~180,000 states?",
-                "answer": "It treats each arrangement as a node and <b>generates the graph as it goes</b>, touching only ~283 states instead of storing them all."
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "Which algorithm fits an unweighted graph?",
-                "answer": "<b>BFS</b> — just count the number of steps."
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "Which algorithm handles negative edge weights?",
-                "answer": "<b>Bellman-Ford</b> (plain Dijkstra can fail with negative weights)."
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "Why can time-dependent paths make a longer road the better choice?",
-                "answer": "Travel time depends on <b>when you enter a road</b>, so a longer route can dodge rush hour — sometimes even waiting before leaving helps."
-            },
-            {
-                "topic": "Shortest Path",
-                "question": "Why is the resource-constrained shortest path surprisingly hard?",
-                "answer": "Finding the cheapest path that also respects a limit (like a fuel budget) is <b>NP-hard</b> — the cheapest path is often illegal, forcing a pricier legal one."
-            },
-            {
-                "topic": "Matching",
-                "question": "What is a matching in a graph?",
-                "answer": "A set of edges where <b>no two edges share a node</b> — everyone gets at most one partner."
-            },
-            {
-                "topic": "Matching",
-                "question": "Is the biggest matching always the best one?",
-                "answer": "No — a <b>smaller matching can be worth more</b> when you count value/weight instead of the number of pairs."
-            },
-            {
-                "topic": "Matching",
-                "question": "How does kidney exchange work as a matching problem?",
-                "answer": "Pair up families so each donor gives to the <b>other pair's compatible patient</b>, maximizing successful transplants."
-            },
-            {
-                "topic": "Matching",
-                "question": "What is the assignment problem?",
-                "answer": "A minimum-cost perfect matching — assign each order to one machine so the <b>total cost is lowest</b>."
-            },
-            {
-                "topic": "Matching",
-                "question": "What makes matching harder to solve?",
-                "answer": "<b>Odd cycles</b> — bipartite graphs (no odd cycles) allow clean, faster algorithms."
-            },
-            {
-                "topic": "Flow",
-                "question": "What does the max flow problem ask?",
-                "answer": "How much can you push from a <b>source to a sink</b> through pipes that each have a capacity limit?"
-            },
-            {
-                "topic": "Flow",
-                "question": "What limits the total flow through a network?",
-                "answer": "The <b>bottleneck</b> — the tightest pipe or cut along the way."
-            },
-            {
-                "topic": "Flow",
-                "question": "How is min-cost flow different from max flow?",
-                "answer": "Each pipe charges a fee per unit, so the goal is to move the required flow at the <b>least total cost</b>."
-            },
-            {
-                "topic": "Flow",
-                "question": "Why is the residual graph the key idea in flow algorithms?",
-                "answer": "It lets the algorithm <b>undo or reroute earlier flow</b>, so bad early decisions can be fixed to reach the true optimum."
-            },
-            {
-                "topic": "Flow",
-                "question": "Why is min-cost flow called a 'Swiss Army knife'?",
-                "answer": "Shortest path, assignment, and transportation problems are all <b>special cases</b> of it."
-            },
-            {
-                "topic": "Flow",
-                "question": "When does a flow problem stop being easy?",
-                "answer": "With <b>multiple goods sharing pipes</b> or costs to open an edge — then it becomes NP-hard and needs a MIP solver."
-            },
-            {
-                "topic": "Spanning Tree",
-                "question": "What is a minimum spanning tree (MST)?",
-                "answer": "The <b>cheapest set of edges that connects every node</b> with no wasteful loops."
-            },
-            {
-                "topic": "Spanning Tree",
-                "question": "Name the three greedy algorithms that build an MST.",
-                "answer": "<b>Kruskal, Prim, and Borůvka</b> — all reach the same optimum."
-            },
-            {
-                "topic": "Spanning Tree",
-                "question": "Why is greedy special for the MST?",
-                "answer": "For the MST, always grabbing the cheapest safe edge is <b>provably exact</b> — rare, since greedy usually isn't optimal."
-            },
-            {
-                "topic": "Spanning Tree",
-                "question": "Give a real-world use of an MST.",
-                "answer": "Wiring a campus with fiber so every building connects using the <b>least total trench length</b>."
-            },
-            {
-                "topic": "Big Picture",
-                "question": "What is the practical performance warning about matching and flow?",
-                "answer": "They usually run fast, but their <b>roughly cubic worst case</b> can become critical on very large or tricky inputs."
-            }
-        ]
+      "id": "tutorial-03-lp-mip-modeling",
+      "title": "Tutorial 03 · LP & MIP Modeling",
+      "description": "The modeling toolkit — Big-M, semi-continuous, PWL, strong formulations.",
+      "cards": [
+        {
+          "topic": "Big-M",
+          "question": "State the general Big-M construction for gating a linear constraint by a binary, then its main drawback and the mitigations.",
+          "answer": "To express <code>b = 1 ⇒ aᵀx ≤ c</code> linearly, write <b>aᵀx ≤ c + M(1 − b)</b> with M large enough that b = 0 leaves the constraint vacuous. Disjunctions, implications, on/off costs and fixed charges all fit this one template. <b>The price: it is not LP-preserving.</b> A <em>fractional</em> b already buys most of the M-slack, so the relaxation collapses and the root bound can be near useless — branch &amp; bound has to rebuild the structure node by node. Mitigations: use the <b>smallest valid M</b>, or avoid Big-M via disaggregation / native indicator constraints."
+        },
+        {
+          "topic": "Semi-Continuous",
+          "question": "Define a semi-continuous variable and give its MIP encoding.",
+          "answer": "x is either <b>off</b> or inside an operating band: x ∈ {0} ∪ [L, U] with 0 &lt; L ≤ U. Encoding: <b>L·b ≤ x ≤ U·b, b ∈ {0,1}</b>. b = 0 squeezes x between 0 and 0, forcing <b>x = 0</b>; b = 1 forces <b>x ∈ [L, U]</b>. The same b doubles as a <b>fixed-charge switch</b> — add c·b to the objective and you pay c exactly when the unit runs."
+        },
+        {
+          "topic": "Semi-Continuous",
+          "question": "For x ∈ [L₁,U₁] ∪ [L₂,U₂] ∪ [L₃,U₃], why does reusing one shared x with three semi-continuous blocks fail, and what is the correct encoding?",
+          "answer": "(a) Each <em>off</em> block independently forces x = 0, so the two intervals you did not pick <b>pin x to zero</b> — the model is only feasible at x = 0. (b) Give each interval <b>its own part</b> and let an exactly-one selector pick the live one: <b>x = x₁ + x₂ + x₃</b>, with <b>Lₖ·bₖ ≤ xₖ ≤ Uₖ·bₖ</b> and <b>Σₖ bₖ = 1</b>. The unselected parts are then zero and contribute nothing to the sum."
+        },
+        {
+          "topic": "LP Tricks",
+          "question": "How do you cast min-max and min-absolute-value objectives as LPs — and why doesn't the trick extend to maximising |x|?",
+          "answer": "<b>min maxᵢ fᵢ(x)</b> → introduce z: <code>min z s.t. fᵢ(x) ≤ z for all i</code>. <b>min Σ|xᵢ − tᵢ|</b> → introduce dᵢ: <code>min Σ dᵢ s.t. dᵢ ≥ xᵢ − tᵢ and dᵢ ≥ tᵢ − xᵢ</code>. Both are correct only because <b>the objective pushes the auxiliary down</b> until it hits the true max / absolute value — nothing else holds it there. <mark>Maximising |x|, or forcing |x| = d, instead needs x pinned to an <em>edge</em> of a non-convex set</mark>, which the auxiliary trick cannot do: it takes a binary and Big-M (x = d·b − d·(1−b))."
+        },
+        {
+          "topic": "Piecewise Linear",
+          "question": "How is a piecewise-linear (PWL) function encoded, and when is PWL approximation especially cheap?",
+          "answer": "Breakpoints (Xₖ, Yₖ) are data; each point is a <b>convex combination</b>: x = ΣλₖXₖ, y = ΣλₖYₖ, Σλₖ = 1, λ ≥ 0 — plus <b>adjacency</b> (only two consecutive λ may be non-zero), enforced by one activation binary per segment. It can approximate <b>any</b> nonlinear function to the accuracy of your breakpoints. <mark>If f is <b>convex</b> and you are minimising, the binaries disappear</mark>: the epigraph y ≥ f(x) is convex, so tangent half-planes <code>y ≥ f'(Xₖ)(x − Xₖ) + f(Xₖ)</code> give an <b>LP-only</b> encoding and objective pressure pulls y onto the envelope. Equality y = f(x) still needs the selection binaries."
+        },
+        {
+          "topic": "Strong vs Weak",
+          "question": "Facility location links xᵢⱼ to yⱼ either disaggregated (xᵢⱼ ≤ yⱼ) or aggregated (Σᵢ xᵢⱼ ≤ n·yⱼ). Same integer solutions — which is better in practice, and why?",
+          "answer": "<b>Disaggregated wins.</b> Both describe the identical integer feasible set, but branch &amp; bound lives off the <b>LP relaxation</b>. xᵢⱼ ≤ yⱼ forces yⱼ up to the largest single assignment — n·m small, <b>tight</b> inequalities. The aggregated version is a Big-M with M = n: one served customer only requires yⱼ ≥ 1/n, so the opening cost is almost free in the relaxation and the <b>bound is weak</b>. The lesson: <b>many tight constraints beat few loose ones</b>, even though the model is larger."
+        }
+      ]
     },
     {
-        "id": "lecture-09-sat",
-        "title": "Lecture 09 · SAT",
-        "description": "How SAT solvers work: from DPLL guessing to modern CDCL learning.",
-        "summary": "summaries/algorithm-engineering/lecture-09-sat.md",
-        "cards": [
-            {
-                "topic": "What is SAT",
-                "question": "In plain words, what does the SAT problem ask?",
-                "answer": "Can we set a bunch of true/false switches (variables) so that <b>every rule is satisfied at the same time</b>? If yes it's satisfiable, if impossible it's unsatisfiable."
-            },
-            {
-                "topic": "What is SAT",
-                "question": "What is a 'clause' in SAT?",
-                "answer": "A single rule that says <b>at least one of these options must be true</b> (an OR-list of literals). The whole formula requires ALL clauses to hold at once."
-            },
-            {
-                "topic": "What is SAT",
-                "question": "What's the difference between a variable and a literal?",
-                "answer": "A <b>variable</b> is a yes/no switch; a <b>literal</b> is that switch or its opposite (the switch, or 'not' the switch)."
-            },
-            {
-                "topic": "What is SAT",
-                "question": "Why is SAT historically important?",
-                "answer": "It was the <b>first problem ever proven NP-complete</b> — the 'granddaddy' of hard problems. A fast trick for SAT would crack a huge family of hard problems."
-            },
-            {
-                "topic": "DPLL",
-                "question": "What is DPLL, at a high level?",
-                "answer": "The classic solver that works like Sudoku: <b>guess, fill in all forced moves, and backtrack</b> (undo) when you hit a contradiction."
-            },
-            {
-                "topic": "DPLL",
-                "question": "What is Unit Propagation, and why does it matter?",
-                "answer": "When a clause shrinks to only one option left, you're <b>forced</b> to pick it — which can force more moves in a domino chain. It's the single most important and most-used move."
-            },
-            {
-                "topic": "DPLL",
-                "question": "What is the Pure Literal rule?",
-                "answer": "If a variable only ever appears in one form (always 'on' or always 'off'), just <b>set it that way for free</b> — it can only help. Removes all clauses it satisfies."
-            },
-            {
-                "topic": "DPLL",
-                "question": "What does DPLL do when nothing is forced?",
-                "answer": "It <b>guesses a variable</b>, runs propagation, and if that leads to a contradiction it undoes the guess and tries the opposite value — building a search tree."
-            },
-            {
-                "topic": "Implementation",
-                "question": "What is the 'trail' in a SAT solver?",
-                "answer": "An <b>ordered stack of everything set true so far</b>, split into decision levels. Level 0 is true forever; each new guess starts a new level."
-            },
-            {
-                "topic": "Implementation",
-                "question": "How does backtracking work with the trail?",
-                "answer": "You just <b>chop off the top decision level</b> — cheap, like tearing the last page off a notepad."
-            },
-            {
-                "topic": "Implementation",
-                "question": "What is the Two Watched Literals idea?",
-                "answer": "In each clause you only <b>keep an eye on two still-alive options</b>. While two are alive the clause can't be forced yet, so you can ignore it — huge speedup."
-            },
-            {
-                "topic": "Implementation",
-                "question": "What must you fix about watched literals when you backtrack? Why?",
-                "answer": "<b>Nothing!</b> Undoing can only bring dead switches back to life, never kill live ones, so 'watch two live options' stays true automatically. Doing nothing is the cheapest option."
-            },
-            {
-                "topic": "DPLL Flaw",
-                "question": "What is DPLL's big weakness?",
-                "answer": "It <b>never learns from its mistakes</b> — it wanders back into the same hidden dead-ends over and over, which can make it insanely slow."
-            },
-            {
-                "topic": "Learning",
-                "question": "What is resolution, in simple terms?",
-                "answer": "A way to <b>combine two rules into a new true rule</b> by cancelling out one variable: 'A or X' plus 'B or not-X' gives you 'A or B'."
-            },
-            {
-                "topic": "Learning",
-                "question": "How can resolution prove a formula is unsatisfiable?",
-                "answer": "Keep combining rules until you reach the <b>empty clause</b> (a rule with zero options = flat-out impossible). That proves the whole thing is UNSAT."
-            },
-            {
-                "topic": "CDCL",
-                "question": "What is CDCL and why is it the modern standard?",
-                "answer": "Conflict-Driven Clause Learning: it's DPLL that <b>learns a new rule from every crash</b>, so it never repeats the same mistake."
-            },
-            {
-                "topic": "CDCL",
-                "question": "What extra info does each forced (propagated) literal store?",
-                "answer": "Its <b>reason</b> — the clause that forced it. These reasons are traced back to build the learned clause when a conflict happens."
-            },
-            {
-                "topic": "CDCL",
-                "question": "What happens on a conflict in CDCL?",
-                "answer": "You <b>trace backwards through the reasons using resolution</b> to find the real cause, distill it into a new learned rule, and add it to the rulebook forever."
-            },
-            {
-                "topic": "CDCL",
-                "question": "What is backjumping?",
-                "answer": "Instead of undoing one step, <b>leap far back</b> to the earliest level where the newly learned rule would have helped — skipping useless branches at once."
-            },
-            {
-                "topic": "CDCL",
-                "question": "What is the First UIP (Unique Implication Point)?",
-                "answer": "The single <b>bottleneck moment</b> in the current level that all the trouble funnels through. Learning the rule right there gives the tightest, most useful lesson."
-            },
-            {
-                "topic": "CDCL",
-                "question": "Why is CDCL guaranteed to terminate?",
-                "answer": "Every conflict teaches a <b>genuinely new rule</b> (never a repeat), and there are only finitely many possible rules to learn — so it must finish."
-            },
-            {
-                "topic": "CDCL",
-                "question": "What are the two ways a CDCL run can end?",
-                "answer": "Either fill in every switch with no conflict (<b>SAT — answer found</b>), or learn the empty clause (<b>UNSAT — proven impossible</b>)."
-            },
-            {
-                "topic": "Improvements",
-                "question": "What does VSIDS do?",
-                "answer": "A variable-picking heuristic: prefer switches <b>recently involved in many conflicts</b> — the 'spicy' important ones. Like a firefighter rushing to where fires keep flaring."
-            },
-            {
-                "topic": "Improvements",
-                "question": "What are restarts, and why keep doing them?",
-                "answer": "Throw away all current guesses and start fresh, but <b>keep everything learned</b> (clauses + scores). Stops the solver getting stuck in a bad part of the search."
-            },
-            {
-                "topic": "Improvements",
-                "question": "What is phase saving?",
-                "answer": "When you undo a switch, <b>remember which way it was set</b> and try that same value next time — so you don't re-discover good settings you already found."
-            },
-            {
-                "topic": "Improvements",
-                "question": "Why delete learned clauses, and how do we choose which?",
-                "answer": "The rulebook bloats and slows down, so we <b>toss the least useful rules</b>. The best quality measure is the glue score (LBD): rules spanning fewer decision levels are stickier and worth keeping."
-            },
-            {
-                "topic": "Improvements",
-                "question": "What is conflict clause minimization?",
-                "answer": "After learning a rule, <b>trim redundant parts</b> so it's shorter and punchier — shorter rules are faster and more powerful."
-            },
-            {
-                "topic": "Improvements",
-                "question": "What is pre-/in-processing, and its most useful technique?",
-                "answer": "Cleaning up and simplifying the rulebook before and during solving. The single most effective is <b>Bounded Variable Elimination (BVE)</b>: remove a variable by folding its clauses together, if it doesn't blow up."
-            },
-            {
-                "topic": "Improvements",
-                "question": "What are SAT/UNSAT stages?",
-                "answer": "Finding an answer vs. proving none exists need different styles, so the solver <b>switches its personality</b> depending on which case it thinks it's in."
-            },
-            {
-                "topic": "Improvements",
-                "question": "What is local search (probSAT/YalSAT) used for here?",
-                "answer": "A 'wander and fix' method that flips switches to satisfy more rules, run on the side to <b>suggest good settings</b> to the main CDCL engine."
-            },
-            {
-                "topic": "Exam Focus",
-                "question": "What does the lecture say to focus on for the exam?",
-                "answer": "<b>CDCL, the trail & decision levels, conflict resolution (learning + backjumping), and the high-level ideas</b> behind the tricks — not every optimization's inner details."
-            }
-        ]
+      "id": "lecture-08-graph-network-algorithms",
+      "title": "Lecture 08 · Graph & Network Algorithms",
+      "description": "The four classic graph problems — shortest path, matching, flow, and spanning trees — explained through everyday examples.",
+      "summary": "summaries/algorithm-engineering/lecture-08.md",
+      "cards": [
+        {
+          "topic": "Graph Basics",
+          "question": "What is special about a graph with no loops (a DAG or tree)?",
+          "answer": "You can never walk in a circle back to the start, which makes them <b>much easier to solve</b> — often with simple step-by-step dynamic programming."
+        },
+        {
+          "topic": "Graph Basics",
+          "question": "What are the four classic graph problems in this lecture?",
+          "answer": "<b>Shortest path, matching, flow, and spanning tree (MST)</b>."
+        },
+        {
+          "topic": "Graph Basics",
+          "question": "Why prefer a graph algorithm over a general solver when possible?",
+          "answer": "Graph algorithms are <b>more specialized and much faster</b> than throwing a general-purpose (LP/MIP) solver at the problem."
+        },
+        {
+          "topic": "Shortest Path",
+          "question": "How does Dijkstra's algorithm explore the graph?",
+          "answer": "Like water flooding outward — it always settles the <b>nearest unvisited node next</b>, in all directions equally."
+        },
+        {
+          "topic": "Shortest Path",
+          "question": "How is A* different from Dijkstra?",
+          "answer": "A* adds a <b>hint pointing toward the goal</b>, so it searches in a focused cone instead of flooding everywhere."
+        },
+        {
+          "topic": "Shortest Path",
+          "question": "What is the one rule the A* hint must obey?",
+          "answer": "It must <b>never overestimate</b> the real remaining distance; an honest under-guess keeps A* correct."
+        },
+        {
+          "topic": "Shortest Path",
+          "question": "How can A* solve a sliding tile puzzle with ~180,000 states?",
+          "answer": "It treats each arrangement as a node and <b>generates the graph as it goes</b>, touching only ~283 states instead of storing them all."
+        },
+        {
+          "topic": "Shortest Path",
+          "question": "Which algorithm fits an unweighted graph?",
+          "answer": "<b>BFS</b> — just count the number of steps."
+        },
+        {
+          "topic": "Shortest Path",
+          "question": "Which algorithm handles negative edge weights?",
+          "answer": "<b>Bellman-Ford</b> (plain Dijkstra can fail with negative weights)."
+        },
+        {
+          "topic": "Shortest Path",
+          "question": "Why can time-dependent paths make a longer road the better choice?",
+          "answer": "Travel time depends on <b>when you enter a road</b>, so a longer route can dodge rush hour — sometimes even waiting before leaving helps."
+        },
+        {
+          "topic": "Shortest Path",
+          "question": "Time-dependent shortest paths can still be solved with Dijkstra — under which condition, and what does it mean?",
+          "answer": "The <b>FIFO</b> or <b>'no overtaking'</b> condition: arrival <code>arr(t) = t + tt(t)</code> must be <b>non-decreasing in departure time</b> — <em>leaving later can never make you arrive earlier</em>. Then the optimality principle still holds and Dijkstra is unchanged: just evaluate each edge's travel time at the current arrival time. <mark>Break it (a bridge that closes, so arr(t) dips) and waiting before you leave can pay off</mark> — Dijkstra's greedy settle is then invalid."
+        },
+        {
+          "topic": "Shortest Path",
+          "question": "Why is the resource-constrained shortest path surprisingly hard?",
+          "answer": "Finding the cheapest path that also respects a limit (like a fuel budget) is <b>NP-hard</b> — the cheapest path is often illegal, forcing a pricier legal one."
+        },
+        {
+          "topic": "Matching",
+          "question": "What is a matching in a graph?",
+          "answer": "A set of edges where <b>no two edges share a node</b> — everyone gets at most one partner."
+        },
+        {
+          "topic": "Matching",
+          "question": "Name and define the two main variants of maximum matching.",
+          "answer": "<b>Maximum cardinality</b> — the largest possible set of disjoint edges (ties often broken by minimum total weight: <em>largest matching of minimum weight</em>). <b>Maximum weight</b> — edges carry weights wₑ and you maximise Σ wₑ. <mark>They are genuinely different: a max-weight matching need not be cardinality-maximal</mark> — a smaller matching can be worth more. Two things help in practice: integral weights are more robust than fractional ones, and bipartite graphs admit faster algorithms."
+        },
+        {
+          "topic": "Matching",
+          "question": "What is the assignment problem?",
+          "answer": "A minimum-cost perfect matching — assign each order to one machine so the <b>total cost is lowest</b>."
+        },
+        {
+          "topic": "Matching",
+          "question": "What makes matching harder to solve?",
+          "answer": "<b>Odd cycles</b> — bipartite graphs (no odd cycles) allow clean, faster algorithms."
+        },
+        {
+          "topic": "Flow",
+          "question": "What does the max flow problem ask?",
+          "answer": "How much can you push from a <b>source to a sink</b> through pipes that each have a capacity limit?"
+        },
+        {
+          "topic": "Flow",
+          "question": "What limits the total flow through a network?",
+          "answer": "The <b>bottleneck</b> — the tightest pipe or cut along the way."
+        },
+        {
+          "topic": "Flow",
+          "question": "How is min-cost flow different from max flow?",
+          "answer": "Each pipe charges a fee per unit, so the goal is to move the required flow at the <b>least total cost</b>."
+        },
+        {
+          "topic": "Flow",
+          "question": "Why is the residual graph the key idea in flow algorithms?",
+          "answer": "It lets the algorithm <b>undo or reroute earlier flow</b>, so bad early decisions can be fixed to reach the true optimum."
+        },
+        {
+          "topic": "Flow",
+          "question": "Why is min-cost flow called a 'Swiss Army knife'?",
+          "answer": "Shortest path, assignment, and transportation problems are all <b>special cases</b> of it."
+        },
+        {
+          "topic": "Flow",
+          "question": "When does a flow problem stop being easy?",
+          "answer": "With <b>multiple goods sharing pipes</b> or costs to open an edge — then it becomes NP-hard and needs a MIP solver."
+        },
+        {
+          "topic": "Spanning Tree",
+          "question": "What is a minimum spanning tree (MST)?",
+          "answer": "The <b>cheapest set of edges that connects every node</b> with no wasteful loops."
+        },
+        {
+          "topic": "Spanning Tree",
+          "question": "Name the three greedy algorithms that build an MST.",
+          "answer": "<b>Kruskal, Prim, and Borůvka</b> — all reach the same optimum."
+        },
+        {
+          "topic": "Spanning Tree",
+          "question": "Why is greedy special for the MST?",
+          "answer": "For the MST, always grabbing the cheapest safe edge is <b>provably exact</b> — rare, since greedy usually isn't optimal."
+        },
+        {
+          "topic": "Big Picture",
+          "question": "What is the practical performance warning about matching and flow?",
+          "answer": "They usually run fast, but their <b>roughly cubic worst case</b> can become critical on very large or tricky inputs."
+        }
+      ]
     },
     {
-        "id": "lecture-10-cp-sat",
-        "title": "Lecture 10 · CP-SAT Technology & Explainability",
-        "description": "How the CP-SAT solver works inside: clever deduction plus learning from mistakes.",
-        "summary": "summaries/algorithm-engineering/lecture-10-cp-sat.md",
-        "cards": [
-            {
-                "topic": "Big Picture",
-                "question": "In one sentence, what is CP-SAT?",
-                "answer": "A puzzle solver that combines <b>clever deduction (CP)</b> with <b>learning from mistakes (SAT)</b> — 'a CP solver with a SAT solver's memory'."
-            },
-            {
-                "topic": "Big Picture",
-                "question": "What kind of problems does CP-SAT solve?",
-                "answer": "Problems with <b>boxes to fill using whole numbers</b> and a list of <b>rules (constraints)</b> — it finds an assignment satisfying every rule, or proves none exists. (Think Sudoku for real-world scheduling, routing, planning.)"
-            },
-            {
-                "topic": "Two Superpowers",
-                "question": "What is CP's superpower?",
-                "answer": "<b>Smart deduction (propagation)</b>: ruling out impossible options because the rules force it, like a good Sudoku player — no guessing needed."
-            },
-            {
-                "topic": "Two Superpowers",
-                "question": "What is SAT's (CDCL's) superpower?",
-                "answer": "<b>Learning from failure</b>: every time it hits a dead end, it writes a permanent 'never do this again' note, so it never repeats the same mistake."
-            },
-            {
-                "topic": "Two Superpowers",
-                "question": "What weakness of classic CP does CP-SAT fix?",
-                "answer": "Classic CP is a great deducer but <b>forgetful</b> — it backtracks and forgets why it failed. CP-SAT adds SAT-style memory so failures become lasting lessons."
-            },
-            {
-                "topic": "Variables as Bounds",
-                "question": "How does CP-SAT store a number while solving?",
-                "answer": "Not as a fixed value, but as a <b>shrinking range</b> (a lowest and a highest it could be). Like the 'higher or lower' guessing game."
-            },
-            {
-                "topic": "Variables as Bounds",
-                "question": "When is a variable finally 'solved'?",
-                "answer": "When its <b>low end and high end squeeze together</b> into a single number. Until then, it has no single value."
-            },
-            {
-                "topic": "Variables as Bounds",
-                "question": "Which way do the ranges move during search?",
-                "answer": "They only ever <b>shrink</b> as the solver works, and <b>pop back open</b> if it has to undo a guess."
-            },
-            {
-                "topic": "Propagation",
-                "question": "What does a propagator do?",
-                "answer": "A helper attached to each rule that <b>squeezes ranges tighter</b> whenever the rule forces it — and can trigger other propagators like falling dominoes."
-            },
-            {
-                "topic": "Propagation",
-                "question": "Does propagation ever guess?",
-                "answer": "No. It only states things that are <b>100% forced</b> by the current ranges. When forced moves run out, the solver must make a guess instead."
-            },
-            {
-                "topic": "Propagation",
-                "question": "What is a 'conflict'?",
-                "answer": "When squeezing leaves a box with <b>no numbers left</b> — a dead end. It sounds bad but is actually useful, because it's what the solver learns from."
-            },
-            {
-                "topic": "Explainability ⭐",
-                "question": "What extra duty does a CP-SAT propagator have that classic CP lacks?",
-                "answer": "It must be able to <b>explain every deduction</b> — name the exact facts (bounds) that forced it — like a detective showing the evidence, not just naming the culprit."
-            },
-            {
-                "topic": "Explainability ⭐",
-                "question": "Why must propagators be able to explain themselves?",
-                "answer": "Because to <b>learn from a mistake</b>, the solver needs to know exactly which facts caused it. No reason = nothing to write in the 'dead ends' notebook."
-            },
-            {
-                "topic": "Lazy Explanations",
-                "question": "What does 'lazy' mean for explanations?",
-                "answer": "The full explanation is <b>built only when it's actually needed</b> — i.e. when that deduction turns out to be part of a dead end — not up front."
-            },
-            {
-                "topic": "Lazy Explanations",
-                "question": "Why is being lazy worthwhile?",
-                "answer": "<b>Most deductions never cause trouble</b>, so explaining all of them up front would be wasted effort. You only pay for the reasons you truly use (like homework done when it's due)."
-            },
-            {
-                "topic": "Learning From Failure",
-                "question": "When CP-SAT hits a dead end, what does it do instead of just undoing the last guess?",
-                "answer": "It traces the reasons back to find the <b>few guesses truly to blame</b>, learns a permanent rule against that combo, and <b>jumps back (backjumps)</b> past the innocent guesses in one leap."
-            },
-            {
-                "topic": "Learning From Failure",
-                "question": "What is a 'nogood'?",
-                "answer": "The <b>learned rule</b> saved after a conflict — 'never combine these facts again' — so the solver never repeats that mistake."
-            },
-            {
-                "topic": "Lazy Clause Generation",
-                "question": "What is CP-SAT's one big unifying idea?",
-                "answer": "<b>Lazy clause generation</b>: propagators that both squeeze ranges AND explain themselves, so the SAT memory can learn from every CP deduction. It's the glue joining the two halves."
-            },
-            {
-                "topic": "Branching (VSIDS)",
-                "question": "How does CP-SAT decide what to guess?",
-                "answer": "With <b>VSIDS</b>: it guesses on whatever has been <b>causing the most recent conflicts</b> — focusing on the troublemakers."
-            },
-            {
-                "topic": "Branching (VSIDS)",
-                "question": "Why can't VSIDS finish the puzzle alone, and what closes the gap?",
-                "answer": "VSIDS only settles simple <b>yes/no facts</b>, which can leave a number still un-pinned. <b>Integer completion</b> then nails down each leftover range to one value."
-            },
-            {
-                "topic": "Turbo-Boosters",
-                "question": "What accelerators are bolted onto the core?",
-                "answer": "<b>LP relaxation</b> (fraction-based hints from the MIP world), <b>cutting planes</b>, <b>restarts</b> (wipe guesses but keep lessons), and a <b>parallel portfolio</b> of solvers that share what they learn."
-            }
-        ]
+      "id": "lecture-09-sat",
+      "title": "Lecture 09 · SAT",
+      "description": "How SAT solvers work: from DPLL guessing to modern CDCL learning.",
+      "summary": "summaries/algorithm-engineering/lecture-09-sat.md",
+      "cards": [
+        {
+          "topic": "What is SAT",
+          "question": "In plain words, what does the SAT problem ask?",
+          "answer": "Can we set a bunch of true/false switches (variables) so that <b>every rule is satisfied at the same time</b>? If yes it's satisfiable, if impossible it's unsatisfiable."
+        },
+        {
+          "topic": "What is SAT",
+          "question": "What is a 'clause' in SAT?",
+          "answer": "A single rule that says <b>at least one of these options must be true</b> (an OR-list of literals). The whole formula requires ALL clauses to hold at once."
+        },
+        {
+          "topic": "What is SAT",
+          "question": "What's the difference between a variable and a literal?",
+          "answer": "A <b>variable</b> is a yes/no switch; a <b>literal</b> is that switch or its opposite (the switch, or 'not' the switch)."
+        },
+        {
+          "topic": "What is SAT",
+          "question": "Why is SAT historically important?",
+          "answer": "It was the <b>first problem ever proven NP-complete</b> — the 'granddaddy' of hard problems. A fast trick for SAT would crack a huge family of hard problems."
+        },
+        {
+          "topic": "DPLL",
+          "question": "What is DPLL, at a high level?",
+          "answer": "The classic solver that works like Sudoku: <b>guess, fill in all forced moves, and backtrack</b> (undo) when you hit a contradiction."
+        },
+        {
+          "topic": "DPLL",
+          "question": "What is Unit Propagation, and why does it matter?",
+          "answer": "When a clause shrinks to only one option left, you're <b>forced</b> to pick it — which can force more moves in a domino chain. It's the single most important and most-used move."
+        },
+        {
+          "topic": "DPLL",
+          "question": "What is the Pure Literal rule?",
+          "answer": "If a variable only ever appears in one form (always 'on' or always 'off'), just <b>set it that way for free</b> — it can only help. Removes all clauses it satisfies."
+        },
+        {
+          "topic": "What is SAT",
+          "question": "SAT only answers yes/no. So how do you use a SAT solver to <em>optimize</em> something?",
+          "answer": "Restate the optimization problem as a <b>sequence of decision problems</b>: 'is there a solution with objective ≤ k?' Then <b>search over k</b> — binary search, or ratchet k down each time you succeed — until the answer flips to UNSAT, which <b>proves</b> the last feasible k optimal. <em>Example (bottleneck crossing-free matching)</em>: guess a maximum edge length L, forbid every edge longer than L, and ask SAT whether a crossing-free perfect matching still exists; binary-search L over the O(n²) candidate edge lengths. <mark>Use the solver <b>incrementally</b></mark> — adding clauses is cheap and learned clauses are kept between calls."
+        },
+        {
+          "topic": "Implementation",
+          "question": "What is the 'trail' in a SAT solver?",
+          "answer": "An <b>ordered stack of everything set true so far</b>, split into decision levels. Level 0 is true forever; each new guess starts a new level."
+        },
+        {
+          "topic": "Implementation",
+          "question": "How does backtracking work with the trail?",
+          "answer": "You just <b>chop off the top decision level</b> — cheap, like tearing the last page off a notepad."
+        },
+        {
+          "topic": "Implementation",
+          "question": "What are the invariants of the Two Watched Literals scheme?",
+          "answer": "<b>Always watch two non-false literals</b> (true or still open) in every clause. For a <em>satisfied</em> clause it is enough to watch the true literal plus any other, even a false one. The pay-off: while two literals are non-false the clause <b>cannot be unit</b>, so unit propagation may ignore it entirely. When a watched literal becomes false you search that clause for a replacement; if there is none, the clause is <b>unit</b> (forcing the other watched literal) or, if that one is false too, a <b>conflict</b>."
+        },
+        {
+          "topic": "Implementation",
+          "question": "What must you fix about watched literals when you backtrack? Why?",
+          "answer": "<b>Nothing!</b> Undoing can only bring dead switches back to life, never kill live ones, so 'watch two live options' stays true automatically. Doing nothing is the cheapest option."
+        },
+        {
+          "topic": "DPLL Flaw",
+          "question": "What is DPLL's big weakness?",
+          "answer": "It <b>never learns from its mistakes</b> — it wanders back into the same hidden dead-ends over and over, which can make it insanely slow."
+        },
+        {
+          "topic": "Learning",
+          "question": "What is resolution, in simple terms?",
+          "answer": "A way to <b>combine two rules into a new true rule</b> by cancelling out one variable: 'A or X' plus 'B or not-X' gives you 'A or B'."
+        },
+        {
+          "topic": "Learning",
+          "question": "How can resolution prove a formula is unsatisfiable?",
+          "answer": "Keep combining rules until you reach the <b>empty clause</b> (a rule with zero options = flat-out impossible). That proves the whole thing is UNSAT."
+        },
+        {
+          "topic": "CDCL",
+          "question": "What is CDCL and why is it the modern standard?",
+          "answer": "Conflict-Driven Clause Learning: it's DPLL that <b>learns a new rule from every crash</b>, so it never repeats the same mistake."
+        },
+        {
+          "topic": "CDCL",
+          "question": "What extra info does each forced (propagated) literal store?",
+          "answer": "Its <b>reason</b> — the clause that forced it. These reasons are traced back to build the learned clause when a conflict happens."
+        },
+        {
+          "topic": "CDCL",
+          "question": "What happens on a conflict in CDCL?",
+          "answer": "You <b>trace backwards through the reasons using resolution</b> to find the real cause, distill it into a new learned rule, and add it to the rulebook forever."
+        },
+        {
+          "topic": "CDCL",
+          "question": "What is backjumping?",
+          "answer": "Instead of undoing one step, <b>leap far back</b> to the earliest level where the newly learned rule would have helped — skipping useless branches at once."
+        },
+        {
+          "topic": "CDCL",
+          "question": "What is the First UIP (Unique Implication Point)?",
+          "answer": "The single <b>bottleneck moment</b> in the current level that all the trouble funnels through. Learning the rule right there gives the tightest, most useful lesson."
+        },
+        {
+          "topic": "CDCL",
+          "question": "Why is CDCL guaranteed to terminate?",
+          "answer": "Every conflict teaches a <b>genuinely new rule</b> (never a repeat), and there are only finitely many possible rules to learn — so it must finish."
+        },
+        {
+          "topic": "CDCL",
+          "question": "What are the two ways a CDCL run can end?",
+          "answer": "Either fill in every switch with no conflict (<b>SAT — answer found</b>), or learn the empty clause (<b>UNSAT — proven impossible</b>)."
+        },
+        {
+          "topic": "Improvements",
+          "question": "What does VSIDS do?",
+          "answer": "A variable-picking heuristic: prefer switches <b>recently involved in many conflicts</b> — the 'spicy' important ones. Like a firefighter rushing to where fires keep flaring."
+        },
+        {
+          "topic": "Improvements",
+          "question": "What are restarts, and why keep doing them?",
+          "answer": "Throw away all current guesses and start fresh, but <b>keep everything learned</b> (clauses + scores). Stops the solver getting stuck in a bad part of the search."
+        },
+        {
+          "topic": "Improvements",
+          "question": "What is phase saving?",
+          "answer": "When you undo a switch, <b>remember which way it was set</b> and try that same value next time — so you don't re-discover good settings you already found."
+        },
+        {
+          "topic": "Improvements",
+          "question": "Why delete learned clauses, and how do we choose which?",
+          "answer": "The rulebook bloats and slows down, so we <b>toss the least useful rules</b>. The best quality measure is the glue score (LBD): rules spanning fewer decision levels are stickier and worth keeping."
+        },
+        {
+          "topic": "Improvements",
+          "question": "What is conflict clause minimization?",
+          "answer": "After learning a rule, <b>trim redundant parts</b> so it's shorter and punchier — shorter rules are faster and more powerful."
+        },
+        {
+          "topic": "Improvements",
+          "question": "What is pre-/in-processing, and its most useful technique?",
+          "answer": "Cleaning up and simplifying the rulebook before and during solving. The single most effective is <b>Bounded Variable Elimination (BVE)</b>: remove a variable by folding its clauses together, if it doesn't blow up."
+        },
+        {
+          "topic": "Improvements",
+          "question": "What must a preprocessing technique preserve to be sound — and what is the weaker property that suffices?",
+          "answer": "The strong property is <b>logical equivalence</b>: the formula has exactly the same models before and after. But that is more than you need — it suffices that the technique is <b>equisatisfiable</b>: the new formula is satisfiable <em>if and only if</em> the old one is, even if the set of models changes. <mark>That weaker bar is what lets techniques like bounded variable elimination work</mark> — BVE deletes a variable entirely, so the models cannot be the same, yet any model of the result extends to a model of the original. To argue soundness you show both directions: every model of the original survives, and every model of the result can be extended back."
+        },
+        {
+          "topic": "Improvements",
+          "question": "What are SAT/UNSAT stages?",
+          "answer": "Finding an answer vs. proving none exists need different styles, so the solver <b>switches its personality</b> depending on which case it thinks it's in."
+        },
+        {
+          "topic": "Improvements",
+          "question": "What is local search (probSAT/YalSAT) used for here?",
+          "answer": "A 'wander and fix' method that flips switches to satisfy more rules, run on the side to <b>suggest good settings</b> to the main CDCL engine."
+        },
+        {
+          "topic": "Exam Focus",
+          "question": "What does the lecture say to focus on for the exam?",
+          "answer": "<b>CDCL, the trail & decision levels, conflict resolution (learning + backjumping), and the high-level ideas</b> behind the tricks — not every optimization's inner details."
+        }
+      ]
     },
     {
-        "id": "lecture-11-decomposition",
-        "title": "Lecture 11 · Decomposition",
-        "description": "Breaking a big, tangled optimization problem into small easy pieces held together by a little glue.",
-        "summary": "summaries/algorithm-engineering/lecture-11-decomposition.md",
-        "cards": [
-            {
-                "topic": "Big Picture",
-                "question": "What is problem decomposition and why do we do it?",
-                "answer": "Some hard problems are really many <b>loosely coupled small problems</b> tied together by a few global rules. Decomposition means pulling apart those tying-together rules so the leftover pieces become easy to solve."
-            },
-            {
-                "topic": "Big Picture",
-                "question": "What is a 'coupling constraint'?",
-                "answer": "A rule that <b>ties all the sub-parts together</b> and makes the problem hard. In facility location it's 'every client must be served by exactly one warehouse.' Remove it and each warehouse could act on its own."
-            },
-            {
-                "topic": "Lagrangian",
-                "question": "What is the core idea of Lagrangian relaxation?",
-                "answer": "Don't forbid breaking a rule — <b>charge a price (penalty) for breaking it</b>. Move the annoying constraint into the objective as a fee, then adjust the fee until the solver stops cheating on its own. (Like library late fees.)"
-            },
-            {
-                "topic": "Lagrangian",
-                "question": "Why is it called a 'relaxation', and what does that give us?",
-                "answer": "The rule isn't deleted, just made optional-with-a-fee, so every original solution still exists at the same cost. We only added options, so the answer can only get cheaper — giving a <b>valid lower bound</b> on the true optimum."
-            },
-            {
-                "topic": "Lagrangian",
-                "question": "What happens to the warehouse problem once the coupling rule is turned into a price?",
-                "answer": "The warehouses become <b>independent subproblems</b>. Each warehouse just picks the clients worth serving at the discounted prices — a tiny, fast problem (greedy works)."
-            },
-            {
-                "topic": "Lagrangian",
-                "question": "How do we find the right penalty prices?",
-                "answer": "Iterate: solve subproblems, check how badly each rule was broken, then <b>nudge each price toward its violation</b> (raise it if under-covered, lower it if over-covered). This price-updating loop is the subgradient method."
-            },
-            {
-                "topic": "Dantzig-Wolfe",
-                "question": "What is the core idea of Dantzig–Wolfe decomposition?",
-                "answer": "Let each part propose complete ready-made plans called <b>patterns</b>, then have a master problem pick the best combination. (Like food trucks each offering menus, and you choose one menu per truck.)"
-            },
-            {
-                "topic": "Dantzig-Wolfe",
-                "question": "What is a 'pattern' in the warehouse example?",
-                "answer": "One legal way a single warehouse could operate — a <b>specific set of clients it serves</b> (or serving nobody = staying closed). Each pattern already bakes in the capacity and opening logic."
-            },
-            {
-                "topic": "Column Generation",
-                "question": "What problem does column generation solve, and how?",
-                "answer": "There are astronomically many patterns to list. Instead of listing them all, <b>generate patterns lazily</b> — start with a few and only invent a new one when it would actually improve the answer."
-            },
-            {
-                "topic": "Column Generation",
-                "question": "How does column generation decide whether to add a new pattern?",
-                "answer": "It solves a small <b>pricing problem</b> to find the most promising missing pattern. If that pattern would lower the cost it's added; if none exists, the current solution is optimal."
-            },
-            {
-                "topic": "Branch & Price",
-                "question": "What is Branch & Price and why use it?",
-                "answer": "Column generation gives fractional answers ('use half a plan'), but real choices are whole. Branch & Price <b>combines column generation with branch & bound</b>, re-generating patterns at each node, and gives a tighter bound than the plain LP."
-            },
-            {
-                "topic": "Benders",
-                "question": "What is the core idea of Benders' decomposition?",
-                "answer": "A master picks the <b>hard strategic choices</b> with an optimistic cost guess; a subproblem fills in the easy details and reports back with <b>cuts</b> that correct the guess. (Pick the cities, let a helper compute the real route.)"
-            },
-            {
-                "topic": "Benders",
-                "question": "In the warehouse example, how is the work split between master and subproblem?",
-                "answer": "The master decides <b>which warehouses to open</b> (the hard part). The subproblem, given those open warehouses, finds the cheapest client assignment — which is just an easy min-cost flow problem."
-            },
-            {
-                "topic": "Benders",
-                "question": "What are optimality cuts vs. feasibility cuts?",
-                "answer": "After solving the subproblem: an <b>optimality cut</b> forces the master's optimistic cost guess to be more realistic; a <b>feasibility cut</b> forbids a choice of open warehouses that genuinely can't serve everyone."
-            },
-            {
-                "topic": "Benders",
-                "question": "What does Logic-Based Benders (LBBD) add?",
-                "answer": "It drops the requirement that the subproblem be an LP — it can be <b>SAT, CP, a MIP, or a DP</b>. Cuts are derived logically and can be much stronger, but must be designed problem-by-problem (no universal recipe)."
-            }
-        ]
+      "id": "tutorial-04-real-world-problems",
+      "title": "Tutorial 04 · Real-World Optimization Problems",
+      "description": "Three families that cover most of industry: shop scheduling, rostering, routing.",
+      "cards": [
+        {
+          "topic": "Job Shop",
+          "question": "Describe Job-Shop Scheduling (JSP) informally, then name at least three constraint or objective variants that occur in practice.",
+          "answer": "Each <b>job</b> is a chain of tasks that must run in order; each task needs a particular <b>machine</b>, and a machine does one thing at a time. A solution is a <b>Gantt chart</b>: for every task, which resource, when it starts, when it ends. Practical add-ons: <b>sequence-dependent setup times</b>, <b>no-wait / blocking</b> (no buffer between steps), <b>release and due dates</b> (so the objective becomes tardiness rather than plain makespan), resource breaks and time windows, multi-mode tasks and consumables."
+        },
+        {
+          "topic": "Job Shop",
+          "question": "Name at least three structural variants of the job-shop topology (not constraint add-ons) and how each differs from classical JSP.",
+          "answer": "<b>Flexible job shop</b>: a task may run on any of several eligible machines, possibly with different durations — you now also choose <em>which</em> machine. <b>Flow shop</b>: every job visits the machines in the <em>same</em> order, so only the entry order is left to decide (jobs may still overtake at later stages). <b>Permutation flow shop</b>: flow shop plus no overtaking — one permutation holds everywhere, a far smaller space but still NP-hard from three stages. <b>Hybrid flow shop</b>: each stage has a pool of parallel machines. <b>Open shop</b>: each job visits each machine once but the order is free. <b>RCPSP</b>: tasks consume a <em>quantity</em> of a resource instead of blocking a whole machine."
+        },
+        {
+          "topic": "Rostering",
+          "question": "Describe employee rostering, then name at least three constraint/objective families — typically hard or soft?",
+          "answer": "Allocate people to shifts over a horizon; the output is a <b>roster matrix</b> (employee × day → shift or off). <b>Hard</b> (violation = infeasible, and often <em>legal</em>): coverage min/max and skill mix, rest periods and working-time limits, contracts and availability. <b>Soft</b> (allowed but penalised): personal preferences, <b>fairness</b> across nights/weekends/holidays, schedule stability. Solvers compare a multi-level <code>(hard, medium, soft)</code> score <b>lexicographically</b> — hard must be zero before soft is even looked at. What makes it its own problem: people are not interchangeable, the hard constraints are law, and fairness is a first-class objective."
+        },
+        {
+          "topic": "Vehicle Routing",
+          "question": "Describe the core Vehicle Routing Problem, then name at least three practical variants from the lecture.",
+          "answer": "One <b>depot</b>, a set of clients, a fleet of vehicles: visit every client exactly once, every route starts and ends at the depot, minimise total cost. Variants: <b>capacity (CVRP)</b> — without it one vehicle would do everything, so capacity is what determines fleet size; <b>time windows (VRPTW)</b> — clients aren't available all day, coupling the visit sequence to the clock; <b>pickups &amp; deliveries</b>; <b>driver shifts</b> (earliest start, latest end, overtime band — usually soft); <b>hours-of-service breaks</b> (45 min after 4.5 h driving, whose <em>placement</em> is itself a decision); multiple depots; heterogeneous fleet with per-vehicle distance matrices."
+        }
+      ]
     },
     {
-        "id": "lecture-12-metaheuristics",
-        "title": "Lecture 12 · Metaheuristics",
-        "description": "Clever tricks for finding good-enough answers fast when perfect solutions take too long.",
-        "summary": "summaries/algorithm-engineering/lecture-12-metaheuristics.md",
-        "cards": [
-            {
-                "topic": "Basics",
-                "question": "What is a heuristic, and what does it promise about the answer?",
-                "answer": "A <b>smart shortcut (rule of thumb)</b> that tries to solve a problem 'well enough'. It should be faster than an exact solve, but gives <b>no guarantee</b> on how good the answer is."
-            },
-            {
-                "topic": "Basics",
-                "question": "What is a metaheuristic, and how is it different from a heuristic?",
-                "answer": "A <b>general recipe for building heuristics</b> that works across many problems. You plug in problem-specific pieces. Its performance depends on the problem, the instance, and its hyperparameters."
-            },
-            {
-                "topic": "Basics",
-                "question": "Why use (meta)heuristics instead of always solving exactly?",
-                "answer": "For <b>very large instances</b>, exact solving is impractical, and often the optimal answer isn't needed. A near-optimal answer found fast is usually a great deal."
-            },
-            {
-                "topic": "Three Families",
-                "question": "What are the three main families of metaheuristic approaches?",
-                "answer": "<b>Constructive</b> (build an answer piece by piece), <b>Trajectory-based</b> (improve one answer step by step), and <b>Population-based</b> (evolve a whole crowd of answers)."
-            },
-            {
-                "topic": "Constructive",
-                "question": "How does GRASP add smartness to a plain greedy build?",
-                "answer": "It picks the next piece <b>randomly from a shortlist of the best options</b> (the Restricted Candidate List), not always the single best. Repeating this gives many different good solutions to choose from."
-            },
-            {
-                "topic": "Constructive",
-                "question": "What is the core idea of the Pilot method (Rollout)?",
-                "answer": "For each candidate next step, <b>quickly finish the whole solution</b> with a cheap base heuristic to see how it turns out, then pick the step that led to the best complete result. (Like sending a scout ahead.)"
-            },
-            {
-                "topic": "Constructive",
-                "question": "What does Beam Search keep at each step, and why?",
-                "answer": "It keeps only the <b>best few partial solutions</b> at each level, expanding and pruning as it goes. This avoids betting everything on one path that might be a dead end."
-            },
-            {
-                "topic": "Constructive",
-                "question": "What is the Squeaky Wheel (construct-analyze-reconstruct) idea?",
-                "answer": "Build a solution, then <b>find the parts to blame and raise their priority</b> for the next build. Repeating this handles the 'troublemakers' earlier and improves quality (great for e.g. graph coloring)."
-            },
-            {
-                "topic": "Trajectory",
-                "question": "What is a local optimum, and why is it the big problem in local search?",
-                "answer": "A solution where <b>every small neighboring move looks worse</b>, so the search stops — but it may only be the bottom of a small dip, not the true best answer. It traps simple hill-climbing."
-            },
-            {
-                "topic": "Trajectory",
-                "question": "What is the key idea of Simulated Annealing, and where does it come from?",
-                "answer": "Inspired by <b>slowly cooling hot metal</b>. A high 'temperature' early on allows accepting worse moves (to escape traps); as it cools, it accepts worse moves less and less until it settles into a good solution."
-            },
-            {
-                "topic": "Trajectory",
-                "question": "How do Iterated Local Search and Path Relinking escape local optima?",
-                "answer": "Iterated Local Search gives a stuck solution a <b>random 'kick'</b> and re-optimizes. Path Relinking <b>morphs one elite solution into another</b>, checking the points in between for something even better."
-            },
-            {
-                "topic": "Trajectory",
-                "question": "What is the idea behind Variable Neighborhood Search (VNS)?",
-                "answer": "Keep <b>switching between different kinds of moves</b> (neighborhoods). A solution stuck under one move type may still be improvable under a different one, helping escape local optima."
-            },
-            {
-                "topic": "Trajectory",
-                "question": "How does Ruin & Recreate / Large Neighborhood Search (LNS) work?",
-                "answer": "<b>Destroy a chunk of a good solution, then rebuild that chunk smarter.</b> This explores a huge neighborhood at once, and the repair step can even use an exact solver on the small piece."
-            },
-            {
-                "topic": "Population",
-                "question": "What are the main steps of a Genetic Algorithm?",
-                "answer": "Keep a population, score each by <b>fitness</b>, select mostly-fit parents, <b>crossover</b> them into children, apply small random <b>mutations</b>, and repeat over generations. Diversity keeps exploration strong."
-            },
-            {
-                "topic": "Population",
-                "question": "What do Memetic Algorithms add, and why?",
-                "answer": "They <b>combine genetic algorithms with local search</b> — each child also 'practices' to improve itself. Evolution explores well but converges poorly; local search exploits well, so together they balance exploration and refinement."
-            },
-            {
-                "topic": "Special Case",
-                "question": "How do you handle a 'disguised' feasibility problem (like coloring) where objective value doesn't guide you?",
-                "answer": "Allow an <b>invalid solution and minimize a conflict metric</b> instead. E.g. in coloring: try to drop a color, then shuffle to drive the number of clashing edges/uncolored vertices down to zero."
-            }
-        ]
+      "id": "lecture-10-cp-sat",
+      "title": "Lecture 10 · CP-SAT Technology & Explainability",
+      "description": "How the CP-SAT solver works inside: clever deduction plus learning from mistakes.",
+      "summary": "summaries/algorithm-engineering/lecture-10-cp-sat.md",
+      "cards": [
+        {
+          "topic": "Big Picture",
+          "question": "In one sentence, what is CP-SAT?",
+          "answer": "A puzzle solver that combines <b>clever deduction (CP)</b> with <b>learning from mistakes (SAT)</b> — 'a CP solver with a SAT solver's memory'."
+        },
+        {
+          "topic": "Big Picture",
+          "question": "What kind of problems does CP-SAT solve?",
+          "answer": "Problems with <b>boxes to fill using whole numbers</b> and a list of <b>rules (constraints)</b> — it finds an assignment satisfying every rule, or proves none exists. (Think Sudoku for real-world scheduling, routing, planning.)"
+        },
+        {
+          "topic": "Two Superpowers",
+          "question": "What is CP's superpower?",
+          "answer": "<b>Smart deduction (propagation)</b>: ruling out impossible options because the rules force it, like a good Sudoku player — no guessing needed."
+        },
+        {
+          "topic": "Two Superpowers",
+          "question": "What is SAT's (CDCL's) superpower?",
+          "answer": "<b>Learning from failure</b>: every time it hits a dead end, it writes a permanent 'never do this again' note, so it never repeats the same mistake."
+        },
+        {
+          "topic": "Two Superpowers",
+          "question": "What weakness of classic CP does CP-SAT fix?",
+          "answer": "Classic CP is a great deducer but <b>forgetful</b> — it backtracks and forgets why it failed. CP-SAT adds SAT-style memory so failures become lasting lessons."
+        },
+        {
+          "topic": "Variables as Bounds",
+          "question": "How does CP-SAT store a number while solving?",
+          "answer": "Not as a fixed value, but as a <b>shrinking range</b> (a lowest and a highest it could be). Like the 'higher or lower' guessing game."
+        },
+        {
+          "topic": "Variables as Bounds",
+          "question": "When is a variable finally 'solved'?",
+          "answer": "When its <b>low end and high end squeeze together</b> into a single number. Until then, it has no single value."
+        },
+        {
+          "topic": "Propagation",
+          "question": "What does a propagator do?",
+          "answer": "A helper attached to each rule that <b>squeezes ranges tighter</b> whenever the rule forces it — and can trigger other propagators like falling dominoes."
+        },
+        {
+          "topic": "Propagation",
+          "question": "Does propagation ever guess?",
+          "answer": "No. It only states things that are <b>100% forced</b> by the current ranges. When forced moves run out, the solver must make a guess instead."
+        },
+        {
+          "topic": "Propagation",
+          "question": "What is a 'conflict'?",
+          "answer": "When squeezing leaves a box with <b>no numbers left</b> — a dead end. It sounds bad but is actually useful, because it's what the solver learns from."
+        },
+        {
+          "topic": "Explainability ⭐",
+          "question": "What extra duty does a CP-SAT propagator have that classic CP lacks?",
+          "answer": "It must be able to <b>explain every deduction</b> — name the exact facts (bounds) that forced it — like a detective showing the evidence, not just naming the culprit."
+        },
+        {
+          "topic": "Explainability ⭐",
+          "question": "Why must propagators be able to explain themselves?",
+          "answer": "Because to <b>learn from a mistake</b>, the solver needs to know exactly which facts caused it. No reason = nothing to write in the 'dead ends' notebook."
+        },
+        {
+          "topic": "Lazy Explanations",
+          "question": "What does 'lazy' mean for explanations?",
+          "answer": "The full explanation is <b>built only when it's actually needed</b> — i.e. when that deduction turns out to be part of a dead end — not up front."
+        },
+        {
+          "topic": "Lazy Explanations",
+          "question": "Why is being lazy worthwhile?",
+          "answer": "<b>Most deductions never cause trouble</b>, so explaining all of them up front would be wasted effort. You only pay for the reasons you truly use (like homework done when it's due)."
+        },
+        {
+          "topic": "Learning From Failure",
+          "question": "When CP-SAT hits a dead end, what does it do instead of just undoing the last guess?",
+          "answer": "It traces the reasons back to find the <b>few guesses truly to blame</b>, learns a permanent rule against that combo, and <b>jumps back (backjumps)</b> past the innocent guesses in one leap."
+        },
+        {
+          "topic": "Learning From Failure",
+          "question": "What is a 'nogood'?",
+          "answer": "The <b>learned rule</b> saved after a conflict — 'never combine these facts again' — so the solver never repeats that mistake."
+        },
+        {
+          "topic": "Lazy Clause Generation",
+          "question": "What is CP-SAT's one big unifying idea?",
+          "answer": "<b>Lazy clause generation</b>: propagators that both squeeze ranges AND explain themselves, so the SAT memory can learn from every CP deduction. It's the glue joining the two halves."
+        },
+        {
+          "topic": "Branching (VSIDS)",
+          "question": "How does CP-SAT decide what to guess?",
+          "answer": "With <b>VSIDS</b>: it guesses on whatever has been <b>causing the most recent conflicts</b> — focusing on the troublemakers."
+        },
+        {
+          "topic": "Branching (VSIDS)",
+          "question": "Why can't VSIDS finish the puzzle alone, and what closes the gap?",
+          "answer": "VSIDS only settles simple <b>yes/no facts</b>, which can leave a number still un-pinned. <b>Integer completion</b> then nails down each leftover range to one value."
+        },
+        {
+          "topic": "Turbo-Boosters",
+          "question": "What accelerators are bolted onto the core?",
+          "answer": "<b>LP relaxation</b> (fraction-based hints from the MIP world), <b>cutting planes</b>, <b>restarts</b> (wipe guesses but keep lessons), and a <b>parallel portfolio</b> of solvers that share what they learn."
+        }
+      ]
     },
     {
-        "id": "lecture-13-tradeoffs-uncertainty",
-        "title": "Lecture 13 · Trade-offs and Uncertainty",
-        "description": "Handling problems with many goals at once and futures we can't predict.",
-        "summary": "summaries/algorithm-engineering/lecture-13-tradeoffs-uncertainty.md",
-        "cards": [
-            {
-                "topic": "The Big Picture",
-                "question": "What two things does the standard 'minimize one number, all facts known' model ignore about real problems?",
-                "answer": "That quality is usually <b>multidimensional</b> (you care about several goals at once) and that the world is <b>uncertain</b> (you don't know exactly what will happen)."
-            },
-            {
-                "topic": "Multiple Objectives",
-                "question": "What is a 'trade-off' between objectives?",
-                "answer": "When <b>improving one goal makes another worse</b>, like making ice cream healthier but less tasty. There's often no single 'best' answer."
-            },
-            {
-                "topic": "Multiple Objectives",
-                "question": "When can you say one option 'dominates' another?",
-                "answer": "When it is <b>at least as good on every goal and strictly better on at least one</b>. A dominated option is beaten on everything, so you can safely throw it out."
-            },
-            {
-                "topic": "Multiple Objectives",
-                "question": "What is the Pareto front, and what's the catch about it?",
-                "answer": "The set of <b>'survivor' options that nothing else beats on every goal</b>. The catch: being on the front doesn't make an option good, only 'not clearly beaten' — a boring option can still survive."
-            },
-            {
-                "topic": "Multiple Objectives",
-                "question": "Which two questions must you keep separate in multi-objective problems?",
-                "answer": "<b>How do we decide which solution is better</b> (the comparison rules) versus <b>how do we find good solutions</b> (the search). Like deciding what's for dinner vs. actually cooking it."
-            },
-            {
-                "topic": "Encoding Preferences",
-                "question": "What is the 'weighted sum' approach, and its main danger?",
-                "answer": "You give each goal a weight and add them into one score. The danger: the weights act like secret <b>exchange rates</b> (e.g. '1 changeover = 5 minutes late') that someone must justify — and different units can trick you."
-            },
-            {
-                "topic": "Encoding Preferences",
-                "question": "What is lexicographic (priority-ladder) optimization?",
-                "answer": "You handle the <b>most important goal first, then the next</b>, never trading away a top goal for a lower one — like always packing the baby's diapers before trying to pack light."
-            },
-            {
-                "topic": "Encoding Preferences",
-                "question": "What is the ε-constraint (limits) approach?",
-                "answer": "You optimize one goal while forcing the others to <b>stay under fixed limits</b>, e.g. 'make the trip cheapest, but under 2 hours and at most 1 transfer.'"
-            },
-            {
-                "topic": "Encoding Preferences",
-                "question": "When can't you name your preferences up front — and what do you do instead?",
-                "answer": "Often people only know what they want <b>after seeing the options</b>. So compute a menu of good alternatives (extremes, balanced middles, and 'knee' sweet spots) and let a human pick."
-            },
-            {
-                "topic": "Uncertainty",
-                "question": "What does the sandwich shop (newsvendor) story teach?",
-                "answer": "You must <b>decide before you know the truth</b>, and because running out hurts more than leftovers, you should prepare a bit more than the average demand. The cost of each mistake shapes your choice."
-            },
-            {
-                "topic": "Uncertainty",
-                "question": "Why is predicting just the 'average future' a trap?",
-                "answer": "A single best guess <b>throws away how uncertain things are</b> — the exact info the decision needs. Even a perfect average prediction can lead to a bad decision."
-            },
-            {
-                "topic": "Uncertainty",
-                "question": "What three questions should you ask before modeling uncertainty?",
-                "answer": "<b>What is uncertain, what do we know about it, and when is it revealed</b> (can we still adapt afterward)?"
-            },
-            {
-                "topic": "Robust Optimization",
-                "question": "What is the idea of robust optimization, and its downside?",
-                "answer": "Make a plan that <b>survives every plausible 'world' at once</b>, like packing umbrella, sunscreen and jacket. Downside: guarding against everything going wrong together is overly pessimistic and costly."
-            },
-            {
-                "topic": "Robust Optimization",
-                "question": "Why is a 'budget' of uncertainty smarter than protecting against the absolute worst?",
-                "answer": "Bad luck tends to <b>cancel out (like coin flips rarely being all heads)</b>, so you protect against a realistic amount of trouble instead of an impossible all-at-once disaster. Safety is a dial, not a switch."
-            },
-            {
-                "topic": "Stochastic Optimization",
-                "question": "How does stochastic optimization differ from robust optimization?",
-                "answer": "Instead of only fearing the worst, it <b>weighs each possible future by how likely it is</b> and aims for the best result on average (like planning lemonade around cold/normal/hot day odds)."
-            },
-            {
-                "topic": "Stochastic Optimization",
-                "question": "What is 'recourse' (two-stage decisions), and the golden rule that goes with it?",
-                "answer": "Decide what you must <b>now</b>, and leave flexible reactions for <b>after you learn more</b> (like hiring staff now, calling extra help later). Golden rule: no crystal ball — your 'now' choice can't peek at the future."
-            },
-            {
-                "topic": "Stochastic Optimization",
-                "question": "Why isn't optimizing for the 'average' automatically safe?",
-                "answer": "Chasing the best average can <b>quietly accept a rare disaster</b> because it's unlikely. If a bad outcome would be catastrophic, you need extra rules to limit the risky tail, and always test plans on fresh scenarios."
-            }
-        ]
+      "id": "tutorial-05-benchmarking",
+      "title": "Tutorial 05 · Benchmarking & Parameter Tuning",
+      "description": "Timeouts, variance, and picking a number that doesn't lie.",
+      "cards": [
+        {
+          "topic": "Why It's Hard",
+          "question": "Why is benchmarking optimization solvers fundamentally hard? Name at least three reasons.",
+          "answer": "1. <b>Runtimes vary by orders of magnitude</b> on NP-hard instances — a trend may exist, but no single instance settles who wins. 2. <b>Too few instances, unevenly spread</b> — they cluster and leave gaps, so a trend line across a gap is wishful interpolation. 3. <b>No clean x-axis</b>: a SAT formula's hardness isn't captured by variable and clause counts — SATzilla needs dozens of features, so there is no simple scalability plot. 4. <b>No clean y-axis</b> either — you are comparing <em>time and solution quality at once</em>, inherently multi-objective. 5. <b>Timeouts leave genuine unknowns</b> you cannot fill in honestly."
+        },
+        {
+          "topic": "Censored Data",
+          "question": "Timeouts produce censored data. What does that mean, why does the way you book them change the conclusion, and which metric addresses it?",
+          "answer": "A timeout tells you only that the run took <b>at least</b> the limit — you never learn whether it was 1 s from done or stuck forever. So the booking decides the result: <mark>removing timeouts silently drops the hard instances</mark> (flattering the weaker solver), substituting the limit under-estimates, and 'no time limit' means running forever. Either way you over- or under-estimate the mean. <b>PAR2 / PAR10</b> addresses it by charging a fixed penalty of 2× or 10× the time limit per timeout, which keeps every instance in the average. <b>Caveat: the penalty factor is arbitrary</b> — it ranks solvers rather than measuring them."
+        },
+        {
+          "topic": "Summarising",
+          "question": "Which 'average' should you report over a benchmark set, and what do integral metrics add?",
+          "answer": "Runtimes are <b>right-skewed and often censored</b>, so match the summary to that shape. <b>Arithmetic mean</b>: one hard instance drags it into the tail, and a timeout leaves nothing finite to average. <b>Median + IQR</b>: robust to outliers and censoring, but silent about the tail. <b>Geometric mean</b>: the only honest way to average <em>ratios</em> and speedups. <b>p90 / p95</b>: describe the tail the median hides. <b>Integral metrics</b> (primal / dual / primal-dual integral — area under the gap curve) score the <b>whole anytime trajectory</b> rather than one instant, so a config that closes the gap earlier wins even when time-to-optimality ties."
+        }
+      ]
     },
     {
-        "id": "lecture-14-analytics-lifecycle",
-        "title": "Lecture 14 · Analytics Lifecycle & Sequential Decisions",
-        "description": "Why the model is the small part, and why repeating decisions need a policy, not a plan.",
-        "summary": "summaries/algorithm-engineering/lecture-14-analytics-lifecycle.md",
-        "cards": [
-            {
-                "topic": "Big Picture",
-                "question": "What is the single most important message of the whole lecture?",
-                "answer": "The clever math (the model) is the <b>small, easy part</b>. Projects succeed or fail in the framing before it and the deployment and upkeep after it."
-            },
-            {
-                "topic": "Big Picture",
-                "question": "What are the two 'lenses' the lecture gives you?",
-                "answer": "The <b>Project Lens</b> (how a whole project runs, start to finish) and the <b>Time Lens</b> (how to decide again and again as new surprises arrive)."
-            },
-            {
-                "topic": "Three Analytics",
-                "question": "What are the three kinds of analytics, and how do they stack?",
-                "answer": "Descriptive (what happened?), Predictive (what will happen?), and Prescriptive (what should we do?). They form a <b>stack, not a menu</b>: doing rests on predicting, which rests on describing."
-            },
-            {
-                "topic": "Project Lens",
-                "question": "How much of a real project is actually building the model, and why does that matter?",
-                "answer": "Only about <b>10–15% of the time</b>. It shows the math is rarely the stage that decides success."
-            },
-            {
-                "topic": "Project Lens",
-                "question": "What are the 7 stages of the INFORMS Analytics Framework?",
-                "answer": "Business Problem Framing, Analytics Problem Framing, Data, Methodology, Model Building, Deployment, and Lifecycle Management. Model Building is just <b>stage 5 of 7</b>."
-            },
-            {
-                "topic": "Project Lens",
-                "question": "Why is the framework called a 'cogwheel, not a pipeline'?",
-                "answer": "The stages <b>loop backward as often as forward</b>. A discovery late (like missing data) can invalidate an assumption made early, forcing you to walk back and re-frame."
-            },
-            {
-                "topic": "Project Lens",
-                "question": "Where do projects actually die, and is it a technical problem?",
-                "answer": "At <b>Deployment</b>, and it's mostly organizational, not technical. A plan people don't trust, no fallback for a bad night, or no internal champion kills it."
-            },
-            {
-                "topic": "Project Lens",
-                "question": "If you only assess three risks before a project, which three matter most?",
-                "answer": "<b>Decision Scope</b> (state it in one sentence?), <b>Value Proposition</b> (worth in real money per year?), and <b>Process Maturity</b> (has this org shipped such a system before?)."
-            },
-            {
-                "topic": "Time Lens",
-                "question": "In the nurse-ward story, the math was perfect and data honest — so why did the roster fail?",
-                "answer": "The <b>horizon was the problem</b>. No fixed two-week plan survives two weeks of surprises, because the surprises (like sick calls) arrive after you've committed."
-            },
-            {
-                "topic": "Time Lens",
-                "question": "What is the key difference between a plan and a policy?",
-                "answer": "A plan is a fixed sequence chosen up front, optimal for only one imagined future. A <b>policy is a rule from 'what you know now' to a decision</b>, so it works for every future because it consumes new information as it arrives."
-            },
-            {
-                "topic": "Time Lens",
-                "question": "What three questions must you answer to frame a sequential-decision problem?",
-                "answer": "What are the decisions and <b>who owns them</b>? How do we measure quality? What uncertainty affects performance? (Frame it before reaching for a method.)"
-            },
-            {
-                "topic": "Time Lens",
-                "question": "Why measure quality with several conflicting numbers instead of one weighted sum?",
-                "answer": "A single sum <b>hides what you give up</b>. Cost, coverage, fairness, preferences, stability, and tail safety pull against each other — surface the trade-offs instead."
-            },
-            {
-                "topic": "Time Lens",
-                "question": "What is the 'simulator', and what is it NOT?",
-                "answer": "It's a <b>wind tunnel, not a forecast</b>. It doesn't predict who gets sick next Tuesday; it shows how a policy behaves across many plausible futures, so you can tune safely without experimenting on real people."
-            },
-            {
-                "topic": "Time Lens",
-                "question": "Why score a policy on the worst nights instead of the average night?",
-                "answer": "Being short-staffed hurts far more than being spare, and the optimizer <b>amplifies forecast errors</b> by pushing against constraints. So you plan for the bad tail, not the comfortable mean."
-            },
-            {
-                "topic": "Time Lens",
-                "question": "What are Powell's four families of policies, and does fancier mean better?",
-                "answer": "PFA (a tuned rule), CFA (solve a fudged proxy goal), VFA (learn a state's future worth), DLA (simulate ahead). <b>More complex is not better</b> — a fancy policy can be too slow for the huddle and too opaque to trust."
-            },
-            {
-                "topic": "Time Lens",
-                "question": "Why write down the nurses' by-hand routine as the baseline?",
-                "answer": "Their routine actually worked better in reality, so it becomes the <b>honest baseline anything fancier must beat</b> — not a strawman. Often the rule was right and only the cutoff needed tuning."
-            }
-        ]
+      "id": "lecture-11-decomposition",
+      "title": "Lecture 11 · Decomposition",
+      "description": "Breaking a big, tangled optimization problem into small easy pieces held together by a little glue.",
+      "summary": "summaries/algorithm-engineering/lecture-11-decomposition.md",
+      "cards": [
+        {
+          "topic": "Lagrangian",
+          "question": "What is the core idea of Lagrangian relaxation?",
+          "answer": "Don't forbid breaking a rule — <b>charge a price (penalty) for breaking it</b>. Move the annoying constraint into the objective as a fee, then adjust the fee until the solver stops cheating on its own. (Like library late fees.)"
+        },
+        {
+          "topic": "Column Generation",
+          "question": "What problem does column generation solve, and how?",
+          "answer": "There are astronomically many patterns to list. Instead of listing them all, <b>generate patterns lazily</b> — start with a few and only invent a new one when it would actually improve the answer."
+        },
+        {
+          "topic": "Benders",
+          "question": "What is the core idea of Benders' decomposition?",
+          "answer": "A master picks the <b>hard strategic choices</b> with an optimistic cost guess; a subproblem fills in the easy details and reports back with <b>cuts</b> that correct the guess. (Pick the cities, let a helper compute the real route.)"
+        }
+      ]
+    },
+    {
+      "id": "lecture-12-metaheuristics",
+      "title": "Lecture 12 · Metaheuristics",
+      "description": "Clever tricks for finding good-enough answers fast when perfect solutions take too long.",
+      "summary": "summaries/algorithm-engineering/lecture-12-metaheuristics.md",
+      "cards": [
+        {
+          "topic": "Trajectory",
+          "question": "What is a local optimum, and why is it the big problem in local search?",
+          "answer": "A solution where <b>every small neighboring move looks worse</b>, so the search stops — but it may only be the bottom of a small dip, not the true best answer. It traps simple hill-climbing."
+        },
+        {
+          "topic": "Trajectory",
+          "question": "What is the key idea of Simulated Annealing, and where does it come from?",
+          "answer": "Inspired by <b>slowly cooling hot metal</b>. A high 'temperature' early on allows accepting worse moves (to escape traps); as it cools, it accepts worse moves less and less until it settles into a good solution."
+        },
+        {
+          "topic": "Trajectory",
+          "question": "How does Ruin & Recreate / Large Neighborhood Search (LNS) work?",
+          "answer": "<b>Destroy a chunk of a good solution, then rebuild that chunk smarter.</b> This explores a huge neighborhood at once, and the repair step can even use an exact solver on the small piece."
+        },
+        {
+          "topic": "Population",
+          "question": "What are the main steps of a Genetic Algorithm?",
+          "answer": "Keep a population, score each by <b>fitness</b>, select mostly-fit parents, <b>crossover</b> them into children, apply small random <b>mutations</b>, and repeat over generations. Diversity keeps exploration strong."
+        }
+      ]
+    },
+    {
+      "id": "lecture-13-tradeoffs-uncertainty",
+      "title": "Lecture 13 · Trade-offs and Uncertainty",
+      "description": "Handling problems with many goals at once and futures we can't predict.",
+      "summary": "summaries/algorithm-engineering/lecture-13-tradeoffs-uncertainty.md",
+      "cards": [
+        {
+          "topic": "The Big Picture",
+          "question": "What two things does the standard 'minimize one number, all facts known' model ignore about real problems?",
+          "answer": "That quality is usually <b>multidimensional</b> (you care about several goals at once) and that the world is <b>uncertain</b> (you don't know exactly what will happen)."
+        },
+        {
+          "topic": "Multiple Objectives",
+          "question": "What is a 'trade-off' between objectives?",
+          "answer": "When <b>improving one goal makes another worse</b>, like making ice cream healthier but less tasty. There's often no single 'best' answer."
+        },
+        {
+          "topic": "Multiple Objectives",
+          "question": "When can you say one option 'dominates' another?",
+          "answer": "When it is <b>at least as good on every goal and strictly better on at least one</b>. A dominated option is beaten on everything, so you can safely throw it out."
+        },
+        {
+          "topic": "Multiple Objectives",
+          "question": "What is the Pareto front, and what's the catch about it?",
+          "answer": "The set of <b>'survivor' options that nothing else beats on every goal</b>. The catch: being on the front doesn't make an option good, only 'not clearly beaten' — a boring option can still survive."
+        },
+        {
+          "topic": "Multiple Objectives",
+          "question": "Which two questions must you keep separate in multi-objective problems?",
+          "answer": "<b>How do we decide which solution is better</b> (the comparison rules) versus <b>how do we find good solutions</b> (the search). Like deciding what's for dinner vs. actually cooking it."
+        },
+        {
+          "topic": "Encoding Preferences",
+          "question": "What is the 'weighted sum' approach, and its main danger?",
+          "answer": "You give each goal a weight and add them into one score. The danger: the weights act like secret <b>exchange rates</b> (e.g. '1 changeover = 5 minutes late') that someone must justify — and different units can trick you."
+        },
+        {
+          "topic": "Encoding Preferences",
+          "question": "What is lexicographic (priority-ladder) optimization?",
+          "answer": "You handle the <b>most important goal first, then the next</b>, never trading away a top goal for a lower one — like always packing the baby's diapers before trying to pack light."
+        },
+        {
+          "topic": "Encoding Preferences",
+          "question": "What is the ε-constraint (limits) approach?",
+          "answer": "You optimize one goal while forcing the others to <b>stay under fixed limits</b>, e.g. 'make the trip cheapest, but under 2 hours and at most 1 transfer.'"
+        },
+        {
+          "topic": "Encoding Preferences",
+          "question": "When can't you name your preferences up front — and what do you do instead?",
+          "answer": "Often people only know what they want <b>after seeing the options</b>. So compute a menu of good alternatives (extremes, balanced middles, and 'knee' sweet spots) and let a human pick."
+        },
+        {
+          "topic": "Uncertainty",
+          "question": "What does the sandwich shop (newsvendor) story teach?",
+          "answer": "You must <b>decide before you know the truth</b>, and because running out hurts more than leftovers, you should prepare a bit more than the average demand. The cost of each mistake shapes your choice."
+        },
+        {
+          "topic": "Uncertainty",
+          "question": "Why is predicting just the 'average future' a trap?",
+          "answer": "A single best guess <b>throws away how uncertain things are</b> — the exact info the decision needs. Even a perfect average prediction can lead to a bad decision."
+        },
+        {
+          "topic": "Uncertainty",
+          "question": "What three questions should you ask before modeling uncertainty?",
+          "answer": "<b>What is uncertain, what do we know about it, and when is it revealed</b> (can we still adapt afterward)?"
+        },
+        {
+          "topic": "Robust Optimization",
+          "question": "What is the idea of robust optimization, and its downside?",
+          "answer": "Make a plan that <b>survives every plausible 'world' at once</b>, like packing umbrella, sunscreen and jacket. Downside: guarding against everything going wrong together is overly pessimistic and costly."
+        },
+        {
+          "topic": "Robust Optimization",
+          "question": "Why is a 'budget' of uncertainty smarter than protecting against the absolute worst?",
+          "answer": "Bad luck tends to <b>cancel out (like coin flips rarely being all heads)</b>, so you protect against a realistic amount of trouble instead of an impossible all-at-once disaster. Safety is a dial, not a switch."
+        },
+        {
+          "topic": "Stochastic Optimization",
+          "question": "How does stochastic optimization differ from robust optimization?",
+          "answer": "Instead of only fearing the worst, it <b>weighs each possible future by how likely it is</b> and aims for the best result on average (like planning lemonade around cold/normal/hot day odds)."
+        },
+        {
+          "topic": "Stochastic Optimization",
+          "question": "What is 'recourse' (two-stage decisions), and the golden rule that goes with it?",
+          "answer": "Decide what you must <b>now</b>, and leave flexible reactions for <b>after you learn more</b> (like hiring staff now, calling extra help later). Golden rule: no crystal ball — your 'now' choice can't peek at the future."
+        },
+        {
+          "topic": "Stochastic Optimization",
+          "question": "Why isn't optimizing for the 'average' automatically safe?",
+          "answer": "Chasing the best average can <b>quietly accept a rare disaster</b> because it's unlikely. If a bad outcome would be catastrophic, you need extra rules to limit the risky tail, and always test plans on fresh scenarios."
+        }
+      ]
+    },
+    {
+      "id": "tutorial-06-coding-patterns",
+      "title": "Tutorial 06 · Coding Patterns, TDD & Debugging",
+      "description": "When it's UNSAT, ask for a small subset — not a verdict on everything.",
+      "cards": [
+        {
+          "topic": "MUS",
+          "question": "Define a Minimal Unsatisfiable Subset (MUS).",
+          "answer": "A subset C' ⊆ C that is both (a) <b>unsatisfiable</b> on its own — <code>solve(C') = UNSAT</code> — and (b) <b>minimal</b>: removing any single constraint c ∈ C' makes it satisfiable. It converts the useless verdict 'all your constraints together are infeasible' into <b>one pinpointed conflict</b>. Same object, different vocabulary: MIP solvers call it an <b>IIS</b> (irreducible infeasible subset)."
+        },
+        {
+          "topic": "MCS",
+          "question": "Define a Minimal Correction Subset (MCS) and contrast it with a MUS.",
+          "answer": "A minimal set of constraints whose <b>removal</b> makes the model satisfiable — the complement of a <em>maximal</em> satisfiable subset. It is the counterfactual view: <b>a MUS answers 'which constraints fight each other?'</b>, while <b>an MCS answers 'what do I drop to fix it?'</b> In the 2-colouring example the MUS is the odd triangle; the MCS is the single edge you delete to make the graph 2-colourable."
+        }
+      ]
+    },
+    {
+      "id": "lecture-14-analytics-lifecycle",
+      "title": "Lecture 14 · Analytics Lifecycle & Sequential Decisions",
+      "description": "Why the model is the small part, and why repeating decisions need a policy, not a plan.",
+      "summary": "summaries/algorithm-engineering/lecture-14-analytics-lifecycle.md",
+      "cards": [
+        {
+          "topic": "Big Picture",
+          "question": "What is the single most important message of the whole lecture?",
+          "answer": "The clever math (the model) is the <b>small, easy part</b>. Projects succeed or fail in the framing before it and the deployment and upkeep after it."
+        },
+        {
+          "topic": "Big Picture",
+          "question": "What are the two 'lenses' the lecture gives you?",
+          "answer": "The <b>Project Lens</b> (how a whole project runs, start to finish) and the <b>Time Lens</b> (how to decide again and again as new surprises arrive)."
+        },
+        {
+          "topic": "Three Analytics",
+          "question": "What are the three kinds of analytics, and how do they stack?",
+          "answer": "Descriptive (what happened?), Predictive (what will happen?), and Prescriptive (what should we do?). They form a <b>stack, not a menu</b>: doing rests on predicting, which rests on describing."
+        },
+        {
+          "topic": "Project Lens",
+          "question": "How much of a real project is actually building the model, and why does that matter?",
+          "answer": "Only about <b>10–15% of the time</b>. It shows the math is rarely the stage that decides success."
+        },
+        {
+          "topic": "Project Lens",
+          "question": "What are the 7 stages of the INFORMS Analytics Framework?",
+          "answer": "Business Problem Framing, Analytics Problem Framing, Data, Methodology, Model Building, Deployment, and Lifecycle Management. Model Building is just <b>stage 5 of 7</b>."
+        },
+        {
+          "topic": "Project Lens",
+          "question": "Why is the framework called a 'cogwheel, not a pipeline'?",
+          "answer": "The stages <b>loop backward as often as forward</b>. A discovery late (like missing data) can invalidate an assumption made early, forcing you to walk back and re-frame."
+        },
+        {
+          "topic": "Project Lens",
+          "question": "Where do projects actually die, and is it a technical problem?",
+          "answer": "At <b>Deployment</b>, and it's mostly organizational, not technical. A plan people don't trust, no fallback for a bad night, or no internal champion kills it."
+        },
+        {
+          "topic": "Project Lens",
+          "question": "If you only assess three risks before a project, which three matter most?",
+          "answer": "<b>Decision Scope</b> (state it in one sentence?), <b>Value Proposition</b> (worth in real money per year?), and <b>Process Maturity</b> (has this org shipped such a system before?)."
+        },
+        {
+          "topic": "Time Lens",
+          "question": "In the nurse-ward story, the math was perfect and data honest — so why did the roster fail?",
+          "answer": "The <b>horizon was the problem</b>. No fixed two-week plan survives two weeks of surprises, because the surprises (like sick calls) arrive after you've committed."
+        },
+        {
+          "topic": "Time Lens",
+          "question": "What is the key difference between a plan and a policy?",
+          "answer": "A plan is a fixed sequence chosen up front, optimal for only one imagined future. A <b>policy is a rule from 'what you know now' to a decision</b>, so it works for every future because it consumes new information as it arrives."
+        },
+        {
+          "topic": "Time Lens",
+          "question": "What three questions must you answer to frame a sequential-decision problem?",
+          "answer": "What are the decisions and <b>who owns them</b>? How do we measure quality? What uncertainty affects performance? (Frame it before reaching for a method.)"
+        },
+        {
+          "topic": "Time Lens",
+          "question": "What does 'SDA' stand for, and what gap does it address?",
+          "answer": "<b>Sequential Decision Analytics.</b> A one-shot optimization model answers 'what is the best plan for this snapshot?' — but real decisions <b>repeat as new information arrives</b> (sick calls, admissions, cancellations). SDA is the framing for that stream: instead of one plan you design a <b>policy</b>, then tune it against many plausible futures in a simulator."
+        },
+        {
+          "topic": "Time Lens",
+          "question": "What are the five elements of a sequential decision problem?",
+          "answer": "1. <b>State</b> — everything you know right now (commitments, who is out, forecast, fairness and hours ledgers). 2. <b>Decision</b> — what you may choose, and its feasible set. 3. <b>Exogenous information</b> — what the world reveals <em>between</em> decisions (sick calls, admissions, whether offered overtime is accepted). 4. <b>Transition</b> — how state + decision + new information produce the next state (overtime tonight rest-locks a nurse tomorrow). 5. <b>Objective</b> — what you score over time (labour + shortfall + fairness + stability). Warren Powell's framing: <b>write these down before reaching for a method</b>."
+        },
+        {
+          "topic": "Time Lens",
+          "question": "Why measure quality with several conflicting numbers instead of one weighted sum?",
+          "answer": "A single sum <b>hides what you give up</b>. Cost, coverage, fairness, preferences, stability, and tail safety pull against each other — surface the trade-offs instead."
+        },
+        {
+          "topic": "Time Lens",
+          "question": "What is the 'simulator', and what is it NOT?",
+          "answer": "It's a <b>wind tunnel, not a forecast</b>. It doesn't predict who gets sick next Tuesday; it shows how a policy behaves across many plausible futures, so you can tune safely without experimenting on real people."
+        },
+        {
+          "topic": "Time Lens",
+          "question": "Why score a policy on the worst nights instead of the average night?",
+          "answer": "Being short-staffed hurts far more than being spare, and the optimizer <b>amplifies forecast errors</b> by pushing against constraints. So you plan for the bad tail, not the comfortable mean."
+        },
+        {
+          "topic": "Time Lens",
+          "question": "What are Powell's four families of policies, and does fancier mean better?",
+          "answer": "PFA (a tuned rule), CFA (solve a fudged proxy goal), VFA (learn a state's future worth), DLA (simulate ahead). <b>More complex is not better</b> — a fancy policy can be too slow for the huddle and too opaque to trust."
+        },
+        {
+          "topic": "Time Lens",
+          "question": "Why write down the nurses' by-hand routine as the baseline?",
+          "answer": "Their routine actually worked better in reality, so it becomes the <b>honest baseline anything fancier must beat</b> — not a strawman. Often the rule was right and only the cutoff needed tuning."
+        }
+      ]
     }
   ]
 }
