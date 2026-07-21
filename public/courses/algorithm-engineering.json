@@ -1519,6 +1519,99 @@
                 "answer": "Allow an <b>invalid solution and minimize a conflict metric</b> instead. E.g. in coloring: try to drop a color, then shuffle to drive the number of clashing edges/uncolored vertices down to zero."
             }
         ]
+    },
+    {
+        "id": "lecture-13-tradeoffs-uncertainty",
+        "title": "Lecture 13 · Trade-offs and Uncertainty",
+        "description": "Handling problems with many goals at once and futures we can't predict.",
+        "summary": "summaries/algorithm-engineering/lecture-13-tradeoffs-uncertainty.md",
+        "cards": [
+            {
+                "topic": "The Big Picture",
+                "question": "What two things does the standard 'minimize one number, all facts known' model ignore about real problems?",
+                "answer": "That quality is usually <b>multidimensional</b> (you care about several goals at once) and that the world is <b>uncertain</b> (you don't know exactly what will happen)."
+            },
+            {
+                "topic": "Multiple Objectives",
+                "question": "What is a 'trade-off' between objectives?",
+                "answer": "When <b>improving one goal makes another worse</b>, like making ice cream healthier but less tasty. There's often no single 'best' answer."
+            },
+            {
+                "topic": "Multiple Objectives",
+                "question": "When can you say one option 'dominates' another?",
+                "answer": "When it is <b>at least as good on every goal and strictly better on at least one</b>. A dominated option is beaten on everything, so you can safely throw it out."
+            },
+            {
+                "topic": "Multiple Objectives",
+                "question": "What is the Pareto front, and what's the catch about it?",
+                "answer": "The set of <b>'survivor' options that nothing else beats on every goal</b>. The catch: being on the front doesn't make an option good, only 'not clearly beaten' — a boring option can still survive."
+            },
+            {
+                "topic": "Multiple Objectives",
+                "question": "Which two questions must you keep separate in multi-objective problems?",
+                "answer": "<b>How do we decide which solution is better</b> (the comparison rules) versus <b>how do we find good solutions</b> (the search). Like deciding what's for dinner vs. actually cooking it."
+            },
+            {
+                "topic": "Encoding Preferences",
+                "question": "What is the 'weighted sum' approach, and its main danger?",
+                "answer": "You give each goal a weight and add them into one score. The danger: the weights act like secret <b>exchange rates</b> (e.g. '1 changeover = 5 minutes late') that someone must justify — and different units can trick you."
+            },
+            {
+                "topic": "Encoding Preferences",
+                "question": "What is lexicographic (priority-ladder) optimization?",
+                "answer": "You handle the <b>most important goal first, then the next</b>, never trading away a top goal for a lower one — like always packing the baby's diapers before trying to pack light."
+            },
+            {
+                "topic": "Encoding Preferences",
+                "question": "What is the ε-constraint (limits) approach?",
+                "answer": "You optimize one goal while forcing the others to <b>stay under fixed limits</b>, e.g. 'make the trip cheapest, but under 2 hours and at most 1 transfer.'"
+            },
+            {
+                "topic": "Encoding Preferences",
+                "question": "When can't you name your preferences up front — and what do you do instead?",
+                "answer": "Often people only know what they want <b>after seeing the options</b>. So compute a menu of good alternatives (extremes, balanced middles, and 'knee' sweet spots) and let a human pick."
+            },
+            {
+                "topic": "Uncertainty",
+                "question": "What does the sandwich shop (newsvendor) story teach?",
+                "answer": "You must <b>decide before you know the truth</b>, and because running out hurts more than leftovers, you should prepare a bit more than the average demand. The cost of each mistake shapes your choice."
+            },
+            {
+                "topic": "Uncertainty",
+                "question": "Why is predicting just the 'average future' a trap?",
+                "answer": "A single best guess <b>throws away how uncertain things are</b> — the exact info the decision needs. Even a perfect average prediction can lead to a bad decision."
+            },
+            {
+                "topic": "Uncertainty",
+                "question": "What three questions should you ask before modeling uncertainty?",
+                "answer": "<b>What is uncertain, what do we know about it, and when is it revealed</b> (can we still adapt afterward)?"
+            },
+            {
+                "topic": "Robust Optimization",
+                "question": "What is the idea of robust optimization, and its downside?",
+                "answer": "Make a plan that <b>survives every plausible 'world' at once</b>, like packing umbrella, sunscreen and jacket. Downside: guarding against everything going wrong together is overly pessimistic and costly."
+            },
+            {
+                "topic": "Robust Optimization",
+                "question": "Why is a 'budget' of uncertainty smarter than protecting against the absolute worst?",
+                "answer": "Bad luck tends to <b>cancel out (like coin flips rarely being all heads)</b>, so you protect against a realistic amount of trouble instead of an impossible all-at-once disaster. Safety is a dial, not a switch."
+            },
+            {
+                "topic": "Stochastic Optimization",
+                "question": "How does stochastic optimization differ from robust optimization?",
+                "answer": "Instead of only fearing the worst, it <b>weighs each possible future by how likely it is</b> and aims for the best result on average (like planning lemonade around cold/normal/hot day odds)."
+            },
+            {
+                "topic": "Stochastic Optimization",
+                "question": "What is 'recourse' (two-stage decisions), and the golden rule that goes with it?",
+                "answer": "Decide what you must <b>now</b>, and leave flexible reactions for <b>after you learn more</b> (like hiring staff now, calling extra help later). Golden rule: no crystal ball — your 'now' choice can't peek at the future."
+            },
+            {
+                "topic": "Stochastic Optimization",
+                "question": "Why isn't optimizing for the 'average' automatically safe?",
+                "answer": "Chasing the best average can <b>quietly accept a rare disaster</b> because it's unlikely. If a bad outcome would be catastrophic, you need extra rules to limit the risky tail, and always test plans on fresh scenarios."
+            }
+        ]
     }
   ]
 }
