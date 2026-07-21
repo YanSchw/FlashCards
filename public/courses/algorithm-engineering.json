@@ -1072,6 +1072,169 @@
                 "answer": "They usually run fast, but their <b>roughly cubic worst case</b> can become critical on very large or tricky inputs."
             }
         ]
+    },
+    {
+        "id": "lecture-09-sat",
+        "title": "Lecture 09 · SAT",
+        "description": "How SAT solvers work: from DPLL guessing to modern CDCL learning.",
+        "summary": "summaries/algorithm-engineering/lecture-09-sat.md",
+        "cards": [
+            {
+                "topic": "What is SAT",
+                "question": "In plain words, what does the SAT problem ask?",
+                "answer": "Can we set a bunch of true/false switches (variables) so that <b>every rule is satisfied at the same time</b>? If yes it's satisfiable, if impossible it's unsatisfiable."
+            },
+            {
+                "topic": "What is SAT",
+                "question": "What is a 'clause' in SAT?",
+                "answer": "A single rule that says <b>at least one of these options must be true</b> (an OR-list of literals). The whole formula requires ALL clauses to hold at once."
+            },
+            {
+                "topic": "What is SAT",
+                "question": "What's the difference between a variable and a literal?",
+                "answer": "A <b>variable</b> is a yes/no switch; a <b>literal</b> is that switch or its opposite (the switch, or 'not' the switch)."
+            },
+            {
+                "topic": "What is SAT",
+                "question": "Why is SAT historically important?",
+                "answer": "It was the <b>first problem ever proven NP-complete</b> — the 'granddaddy' of hard problems. A fast trick for SAT would crack a huge family of hard problems."
+            },
+            {
+                "topic": "DPLL",
+                "question": "What is DPLL, at a high level?",
+                "answer": "The classic solver that works like Sudoku: <b>guess, fill in all forced moves, and backtrack</b> (undo) when you hit a contradiction."
+            },
+            {
+                "topic": "DPLL",
+                "question": "What is Unit Propagation, and why does it matter?",
+                "answer": "When a clause shrinks to only one option left, you're <b>forced</b> to pick it — which can force more moves in a domino chain. It's the single most important and most-used move."
+            },
+            {
+                "topic": "DPLL",
+                "question": "What is the Pure Literal rule?",
+                "answer": "If a variable only ever appears in one form (always 'on' or always 'off'), just <b>set it that way for free</b> — it can only help. Removes all clauses it satisfies."
+            },
+            {
+                "topic": "DPLL",
+                "question": "What does DPLL do when nothing is forced?",
+                "answer": "It <b>guesses a variable</b>, runs propagation, and if that leads to a contradiction it undoes the guess and tries the opposite value — building a search tree."
+            },
+            {
+                "topic": "Implementation",
+                "question": "What is the 'trail' in a SAT solver?",
+                "answer": "An <b>ordered stack of everything set true so far</b>, split into decision levels. Level 0 is true forever; each new guess starts a new level."
+            },
+            {
+                "topic": "Implementation",
+                "question": "How does backtracking work with the trail?",
+                "answer": "You just <b>chop off the top decision level</b> — cheap, like tearing the last page off a notepad."
+            },
+            {
+                "topic": "Implementation",
+                "question": "What is the Two Watched Literals idea?",
+                "answer": "In each clause you only <b>keep an eye on two still-alive options</b>. While two are alive the clause can't be forced yet, so you can ignore it — huge speedup."
+            },
+            {
+                "topic": "Implementation",
+                "question": "What must you fix about watched literals when you backtrack? Why?",
+                "answer": "<b>Nothing!</b> Undoing can only bring dead switches back to life, never kill live ones, so 'watch two live options' stays true automatically. Doing nothing is the cheapest option."
+            },
+            {
+                "topic": "DPLL Flaw",
+                "question": "What is DPLL's big weakness?",
+                "answer": "It <b>never learns from its mistakes</b> — it wanders back into the same hidden dead-ends over and over, which can make it insanely slow."
+            },
+            {
+                "topic": "Learning",
+                "question": "What is resolution, in simple terms?",
+                "answer": "A way to <b>combine two rules into a new true rule</b> by cancelling out one variable: 'A or X' plus 'B or not-X' gives you 'A or B'."
+            },
+            {
+                "topic": "Learning",
+                "question": "How can resolution prove a formula is unsatisfiable?",
+                "answer": "Keep combining rules until you reach the <b>empty clause</b> (a rule with zero options = flat-out impossible). That proves the whole thing is UNSAT."
+            },
+            {
+                "topic": "CDCL",
+                "question": "What is CDCL and why is it the modern standard?",
+                "answer": "Conflict-Driven Clause Learning: it's DPLL that <b>learns a new rule from every crash</b>, so it never repeats the same mistake."
+            },
+            {
+                "topic": "CDCL",
+                "question": "What extra info does each forced (propagated) literal store?",
+                "answer": "Its <b>reason</b> — the clause that forced it. These reasons are traced back to build the learned clause when a conflict happens."
+            },
+            {
+                "topic": "CDCL",
+                "question": "What happens on a conflict in CDCL?",
+                "answer": "You <b>trace backwards through the reasons using resolution</b> to find the real cause, distill it into a new learned rule, and add it to the rulebook forever."
+            },
+            {
+                "topic": "CDCL",
+                "question": "What is backjumping?",
+                "answer": "Instead of undoing one step, <b>leap far back</b> to the earliest level where the newly learned rule would have helped — skipping useless branches at once."
+            },
+            {
+                "topic": "CDCL",
+                "question": "What is the First UIP (Unique Implication Point)?",
+                "answer": "The single <b>bottleneck moment</b> in the current level that all the trouble funnels through. Learning the rule right there gives the tightest, most useful lesson."
+            },
+            {
+                "topic": "CDCL",
+                "question": "Why is CDCL guaranteed to terminate?",
+                "answer": "Every conflict teaches a <b>genuinely new rule</b> (never a repeat), and there are only finitely many possible rules to learn — so it must finish."
+            },
+            {
+                "topic": "CDCL",
+                "question": "What are the two ways a CDCL run can end?",
+                "answer": "Either fill in every switch with no conflict (<b>SAT — answer found</b>), or learn the empty clause (<b>UNSAT — proven impossible</b>)."
+            },
+            {
+                "topic": "Improvements",
+                "question": "What does VSIDS do?",
+                "answer": "A variable-picking heuristic: prefer switches <b>recently involved in many conflicts</b> — the 'spicy' important ones. Like a firefighter rushing to where fires keep flaring."
+            },
+            {
+                "topic": "Improvements",
+                "question": "What are restarts, and why keep doing them?",
+                "answer": "Throw away all current guesses and start fresh, but <b>keep everything learned</b> (clauses + scores). Stops the solver getting stuck in a bad part of the search."
+            },
+            {
+                "topic": "Improvements",
+                "question": "What is phase saving?",
+                "answer": "When you undo a switch, <b>remember which way it was set</b> and try that same value next time — so you don't re-discover good settings you already found."
+            },
+            {
+                "topic": "Improvements",
+                "question": "Why delete learned clauses, and how do we choose which?",
+                "answer": "The rulebook bloats and slows down, so we <b>toss the least useful rules</b>. The best quality measure is the glue score (LBD): rules spanning fewer decision levels are stickier and worth keeping."
+            },
+            {
+                "topic": "Improvements",
+                "question": "What is conflict clause minimization?",
+                "answer": "After learning a rule, <b>trim redundant parts</b> so it's shorter and punchier — shorter rules are faster and more powerful."
+            },
+            {
+                "topic": "Improvements",
+                "question": "What is pre-/in-processing, and its most useful technique?",
+                "answer": "Cleaning up and simplifying the rulebook before and during solving. The single most effective is <b>Bounded Variable Elimination (BVE)</b>: remove a variable by folding its clauses together, if it doesn't blow up."
+            },
+            {
+                "topic": "Improvements",
+                "question": "What are SAT/UNSAT stages?",
+                "answer": "Finding an answer vs. proving none exists need different styles, so the solver <b>switches its personality</b> depending on which case it thinks it's in."
+            },
+            {
+                "topic": "Improvements",
+                "question": "What is local search (probSAT/YalSAT) used for here?",
+                "answer": "A 'wander and fix' method that flips switches to satisfy more rules, run on the side to <b>suggest good settings</b> to the main CDCL engine."
+            },
+            {
+                "topic": "Exam Focus",
+                "question": "What does the lecture say to focus on for the exam?",
+                "answer": "<b>CDCL, the trail & decision levels, conflict resolution (learning + backjumping), and the high-level ideas</b> behind the tricks — not every optimization's inner details."
+            }
+        ]
     }
   ]
 }
