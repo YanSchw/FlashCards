@@ -1,173 +1,180 @@
 {
-    "id": "lecture-02-ray-tracing-fundamentals",
-    "title": "Lecture 02 · Ray Tracing Fundamentals",
-    "description": "How ray tracing builds an image by shooting rays from the eye, hitting shapes, and bouncing through mirrors and glass.",
-    "summary": "summaries/computer-graphics/lecture-02-ray-tracing-fundamentals.md",
-    "cards": [
+    "id": "computer-graphics",
+    "title": "Computergrafik I",
+    "description": "An introduction to computer graphics, covering the fundamental concepts of rendering, ray tracing, and the mathematics behind 3D graphics.",
+    "lectures": [
         {
-            "topic": "Big Idea",
-            "question": "What is the core idea behind ray tracing?",
-            "answer": "Instead of following light from the source, it works <b>backwards from the eye</b>, shooting a ray through each pixel to find what it hits."
-        },
-        {
-            "topic": "Big Idea",
-            "question": "Why trace rays from the eye instead of from the light source?",
-            "answer": "Because nature wastes billions of rays that never reach the eye, so starting from the eye <b>only computes rays that actually matter</b>."
-        },
-        {
-            "topic": "Big Idea",
-            "question": "What are the 3 ways to create an image?",
-            "answer": "Starting from <b>light sources</b> (nature), from <b>scene surfaces</b> (rasterization), and from the <b>viewpoint</b> (ray tracing)."
-        },
-        {
-            "topic": "Big Idea",
-            "question": "What does each pixel represent when tracing rays?",
-            "answer": "A single dot on the image plane that a ray passes through; whatever the ray hits <b>decides that pixel's color</b>."
-        },
-        {
-            "topic": "The 4 Steps",
-            "question": "What are the four main steps of ray tracing?",
-            "answer": "<b>Primary rays</b>, <b>shadow rays</b>, <b>shading</b>, and <b>secondary rays</b>."
-        },
-        {
-            "topic": "The 4 Steps",
-            "question": "What is the job of a primary ray?",
-            "answer": "Shot from the eye through a pixel to find the <b>closest object</b> it hits in the scene."
-        },
-        {
-            "topic": "The 4 Steps",
-            "question": "Why do we only keep the closest hit for a primary ray?",
-            "answer": "Because nearer objects block ones behind them, so the closest hit is the <b>one actually visible</b>."
-        },
-        {
-            "topic": "The 4 Steps",
-            "question": "What does a shadow ray tell us?",
-            "answer": "It checks the path to a light: if something blocks it the point is <b>in shadow</b>, if clear the point is <b>directly lit</b>."
-        },
-        {
-            "topic": "The 4 Steps",
-            "question": "What things determine a pixel's color during shading?",
-            "answer": "The hit point, its <b>surface normal direction</b>, whether it's lit or shadowed, and the surface's <b>material</b> (dull, glossy, shiny...)."
-        },
-        {
-            "topic": "The 4 Steps",
-            "question": "When are secondary rays created?",
-            "answer": "When a ray hits a <b>mirror or glass</b> surface, spawning new reflected and refracted rays."
-        },
-        {
-            "topic": "Assumptions",
-            "question": "How does graphics simplify light sources?",
-            "answer": "It treats them as tiny <b>point light sources</b>, while in reality they are extended (like the glowing ball of the sun)."
-        },
-        {
-            "topic": "Assumptions",
-            "question": "What does ray tracing assume about empty space?",
-            "answer": "That it is <b>perfectly transparent</b>, ignoring real effects like fog, haze, absorption, and scattering."
-        },
-        {
-            "topic": "Assumptions",
-            "question": "What camera model does graphics use, and why is it a simplification?",
-            "answer": "The <b>pinhole model</b>, which ignores real lens effects like depth-of-field, blur, and distortion."
-        },
-        {
-            "topic": "Assumptions",
-            "question": "How is color simplified in ray tracing?",
-            "answer": "It uses just <b>Red-Green-Blue channels</b> instead of the full continuous light spectrum."
-        },
-        {
-            "topic": "Math Toolbox",
-            "question": "How can you describe a ray in simple terms?",
-            "answer": "As a <b>start point plus a walk</b>: begin at the origin and move in a direction by some distance."
-        },
-        {
-            "topic": "Math Toolbox",
-            "question": "What does the sign of the ray distance value mean?",
-            "answer": "Positive means the point is <b>in front of the viewpoint</b>; negative means it's behind and gets ignored."
-        },
-        {
-            "topic": "Math Toolbox",
-            "question": "What does the dot product intuitively measure?",
-            "answer": "How much two arrows <b>point the same direction</b> (useful for how directly a surface faces the light)."
-        },
-        {
-            "topic": "Math Toolbox",
-            "question": "What does the cross product give you?",
-            "answer": "A new arrow that is <b>perpendicular to two others</b>, used to find a surface's normal."
-        },
-        {
-            "topic": "Shape Intersections",
-            "question": "What is the most important task in ray tracing?",
-            "answer": "<b>Intersecting rays with the scene</b> — figuring out whether and where a ray hits a shape."
-        },
-        {
-            "topic": "Shape Intersections",
-            "question": "For a sphere, what does the discriminant tell you?",
-            "answer": "Whether the ray <b>misses</b> (negative), just <b>grazes</b> it (zero), or <b>goes through</b> with two hits (positive)."
-        },
-        {
-            "topic": "Shape Intersections",
-            "question": "How is an axis-aligned box treated for intersection?",
-            "answer": "As <b>6 flat walls</b>, finding where the ray enters and exits across all sides."
-        },
-        {
-            "topic": "Shape Intersections",
-            "question": "How do you know if a ray actually misses a box?",
-            "answer": "If the <b>exit comes before the entry</b>, or the exit point is behind the viewpoint, the ray misses."
-        },
-        {
-            "topic": "Shape Intersections",
-            "question": "Why is the ray-triangle intersection especially important?",
-            "answer": "Because triangles are the <b>building blocks of almost every 3D model</b>."
-        },
-        {
-            "topic": "Shape Intersections",
-            "question": "What are the two steps of ray-triangle intersection?",
-            "answer": "First find where the ray hits the triangle's <b>infinite plane</b>, then check if that point is <b>inside the triangle</b>."
-        },
-        {
-            "topic": "Shape Intersections",
-            "question": "What idea do barycentric coordinates capture?",
-            "answer": "A point inside a triangle as a <b>mix of its three corners</b>; if the mix stays valid, the point is inside."
-        },
-        {
-            "topic": "Recursive Ray Tracing",
-            "question": "What is Whitted-style (recursive) ray tracing?",
-            "answer": "Ray tracing that <b>keeps spawning new rays</b> at mirror and glass surfaces to capture reflections and refractions."
-        },
-        {
-            "topic": "Recursive Ray Tracing",
-            "question": "What three parts add up to a pixel's final color?",
-            "answer": "<b>Direct light</b>, plus what it sees in <b>reflection</b>, plus what it sees through <b>refraction</b>."
-        },
-        {
-            "topic": "Recursive Ray Tracing",
-            "question": "Why do we limit the recursion depth?",
-            "answer": "To stop <b>endless bouncing</b> (like two mirrors facing each other); more bounces look better but cost more time."
-        },
-        {
-            "topic": "Reflection & Refraction",
-            "question": "What is the rule for mirror reflection?",
-            "answer": "The <b>angle in equals the angle out</b>, just like a ball bouncing off a wall."
-        },
-        {
-            "topic": "Reflection & Refraction",
-            "question": "What is refraction, and what law governs it?",
-            "answer": "The <b>bending of light</b> when it enters a new material, described by <b>Snell's Law</b>."
-        },
-        {
-            "topic": "Reflection & Refraction",
-            "question": "What does the refractive index describe?",
-            "answer": "A material's <b>bendiness</b> — how strongly it bends light (e.g. diamond bends a lot, which is why it sparkles)."
-        },
-        {
-            "topic": "Reflection & Refraction",
-            "question": "What is total internal reflection?",
-            "answer": "When light going from a <b>thick to a thin medium</b> at a steep angle can't escape and <b>reflects back inside</b>."
-        },
-        {
-            "topic": "Reflection & Refraction",
-            "question": "What does the Fresnel effect describe?",
-            "answer": "That surfaces both reflect and transmit light, with the mix <b>depending on the viewing angle</b> (e.g. a lake looks clear from above but mirror-like from the side)."
+            "id": "lecture-02-ray-tracing-fundamentals",
+            "title": "Lecture 02 · Ray Tracing Fundamentals",
+            "description": "How ray tracing builds an image by shooting rays from the eye, hitting shapes, and bouncing through mirrors and glass.",
+            "summary": "summaries/computer-graphics/lecture-02-ray-tracing-fundamentals.md",
+            "cards": [
+                {
+                    "topic": "Big Idea",
+                    "question": "What is the core idea behind ray tracing?",
+                    "answer": "Instead of following light from the source, it works <b>backwards from the eye</b>, shooting a ray through each pixel to find what it hits."
+                },
+                {
+                    "topic": "Big Idea",
+                    "question": "Why trace rays from the eye instead of from the light source?",
+                    "answer": "Because nature wastes billions of rays that never reach the eye, so starting from the eye <b>only computes rays that actually matter</b>."
+                },
+                {
+                    "topic": "Big Idea",
+                    "question": "What are the 3 ways to create an image?",
+                    "answer": "Starting from <b>light sources</b> (nature), from <b>scene surfaces</b> (rasterization), and from the <b>viewpoint</b> (ray tracing)."
+                },
+                {
+                    "topic": "Big Idea",
+                    "question": "What does each pixel represent when tracing rays?",
+                    "answer": "A single dot on the image plane that a ray passes through; whatever the ray hits <b>decides that pixel's color</b>."
+                },
+                {
+                    "topic": "The 4 Steps",
+                    "question": "What are the four main steps of ray tracing?",
+                    "answer": "<b>Primary rays</b>, <b>shadow rays</b>, <b>shading</b>, and <b>secondary rays</b>."
+                },
+                {
+                    "topic": "The 4 Steps",
+                    "question": "What is the job of a primary ray?",
+                    "answer": "Shot from the eye through a pixel to find the <b>closest object</b> it hits in the scene."
+                },
+                {
+                    "topic": "The 4 Steps",
+                    "question": "Why do we only keep the closest hit for a primary ray?",
+                    "answer": "Because nearer objects block ones behind them, so the closest hit is the <b>one actually visible</b>."
+                },
+                {
+                    "topic": "The 4 Steps",
+                    "question": "What does a shadow ray tell us?",
+                    "answer": "It checks the path to a light: if something blocks it the point is <b>in shadow</b>, if clear the point is <b>directly lit</b>."
+                },
+                {
+                    "topic": "The 4 Steps",
+                    "question": "What things determine a pixel's color during shading?",
+                    "answer": "The hit point, its <b>surface normal direction</b>, whether it's lit or shadowed, and the surface's <b>material</b> (dull, glossy, shiny...)."
+                },
+                {
+                    "topic": "The 4 Steps",
+                    "question": "When are secondary rays created?",
+                    "answer": "When a ray hits a <b>mirror or glass</b> surface, spawning new reflected and refracted rays."
+                },
+                {
+                    "topic": "Assumptions",
+                    "question": "How does graphics simplify light sources?",
+                    "answer": "It treats them as tiny <b>point light sources</b>, while in reality they are extended (like the glowing ball of the sun)."
+                },
+                {
+                    "topic": "Assumptions",
+                    "question": "What does ray tracing assume about empty space?",
+                    "answer": "That it is <b>perfectly transparent</b>, ignoring real effects like fog, haze, absorption, and scattering."
+                },
+                {
+                    "topic": "Assumptions",
+                    "question": "What camera model does graphics use, and why is it a simplification?",
+                    "answer": "The <b>pinhole model</b>, which ignores real lens effects like depth-of-field, blur, and distortion."
+                },
+                {
+                    "topic": "Assumptions",
+                    "question": "How is color simplified in ray tracing?",
+                    "answer": "It uses just <b>Red-Green-Blue channels</b> instead of the full continuous light spectrum."
+                },
+                {
+                    "topic": "Math Toolbox",
+                    "question": "How can you describe a ray in simple terms?",
+                    "answer": "As a <b>start point plus a walk</b>: begin at the origin and move in a direction by some distance."
+                },
+                {
+                    "topic": "Math Toolbox",
+                    "question": "What does the sign of the ray distance value mean?",
+                    "answer": "Positive means the point is <b>in front of the viewpoint</b>; negative means it's behind and gets ignored."
+                },
+                {
+                    "topic": "Math Toolbox",
+                    "question": "What does the dot product intuitively measure?",
+                    "answer": "How much two arrows <b>point the same direction</b> (useful for how directly a surface faces the light)."
+                },
+                {
+                    "topic": "Math Toolbox",
+                    "question": "What does the cross product give you?",
+                    "answer": "A new arrow that is <b>perpendicular to two others</b>, used to find a surface's normal."
+                },
+                {
+                    "topic": "Shape Intersections",
+                    "question": "What is the most important task in ray tracing?",
+                    "answer": "<b>Intersecting rays with the scene</b> — figuring out whether and where a ray hits a shape."
+                },
+                {
+                    "topic": "Shape Intersections",
+                    "question": "For a sphere, what does the discriminant tell you?",
+                    "answer": "Whether the ray <b>misses</b> (negative), just <b>grazes</b> it (zero), or <b>goes through</b> with two hits (positive)."
+                },
+                {
+                    "topic": "Shape Intersections",
+                    "question": "How is an axis-aligned box treated for intersection?",
+                    "answer": "As <b>6 flat walls</b>, finding where the ray enters and exits across all sides."
+                },
+                {
+                    "topic": "Shape Intersections",
+                    "question": "How do you know if a ray actually misses a box?",
+                    "answer": "If the <b>exit comes before the entry</b>, or the exit point is behind the viewpoint, the ray misses."
+                },
+                {
+                    "topic": "Shape Intersections",
+                    "question": "Why is the ray-triangle intersection especially important?",
+                    "answer": "Because triangles are the <b>building blocks of almost every 3D model</b>."
+                },
+                {
+                    "topic": "Shape Intersections",
+                    "question": "What are the two steps of ray-triangle intersection?",
+                    "answer": "First find where the ray hits the triangle's <b>infinite plane</b>, then check if that point is <b>inside the triangle</b>."
+                },
+                {
+                    "topic": "Shape Intersections",
+                    "question": "What idea do barycentric coordinates capture?",
+                    "answer": "A point inside a triangle as a <b>mix of its three corners</b>; if the mix stays valid, the point is inside."
+                },
+                {
+                    "topic": "Recursive Ray Tracing",
+                    "question": "What is Whitted-style (recursive) ray tracing?",
+                    "answer": "Ray tracing that <b>keeps spawning new rays</b> at mirror and glass surfaces to capture reflections and refractions."
+                },
+                {
+                    "topic": "Recursive Ray Tracing",
+                    "question": "What three parts add up to a pixel's final color?",
+                    "answer": "<b>Direct light</b>, plus what it sees in <b>reflection</b>, plus what it sees through <b>refraction</b>."
+                },
+                {
+                    "topic": "Recursive Ray Tracing",
+                    "question": "Why do we limit the recursion depth?",
+                    "answer": "To stop <b>endless bouncing</b> (like two mirrors facing each other); more bounces look better but cost more time."
+                },
+                {
+                    "topic": "Reflection & Refraction",
+                    "question": "What is the rule for mirror reflection?",
+                    "answer": "The <b>angle in equals the angle out</b>, just like a ball bouncing off a wall."
+                },
+                {
+                    "topic": "Reflection & Refraction",
+                    "question": "What is refraction, and what law governs it?",
+                    "answer": "The <b>bending of light</b> when it enters a new material, described by <b>Snell's Law</b>."
+                },
+                {
+                    "topic": "Reflection & Refraction",
+                    "question": "What does the refractive index describe?",
+                    "answer": "A material's <b>bendiness</b> — how strongly it bends light (e.g. diamond bends a lot, which is why it sparkles)."
+                },
+                {
+                    "topic": "Reflection & Refraction",
+                    "question": "What is total internal reflection?",
+                    "answer": "When light going from a <b>thick to a thin medium</b> at a steep angle can't escape and <b>reflects back inside</b>."
+                },
+                {
+                    "topic": "Reflection & Refraction",
+                    "question": "What does the Fresnel effect describe?",
+                    "answer": "That surfaces both reflect and transmit light, with the mix <b>depending on the viewing angle</b> (e.g. a lake looks clear from above but mirror-like from the side)."
+                }
+            ]
         }
     ]
 }
