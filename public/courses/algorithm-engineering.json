@@ -909,7 +909,7 @@
         "id": "lecture-08-graph-network-algorithms",
         "title": "Lecture 08 · Graph & Network Algorithms",
         "description": "The four classic graph problems — shortest path, matching, flow, and spanning trees — explained through everyday examples.",
-        "summary": "summaries/algorithm-engineering/lecture-08-graph-network-algorithms.md",
+        "summary": "summaries/algorithm-engineering/lecture-08.md",
         "cards": [
             {
                 "topic": "Graph Basics",
