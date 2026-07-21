@@ -1612,6 +1612,94 @@
                 "answer": "Chasing the best average can <b>quietly accept a rare disaster</b> because it's unlikely. If a bad outcome would be catastrophic, you need extra rules to limit the risky tail, and always test plans on fresh scenarios."
             }
         ]
+    },
+    {
+        "id": "lecture-14-analytics-lifecycle",
+        "title": "Lecture 14 · Analytics Lifecycle & Sequential Decisions",
+        "description": "Why the model is the small part, and why repeating decisions need a policy, not a plan.",
+        "summary": "summaries/algorithm-engineering/lecture-14-analytics-lifecycle.md",
+        "cards": [
+            {
+                "topic": "Big Picture",
+                "question": "What is the single most important message of the whole lecture?",
+                "answer": "The clever math (the model) is the <b>small, easy part</b>. Projects succeed or fail in the framing before it and the deployment and upkeep after it."
+            },
+            {
+                "topic": "Big Picture",
+                "question": "What are the two 'lenses' the lecture gives you?",
+                "answer": "The <b>Project Lens</b> (how a whole project runs, start to finish) and the <b>Time Lens</b> (how to decide again and again as new surprises arrive)."
+            },
+            {
+                "topic": "Three Analytics",
+                "question": "What are the three kinds of analytics, and how do they stack?",
+                "answer": "Descriptive (what happened?), Predictive (what will happen?), and Prescriptive (what should we do?). They form a <b>stack, not a menu</b>: doing rests on predicting, which rests on describing."
+            },
+            {
+                "topic": "Project Lens",
+                "question": "How much of a real project is actually building the model, and why does that matter?",
+                "answer": "Only about <b>10–15% of the time</b>. It shows the math is rarely the stage that decides success."
+            },
+            {
+                "topic": "Project Lens",
+                "question": "What are the 7 stages of the INFORMS Analytics Framework?",
+                "answer": "Business Problem Framing, Analytics Problem Framing, Data, Methodology, Model Building, Deployment, and Lifecycle Management. Model Building is just <b>stage 5 of 7</b>."
+            },
+            {
+                "topic": "Project Lens",
+                "question": "Why is the framework called a 'cogwheel, not a pipeline'?",
+                "answer": "The stages <b>loop backward as often as forward</b>. A discovery late (like missing data) can invalidate an assumption made early, forcing you to walk back and re-frame."
+            },
+            {
+                "topic": "Project Lens",
+                "question": "Where do projects actually die, and is it a technical problem?",
+                "answer": "At <b>Deployment</b>, and it's mostly organizational, not technical. A plan people don't trust, no fallback for a bad night, or no internal champion kills it."
+            },
+            {
+                "topic": "Project Lens",
+                "question": "If you only assess three risks before a project, which three matter most?",
+                "answer": "<b>Decision Scope</b> (state it in one sentence?), <b>Value Proposition</b> (worth in real money per year?), and <b>Process Maturity</b> (has this org shipped such a system before?)."
+            },
+            {
+                "topic": "Time Lens",
+                "question": "In the nurse-ward story, the math was perfect and data honest — so why did the roster fail?",
+                "answer": "The <b>horizon was the problem</b>. No fixed two-week plan survives two weeks of surprises, because the surprises (like sick calls) arrive after you've committed."
+            },
+            {
+                "topic": "Time Lens",
+                "question": "What is the key difference between a plan and a policy?",
+                "answer": "A plan is a fixed sequence chosen up front, optimal for only one imagined future. A <b>policy is a rule from 'what you know now' to a decision</b>, so it works for every future because it consumes new information as it arrives."
+            },
+            {
+                "topic": "Time Lens",
+                "question": "What three questions must you answer to frame a sequential-decision problem?",
+                "answer": "What are the decisions and <b>who owns them</b>? How do we measure quality? What uncertainty affects performance? (Frame it before reaching for a method.)"
+            },
+            {
+                "topic": "Time Lens",
+                "question": "Why measure quality with several conflicting numbers instead of one weighted sum?",
+                "answer": "A single sum <b>hides what you give up</b>. Cost, coverage, fairness, preferences, stability, and tail safety pull against each other — surface the trade-offs instead."
+            },
+            {
+                "topic": "Time Lens",
+                "question": "What is the 'simulator', and what is it NOT?",
+                "answer": "It's a <b>wind tunnel, not a forecast</b>. It doesn't predict who gets sick next Tuesday; it shows how a policy behaves across many plausible futures, so you can tune safely without experimenting on real people."
+            },
+            {
+                "topic": "Time Lens",
+                "question": "Why score a policy on the worst nights instead of the average night?",
+                "answer": "Being short-staffed hurts far more than being spare, and the optimizer <b>amplifies forecast errors</b> by pushing against constraints. So you plan for the bad tail, not the comfortable mean."
+            },
+            {
+                "topic": "Time Lens",
+                "question": "What are Powell's four families of policies, and does fancier mean better?",
+                "answer": "PFA (a tuned rule), CFA (solve a fudged proxy goal), VFA (learn a state's future worth), DLA (simulate ahead). <b>More complex is not better</b> — a fancy policy can be too slow for the huddle and too opaque to trust."
+            },
+            {
+                "topic": "Time Lens",
+                "question": "Why write down the nurses' by-hand routine as the baseline?",
+                "answer": "Their routine actually worked better in reality, so it becomes the <b>honest baseline anything fancier must beat</b> — not a strawman. Often the rule was right and only the cutoff needed tuning."
+            }
+        ]
     }
   ]
 }
