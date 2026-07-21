@@ -1030,7 +1030,7 @@
       "id": "lecture-09-sat",
       "title": "Lecture 09 · SAT",
       "description": "How SAT solvers work: from DPLL guessing to modern CDCL learning.",
-      "summary": "summaries/algorithm-engineering/lecture-09-sat.md",
+      "summary": "summaries/algorithm-engineering/lecture-09.md",
       "cards": [
         {
           "topic": "What is SAT",
@@ -1225,7 +1225,7 @@
       "id": "lecture-10-cp-sat",
       "title": "Lecture 10 · CP-SAT Technology & Explainability",
       "description": "How the CP-SAT solver works inside: clever deduction plus learning from mistakes.",
-      "summary": "summaries/algorithm-engineering/lecture-10-cp-sat.md",
+      "summary": "summaries/algorithm-engineering/lecture-10.md",
       "cards": [
         {
           "topic": "Big Picture",
@@ -1355,7 +1355,7 @@
       "id": "lecture-11-decomposition",
       "title": "Lecture 11 · Decomposition",
       "description": "Breaking a big, tangled optimization problem into small easy pieces held together by a little glue.",
-      "summary": "summaries/algorithm-engineering/lecture-11-decomposition.md",
+      "summary": "summaries/algorithm-engineering/lecture-11.md",
       "cards": [
         {
           "topic": "Lagrangian",
@@ -1378,7 +1378,7 @@
       "id": "lecture-12-metaheuristics",
       "title": "Lecture 12 · Metaheuristics",
       "description": "Clever tricks for finding good-enough answers fast when perfect solutions take too long.",
-      "summary": "summaries/algorithm-engineering/lecture-12-metaheuristics.md",
+      "summary": "summaries/algorithm-engineering/lecture-12.md",
       "cards": [
         {
           "topic": "Trajectory",
@@ -1406,7 +1406,7 @@
       "id": "lecture-13-tradeoffs-uncertainty",
       "title": "Lecture 13 · Trade-offs and Uncertainty",
       "description": "Handling problems with many goals at once and futures we can't predict.",
-      "summary": "summaries/algorithm-engineering/lecture-13-tradeoffs-uncertainty.md",
+      "summary": "summaries/algorithm-engineering/lecture-13.md",
       "cards": [
         {
           "topic": "The Big Picture",
@@ -1516,7 +1516,7 @@
       "id": "lecture-14-analytics-lifecycle",
       "title": "Lecture 14 · Analytics Lifecycle & Sequential Decisions",
       "description": "Why the model is the small part, and why repeating decisions need a policy, not a plan.",
-      "summary": "summaries/algorithm-engineering/lecture-14-analytics-lifecycle.md",
+      "summary": "summaries/algorithm-engineering/lecture-14.md",
       "cards": [
         {
           "topic": "Big Picture",
