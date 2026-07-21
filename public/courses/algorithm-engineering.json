@@ -1431,6 +1431,94 @@
                 "answer": "It drops the requirement that the subproblem be an LP — it can be <b>SAT, CP, a MIP, or a DP</b>. Cuts are derived logically and can be much stronger, but must be designed problem-by-problem (no universal recipe)."
             }
         ]
+    },
+    {
+        "id": "lecture-12-metaheuristics",
+        "title": "Lecture 12 · Metaheuristics",
+        "description": "Clever tricks for finding good-enough answers fast when perfect solutions take too long.",
+        "summary": "summaries/algorithm-engineering/lecture-12-metaheuristics.md",
+        "cards": [
+            {
+                "topic": "Basics",
+                "question": "What is a heuristic, and what does it promise about the answer?",
+                "answer": "A <b>smart shortcut (rule of thumb)</b> that tries to solve a problem 'well enough'. It should be faster than an exact solve, but gives <b>no guarantee</b> on how good the answer is."
+            },
+            {
+                "topic": "Basics",
+                "question": "What is a metaheuristic, and how is it different from a heuristic?",
+                "answer": "A <b>general recipe for building heuristics</b> that works across many problems. You plug in problem-specific pieces. Its performance depends on the problem, the instance, and its hyperparameters."
+            },
+            {
+                "topic": "Basics",
+                "question": "Why use (meta)heuristics instead of always solving exactly?",
+                "answer": "For <b>very large instances</b>, exact solving is impractical, and often the optimal answer isn't needed. A near-optimal answer found fast is usually a great deal."
+            },
+            {
+                "topic": "Three Families",
+                "question": "What are the three main families of metaheuristic approaches?",
+                "answer": "<b>Constructive</b> (build an answer piece by piece), <b>Trajectory-based</b> (improve one answer step by step), and <b>Population-based</b> (evolve a whole crowd of answers)."
+            },
+            {
+                "topic": "Constructive",
+                "question": "How does GRASP add smartness to a plain greedy build?",
+                "answer": "It picks the next piece <b>randomly from a shortlist of the best options</b> (the Restricted Candidate List), not always the single best. Repeating this gives many different good solutions to choose from."
+            },
+            {
+                "topic": "Constructive",
+                "question": "What is the core idea of the Pilot method (Rollout)?",
+                "answer": "For each candidate next step, <b>quickly finish the whole solution</b> with a cheap base heuristic to see how it turns out, then pick the step that led to the best complete result. (Like sending a scout ahead.)"
+            },
+            {
+                "topic": "Constructive",
+                "question": "What does Beam Search keep at each step, and why?",
+                "answer": "It keeps only the <b>best few partial solutions</b> at each level, expanding and pruning as it goes. This avoids betting everything on one path that might be a dead end."
+            },
+            {
+                "topic": "Constructive",
+                "question": "What is the Squeaky Wheel (construct-analyze-reconstruct) idea?",
+                "answer": "Build a solution, then <b>find the parts to blame and raise their priority</b> for the next build. Repeating this handles the 'troublemakers' earlier and improves quality (great for e.g. graph coloring)."
+            },
+            {
+                "topic": "Trajectory",
+                "question": "What is a local optimum, and why is it the big problem in local search?",
+                "answer": "A solution where <b>every small neighboring move looks worse</b>, so the search stops — but it may only be the bottom of a small dip, not the true best answer. It traps simple hill-climbing."
+            },
+            {
+                "topic": "Trajectory",
+                "question": "What is the key idea of Simulated Annealing, and where does it come from?",
+                "answer": "Inspired by <b>slowly cooling hot metal</b>. A high 'temperature' early on allows accepting worse moves (to escape traps); as it cools, it accepts worse moves less and less until it settles into a good solution."
+            },
+            {
+                "topic": "Trajectory",
+                "question": "How do Iterated Local Search and Path Relinking escape local optima?",
+                "answer": "Iterated Local Search gives a stuck solution a <b>random 'kick'</b> and re-optimizes. Path Relinking <b>morphs one elite solution into another</b>, checking the points in between for something even better."
+            },
+            {
+                "topic": "Trajectory",
+                "question": "What is the idea behind Variable Neighborhood Search (VNS)?",
+                "answer": "Keep <b>switching between different kinds of moves</b> (neighborhoods). A solution stuck under one move type may still be improvable under a different one, helping escape local optima."
+            },
+            {
+                "topic": "Trajectory",
+                "question": "How does Ruin & Recreate / Large Neighborhood Search (LNS) work?",
+                "answer": "<b>Destroy a chunk of a good solution, then rebuild that chunk smarter.</b> This explores a huge neighborhood at once, and the repair step can even use an exact solver on the small piece."
+            },
+            {
+                "topic": "Population",
+                "question": "What are the main steps of a Genetic Algorithm?",
+                "answer": "Keep a population, score each by <b>fitness</b>, select mostly-fit parents, <b>crossover</b> them into children, apply small random <b>mutations</b>, and repeat over generations. Diversity keeps exploration strong."
+            },
+            {
+                "topic": "Population",
+                "question": "What do Memetic Algorithms add, and why?",
+                "answer": "They <b>combine genetic algorithms with local search</b> — each child also 'practices' to improve itself. Evolution explores well but converges poorly; local search exploits well, so together they balance exploration and refinement."
+            },
+            {
+                "topic": "Special Case",
+                "question": "How do you handle a 'disguised' feasibility problem (like coloring) where objective value doesn't guide you?",
+                "answer": "Allow an <b>invalid solution and minimize a conflict metric</b> instead. E.g. in coloring: try to drop a color, then shuffle to drive the number of clashing edges/uncolored vertices down to zero."
+            }
+        ]
     }
   ]
 }
