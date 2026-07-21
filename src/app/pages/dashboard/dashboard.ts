@@ -41,7 +41,7 @@ import { StateBar } from '../../ui/state-bar';
             <span class="mono-label text-back-ink/55">Cards</span>
             @for (k of kOptions; track k) {
               <button class="chip" [class.active]="k === deckSize()" (click)="deckSize.set(k)">
-                {{ k }}
+                {{ kLabel(k) }}
               </button>
             }
           </div>
@@ -97,7 +97,8 @@ export class Dashboard {
 
   protected course = signal<Course | null>(null);
   protected deckSize = signal(15);
-  protected kOptions = [10, 15, 25, 50];
+  // Infinity = "All": every card in the selected scope, no sampling cut-off.
+  protected kOptions = [10, 15, 25, 50, Infinity];
   protected states = (['unanswered', 'wrong', 'repeat', 'memorized'] as const).map((key) => ({
     key,
     ...STATE_META[key],
@@ -115,6 +116,10 @@ export class Dashboard {
 
   protected pickCount(available: number): number {
     return Math.min(this.deckSize(), available);
+  }
+
+  protected kLabel(k: number): string {
+    return Number.isFinite(k) ? String(k) : 'All';
   }
 
   protected courseCounts = computed(() => {

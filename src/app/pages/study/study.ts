@@ -7,6 +7,7 @@ import { ProgressService } from '../../services/progress.service';
 
 const SWIPE = 90; // px past which a drag counts as a swipe
 const TAP = 8; // px below which a pointer up counts as a tap
+const DOTS_MAX = 30; // longer queues get a progress bar instead of one dot per card
 
 @Component({
   selector: 'app-study',
@@ -40,16 +41,28 @@ const TAP = 8; // px below which a pointer up counts as a tap
         </div>
       </section>
     } @else if (currentCard(); as card) {
-      <div class="mt-5 flex items-center justify-center gap-1.5" aria-hidden="true">
-        @for (i of queueIndices(); track i) {
-          <div
-            class="h-1.5 rounded-full transition-all"
-            [class.w-6]="i === index()"
-            [class.w-2]="i !== index()"
-            [style.background]="i < index() ? 'var(--color-solder)' : i === index() ? 'var(--color-copper-bright)' : 'var(--color-trace)'"
-          ></div>
+      @if (queueIndices(); as indices) {
+        @if (indices.length <= DOTS_MAX) {
+          <div class="mt-5 flex items-center justify-center gap-1.5" aria-hidden="true">
+            @for (i of indices; track i) {
+              <div
+                class="h-1.5 rounded-full transition-all"
+                [class.w-6]="i === index()"
+                [class.w-2]="i !== index()"
+                [style.background]="i < index() ? 'var(--color-solder)' : i === index() ? 'var(--color-copper-bright)' : 'var(--color-trace)'"
+              ></div>
+            }
+          </div>
+        } @else {
+          <div class="mx-auto mt-5 h-1.5 w-full max-w-[540px] overflow-hidden rounded-full bg-trace" aria-hidden="true">
+            <div
+              class="h-full rounded-full transition-all"
+              style="background: var(--color-copper-bright)"
+              [style.width.%]="((index() + 1) / indices.length) * 100"
+            ></div>
+          </div>
         }
-      </div>
+      }
       <p class="mono-label mt-3 text-center text-solder">
         {{ index() + 1 }} / {{ queue().length }}
       </p>
@@ -190,6 +203,7 @@ export class Study {
   protected progress = inject(ProgressService);
   protected readonly Math = Math;
   protected readonly SWIPE = SWIPE;
+  protected readonly DOTS_MAX = DOTS_MAX;
 
   protected queue = signal<Card[]>([]);
   protected index = signal(0);
