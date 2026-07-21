@@ -48,6 +48,7 @@ Add one entry to `public/courses/index.json`:
       "id": "lecture-01-slug",
       "title": "Lecture 01 · Topic Name",
       "description": "One short sentence shown under the lecture title.",
+      "summary": "summaries/your-course-id/lecture-01-slug.md",
       "cards": [
         {
           "topic": "A Short Group Name",
@@ -69,6 +70,7 @@ Add one entry to `public/courses/index.json`:
 | `description`        | no       | Plain text, ~1 sentence.                                              |
 | `lectures[].id`      | yes      | kebab-case, unique **within the course**.                             |
 | `lectures[].title`   | yes      | Plain text.                                                           |
+| `lectures[].summary` | no       | Path (from the public root) to a Markdown overview, e.g. `summaries/…/x.md`. |
 | `cards[].topic`      | yes      | Short label used for grouping/filtering (e.g. "Branch Prediction").   |
 | `cards[].question`   | yes      | Plain text. One idea per card. End with a `?` when it's a question.   |
 | `cards[].answer`     | yes      | May contain the inline tags below. No other HTML.                    |
@@ -85,6 +87,18 @@ Only these four inline tags render (anything else is stripped by the sanitizer):
 | `<code>` | code, identifiers, API names (`reserve()`) | monospace chip        |
 
 Keep it restrained — a card with everything highlighted highlights nothing.
+
+### Lecture summaries (optional Markdown)
+
+A lecture can point to a **Markdown overview** via `lectures[].summary`. The path
+is relative to the public root and can live anywhere; the convention used here is
+`public/summaries/<course-id>/<lecture-id>.md`. Create the folder and file
+yourself — the app fetches and renders it on the lecture's overview page, and
+shows a friendly "no summary yet" note if the file is missing.
+
+Standard Markdown works (headings, lists, tables, `code`, blockquotes, links).
+It's sanitized on render, so scripts/inline styles are dropped. Keep summaries to
+a readable one-pager that frames the lecture before drilling into cards.
 
 ### Card identity (why wording matters)
 

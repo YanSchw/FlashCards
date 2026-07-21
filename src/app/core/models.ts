@@ -8,6 +8,7 @@ export interface RawLecture {
   id: string;
   title: string;
   description?: string;
+  summary?: string; // path (relative to public root) to a Markdown overview
   cards: RawCard[];
 }
 

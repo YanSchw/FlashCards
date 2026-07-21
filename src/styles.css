@@ -153,6 +153,120 @@ body::before {
     border-radius: 5px;
     padding: 1px 5px;
   }
+
+  /* Rendered Markdown (lecture summaries). */
+  .markdown {
+    color: rgba(238, 243, 238, 0.82);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+  .markdown > :first-child {
+    margin-top: 0;
+  }
+  .markdown h1,
+  .markdown h2,
+  .markdown h3,
+  .markdown h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-back-ink);
+    line-height: 1.25;
+    margin: 1.6em 0 0.6em;
+  }
+  .markdown h1 {
+    font-size: 1.7em;
+  }
+  .markdown h2 {
+    font-size: 1.35em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--color-trace);
+  }
+  .markdown h3 {
+    font-size: 1.12em;
+    color: var(--color-copper-bright);
+  }
+  .markdown p,
+  .markdown ul,
+  .markdown ol,
+  .markdown blockquote,
+  .markdown pre,
+  .markdown table {
+    margin: 0.85em 0;
+  }
+  .markdown ul {
+    padding-left: 1.4em;
+    list-style: disc;
+  }
+  .markdown ol {
+    padding-left: 1.4em;
+    list-style: decimal;
+  }
+  .markdown li {
+    margin: 0.3em 0;
+  }
+  .markdown li::marker {
+    color: var(--color-solder);
+  }
+  .markdown a {
+    color: var(--color-copper-bright);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .markdown strong {
+    color: var(--color-back-ink);
+    font-weight: 600;
+  }
+  .markdown blockquote {
+    border-left: 3px solid var(--color-copper);
+    padding-left: 1em;
+    color: rgba(238, 243, 238, 0.6);
+    font-style: italic;
+  }
+  .markdown code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    color: #bfe6da;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(107, 179, 160, 0.2);
+    border-radius: 5px;
+    padding: 1px 5px;
+  }
+  .markdown pre {
+    background: var(--color-board-2);
+    border: 1px solid var(--color-trace);
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow-x: auto;
+  }
+  .markdown pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #cfe3db;
+  }
+  .markdown hr {
+    border: none;
+    border-top: 1px solid var(--color-trace);
+    margin: 1.6em 0;
+  }
+  .markdown table {
+    width: 100%;
+    border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
+  }
+  .markdown th,
+  .markdown td {
+    border: 1px solid var(--color-trace);
+    padding: 7px 11px;
+    text-align: left;
+  }
+  .markdown th {
+    background: var(--color-board-2);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

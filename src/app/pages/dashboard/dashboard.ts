@@ -60,16 +60,21 @@ import { StateBar } from '../../ui/state-bar';
           @for (l of c.lectures; track l.id) {
             <div class="rounded-2xl border border-trace bg-board-2/70 p-4">
               <div class="flex items-start justify-between gap-3">
-                <div>
-                  <h3 class="font-display text-lg font-semibold text-back-ink">{{ l.title }}</h3>
-                  <p class="mt-0.5 text-[13px] text-back-ink/55">{{ l.description }}</p>
-                </div>
-                <button
-                  class="tool shrink-0 self-center"
-                  (click)="studyLecture(l.id, l.cards.length)"
+                <a
+                  [routerLink]="['/c', courseId(), 'l', l.id]"
+                  class="group -m-1 rounded-lg p-1 transition-colors hover:bg-board/50"
                 >
-                  Study {{ pickCount(l.cards.length) }} ›
-                </button>
+                  <h3 class="font-display text-lg font-semibold text-back-ink group-hover:text-copper-bright">
+                    {{ l.title }}
+                  </h3>
+                  <p class="mt-0.5 text-[13px] text-back-ink/55">{{ l.description }}</p>
+                </a>
+                <div class="flex shrink-0 flex-col items-end gap-2 self-center">
+                  <a [routerLink]="['/c', courseId(), 'l', l.id]" class="tool">☰ Overview</a>
+                  <button class="tool" (click)="studyLecture(l.id, l.cards.length)">
+                    Study {{ pickCount(l.cards.length) }} ›
+                  </button>
+                </div>
               </div>
               <div class="mt-3">
                 <app-state-bar [counts]="lectureCounts()[l.id]" [showLegend]="false" />

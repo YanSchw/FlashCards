@@ -14,15 +14,17 @@ npm run build    # production build into dist/
 
 ## How it works
 
-**Flow:** Home (pick a course) → Dashboard (progress overview) →
-Study (a shuffled session of _K_ cards) → back to Dashboard.
+**Flow:** Home (pick a course) → Dashboard (progress overview, per-lecture
+summaries) → Study (a shuffled session of _K_ cards) → back to Dashboard.
 
 **Progress** is saved under the `flashcards.v1` key in `localStorage`. No
 accounts, no sync — it lives in the browser on the device.
 
 **Content.** Every course is a self-contained JSON file in
 [`public/courses/`](public/courses/), listed in
-[`index.json`](public/courses/index.json). Courses never share cards. See
+[`index.json`](public/courses/index.json). Courses never share cards. Each lecture
+can also link a **Markdown summary** (`lectures[].summary`) rendered on its
+overview page — the files live in [`public/summaries/`](public/summaries/). See
 [FLASH_CARD_GUIDE.md](FLASH_CARD_GUIDE.md) to add cards (built for AI agents
 converting PDFs → decks).
 
@@ -63,9 +65,10 @@ than _K_ cards exist, you get all of them.
 
 ```
 public/courses/         JSON content (the source of truth)
+public/summaries/       per-lecture Markdown overviews (linked from the JSON)
 src/app/core/           models, card-id hashing, card-state logic, weighted shuffle
 src/app/services/       courses loader + progress/localStorage store
-src/app/pages/          home · dashboard · study (lazy-loaded routes)
+src/app/pages/          home · dashboard · lecture · study (lazy-loaded routes)
 src/app/ui/             shared presentational components
 reference/              the original single-file prototype
 ```

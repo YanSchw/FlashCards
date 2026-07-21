@@ -10,6 +10,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
+    path: 'c/:courseId/l/:lectureId',
+    loadComponent: () => import('./pages/lecture/lecture').then((m) => m.LectureView),
+  },
+  {
     path: 'c/:courseId/study',
     loadComponent: () => import('./pages/study/study').then((m) => m.Study),
   },
