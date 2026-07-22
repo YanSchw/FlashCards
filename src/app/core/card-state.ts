@@ -3,7 +3,7 @@ import { Attempt, CardState } from './models';
 export const HOUR = 60 * 60 * 1000;
 export const RECENT_WINDOW = 72 * HOUR;
 export const MEMORIZED_WINDOW = 12 * HOUR;
-export const HISTORY_SIZE = 3; // last N attempts kept, and N required to memorize
+export const HISTORY_SIZE = 2; // last N attempts kept, and N required to memorize
 
 // Derive a card's state from its recent attempts (see FLASH_CARD_GUIDE / README).
 //   unanswered — nothing tried in the last 72h
